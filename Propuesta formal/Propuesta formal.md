@@ -1,8 +1,8 @@
 # FeriaApp
 
-**Autor:** Pablo Sanz Aznar
-**Fecha:** 10 de marzo de 2025
-**Ciclo:** Desarrollo de Aplicaciones Web
+- **Autor:** Pablo Sanz Aznar
+- **Fecha:** 10 de marzo de 2025
+- **Ciclo:** Desarrollo de Aplicaciones Web
 
 ---
 
