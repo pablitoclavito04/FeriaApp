@@ -4,9 +4,13 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const connectDB = require('./src/config/db');
 
 // Configuración de variables de entorno
 dotenv.config();
+
+// Conectar a MongoDB
+connectDB();
 
 const app = express();
 
