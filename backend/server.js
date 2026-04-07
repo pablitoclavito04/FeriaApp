@@ -1,10 +1,10 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./src/config/db');
+const authRoutes = require('./src/routes/authRoutes');
 
 // Configuración de variables de entorno
 dotenv.config();
@@ -19,6 +19,9 @@ app.use(express.json());
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(cors());
+
+// Rutas
+app.use('/api/auth', authRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
