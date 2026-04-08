@@ -37,4 +37,5 @@ Thumbs.db
 *.db
 
 # Insomnia
-docs/insomnia/
+docs/insomnia/*.json
+docs/insomnia/*.yaml
