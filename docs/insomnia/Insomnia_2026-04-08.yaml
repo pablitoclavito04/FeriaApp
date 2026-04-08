@@ -1,0 +1,598 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: FeriaApp API
+meta:
+  id: wrk_5c06979df209404399a8155d731a6a3b
+  created: 1775634170394
+  modified: 1775634230610
+  description: ""
+collection:
+  - url: http://localhost:5000/api/auth/login
+    name: Login admin
+    meta:
+      id: req_6ec6f806beaa41efa53406216500dda3
+      created: 1775634170442
+      modified: 1775634350930
+      isPrivate: false
+      description: ""
+      sortKey: -1775634170442
+    method: POST
+    body:
+      mimeType: application/json
+      text: |
+        {
+          "email": "admin@feriaapp.com",
+          "password": "admin1234"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5000/api/ferias
+    name: Crear feria
+    meta:
+      id: req_04d230a0e66c4a458b578a4a04cc2778
+      created: 1775634435320
+      modified: 1775634524309
+      isPrivate: false
+      description: ""
+      sortKey: -1775634435320
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "nombre": "Feria de Jerez 2025",
+          "descripcion": "La Feria del Caballo de Jerez de la Frontera",
+          "fechaInicio": "2025-05-06",
+          "fechaFin": "2025-05-11",
+          "ubicacion": "Real de la Feria, Jerez de la Frontera",
+          "activa": true
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDU0YzQxNjg0MmFmODllNTA5MjcyNCIsImlhdCI6MTc3NTYzNDM2OCwiZXhwIjoxNzc4MjI2MzY4fQ.jZ2-QsKYAufAlf86QcZDR6j4D64ZJTif4yLXJtHGplY
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5000/api/ferias
+    name: Obtener ferias
+    meta:
+      id: req_1be3f37bba994a2a82521b76a1f10857
+      created: 1775634680831
+      modified: 1775634697278
+      isPrivate: false
+      description: ""
+      sortKey: -1775634680831
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5000/api/casetas
+    name: Crear caseta
+    meta:
+      id: req_612accd041b4422b93bc84ebf51b78f4
+      created: 1775634736086
+      modified: 1775635017133
+      isPrivate: false
+      description: ""
+      sortKey: -1775634736086
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "nombre": "La casapuerta",
+          "numero": 1,
+          "descripcion": "Caseta número 1 de la Feria de Jerez",
+          "feria": "69d6086a0dc853bdab66dae3"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDU0YzQxNjg0MmFmODllNTA5MjcyNCIsImlhdCI6MTc3NTYzNDM2OCwiZXhwIjoxNzc4MjI2MzY4fQ.jZ2-QsKYAufAlf86QcZDR6j4D64ZJTif4yLXJtHGplY
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5000/api/menus/69d60ba60dc853bdab66dae7
+    name: Crear menu
+    meta:
+      id: req_c55e28c573bb410ba4389cf26e34155f
+      created: 1775635058232
+      modified: 1775671027279
+      isPrivate: false
+      description: ""
+      sortKey: -1775635058232
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "nombre": "Jamón ibérico",
+          "descripcion": "Jamón ibérico de bellota",
+          "precio": 12.50,
+          "caseta": "69d60a5a0dc853bdab66dae4"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDU0YzQxNjg0MmFmODllNTA5MjcyNCIsImlhdCI6MTc3NTYzNDM2OCwiZXhwIjoxNzc4MjI2MzY4fQ.jZ2-QsKYAufAlf86QcZDR6j4D64ZJTif4yLXJtHGplY
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5000/api/conciertos
+    name: Crear concierto
+    meta:
+      id: req_8b129973d6cb4bf7a9a4a4f840acd3d5
+      created: 1775635394840
+      modified: 1775635460704
+      isPrivate: false
+      description: ""
+      sortKey: -1775635394841
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "artista": "Grupo flamenco Los Jerezanos",
+          "genero": "Flamenco",
+          "fecha": "2025-05-06",
+          "hora": "22:00",
+          "caseta": "69d60a5a0dc853bdab66dae4"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDU0YzQxNjg0MmFmODllNTA5MjcyNCIsImlhdCI6MTc3NTYzNDM2OCwiZXhwIjoxNzc4MjI2MzY4fQ.jZ2-QsKYAufAlf86QcZDR6j4D64ZJTif4yLXJtHGplY
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5000/api/ferias/69d6086a0dc853bdab66dae3
+    name: Actualizar feria
+    meta:
+      id: req_50ae76525fd543bbb92c2808e866d430
+      created: 1775644074161
+      modified: 1775646670055
+      isPrivate: false
+      description: ""
+      sortKey: -1775634708458.5
+    method: PUT
+    body:
+      mimeType: application/json
+      text: >-
+        {
+          "nombre": "Feria de Jerez 2025",
+          "descripcion": "La Feria del Caballo de Jerez de la Frontera - Actualizada",
+          "activa": true
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDU0YzQxNjg0MmFmODllNTA5MjcyNCIsImlhdCI6MTc3NTYzNDM2OCwiZXhwIjoxNzc4MjI2MzY4fQ.jZ2-QsKYAufAlf86QcZDR6j4D64ZJTif4yLXJtHGplY
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5000/api/ferias/69d6086a0dc853bdab66dae3
+    name: Eliminar feria
+    meta:
+      id: req_80811a5d645743f9bf6cd6f23617c62f
+      created: 1775644076177
+      modified: 1775646762889
+      isPrivate: false
+      description: ""
+      sortKey: -1775634722272.25
+    method: DELETE
+    headers:
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDU0YzQxNjg0MmFmODllNTA5MjcyNCIsImlhdCI6MTc3NTYzNDM2OCwiZXhwIjoxNzc4MjI2MzY4fQ.jZ2-QsKYAufAlf86QcZDR6j4D64ZJTif4yLXJtHGplY
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5000/api/casetas/69d60a5a0dc853bdab66dae4
+    name: Obtener caseta
+    meta:
+      id: req_91bc93237e07434ba87e85934adf3451
+      created: 1775644391833
+      modified: 1775670729848
+      isPrivate: false
+      description: ""
+      sortKey: -1775634897159
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5000/api/casetas/69d60a5a0dc853bdab66dae4
+    name: Actualizar caseta
+    meta:
+      id: req_20721510fb664600821f8acc0e6e46bc
+      created: 1775644393810
+      modified: 1775670787120
+      isPrivate: false
+      description: ""
+      sortKey: -1775634977695.5
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "nombre": "La Casapuerta - Actualizada",
+          "numero": 1
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDU0YzQxNjg0MmFmODllNTA5MjcyNCIsImlhdCI6MTc3NTYzNDM2OCwiZXhwIjoxNzc4MjI2MzY4fQ.jZ2-QsKYAufAlf86QcZDR6j4D64ZJTif4yLXJtHGplY
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5000/api/casetas/69d60a5a0dc853bdab66dae4
+    name: Eliminar caseta
+    meta:
+      id: req_9409c47b52d946baa10b2271521f89f1
+      created: 1775644395152
+      modified: 1775670832495
+      isPrivate: false
+      description: ""
+      sortKey: -1775635017963.75
+    method: DELETE
+    headers:
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDU0YzQxNjg0MmFmODllNTA5MjcyNCIsImlhdCI6MTc3NTYzNDM2OCwiZXhwIjoxNzc4MjI2MzY4fQ.jZ2-QsKYAufAlf86QcZDR6j4D64ZJTif4yLXJtHGplY
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5000/api/menus/caseta/69d60a5a0dc853bdab66dae4
+    name: Obtener menu
+    meta:
+      id: req_2177459225ba4bfd9e897aa28ca0109f
+      created: 1775644499179
+      modified: 1775670954276
+      isPrivate: false
+      description: ""
+      sortKey: -1775635226536.5
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    authentication:
+      type: none
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5000/api/menus/69d60ba60dc853bdab66dae7
+    name: Actualizar menu
+    meta:
+      id: req_8b151bf4a3e943f785d22519cf1d8f13
+      created: 1775644514468
+      modified: 1775671085304
+      isPrivate: false
+      description: ""
+      sortKey: -1775635310688.75
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "nombre": "Jamón ibérico - Actualizado",
+          "precio": 14.00
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDU0YzQxNjg0MmFmODllNTA5MjcyNCIsImlhdCI6MTc3NTYzNDM2OCwiZXhwIjoxNzc4MjI2MzY4fQ.jZ2-QsKYAufAlf86QcZDR6j4D64ZJTif4yLXJtHGplY
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5000/api/menus/69d60ba60dc853bdab66dae7
+    name: Eliminar menu
+    meta:
+      id: req_db403974dd8a4450a7e8710f3ce455ee
+      created: 1775644525771
+      modified: 1775671132818
+      isPrivate: false
+      description: ""
+      sortKey: -1775635352764.875
+    method: DELETE
+    headers:
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDU0YzQxNjg0MmFmODllNTA5MjcyNCIsImlhdCI6MTc3NTYzNDM2OCwiZXhwIjoxNzc4MjI2MzY4fQ.jZ2-QsKYAufAlf86QcZDR6j4D64ZJTif4yLXJtHGplY
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5000/api/conciertos
+    name: Obtener concierto
+    meta:
+      id: req_e5949c1de22e4300ab7aecfab8e6c600
+      created: 1775644635428
+      modified: 1775671166875
+      isPrivate: false
+      description: ""
+      sortKey: -1775635394941
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5000/api/conciertos/69d60c060dc853bdab66dae8
+    name: Actualizar concierto
+    meta:
+      id: req_80ea093dd1e54242a56bf0799ec963e6
+      created: 1775644650993
+      modified: 1775671231521
+      isPrivate: false
+      description: ""
+      sortKey: -1775635395041
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "artista": "Grupo Flamenco Los Jerezanos - Actualizado",
+          "hora": "23:00"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDU0YzQxNjg0MmFmODllNTA5MjcyNCIsImlhdCI6MTc3NTYzNDM2OCwiZXhwIjoxNzc4MjI2MzY4fQ.jZ2-QsKYAufAlf86QcZDR6j4D64ZJTif4yLXJtHGplY
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5000/api/conciertos/69d60c060dc853bdab66dae8
+    name: Eliminar concierto
+    meta:
+      id: req_e5512fb313144fd6a23a1babae5996af
+      created: 1775644662544
+      modified: 1775671259254
+      isPrivate: false
+      description: ""
+      sortKey: -1775635395141
+    method: DELETE
+    headers:
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    authentication:
+      type: bearer
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDU0YzQxNjg0MmFmODllNTA5MjcyNCIsImlhdCI6MTc3NTYzNDM2OCwiZXhwIjoxNzc4MjI2MzY4fQ.jZ2-QsKYAufAlf86QcZDR6j4D64ZJTif4yLXJtHGplY
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5000/api/ferias
+    name: POST sin token
+    meta:
+      id: req_904687d1b0ed4647bc75cacdb9b30256
+      created: 1775671278240
+      modified: 1775671379925
+      isPrivate: false
+      description: ""
+      sortKey: -1775671278240
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "nombre": "Feria sin token"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:5000/api/ferias/000000000000000000000000
+    name: GET con id inexistente
+    meta:
+      id: req_f5b7c287b2984b3dac58ec9a830e664c
+      created: 1775671299657
+      modified: 1775671405497
+      isPrivate: false
+      description: ""
+      sortKey: -1775671299657
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/12.5.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_5ff3283e5a7031bbbea60f49f6a26bceee19c7e0
+    created: 1775634170434
+    modified: 1775634170434
+environments:
+  name: Base Environment
+  meta:
+    id: env_5ff3283e5a7031bbbea60f49f6a26bceee19c7e0
+    created: 1775634170431
+    modified: 1775634170431
+    isPrivate: false
