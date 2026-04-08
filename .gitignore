@@ -35,3 +35,6 @@ Thumbs.db
 
 # MongoDB
 *.db
+
+# Insomnia
+docs/insomnia/
