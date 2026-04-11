@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const Usuario = require('../models/Usuario');
+const User = require('../models/User');
 
 const protect = async (req, res, next) => {
   let token;
@@ -9,17 +9,23 @@ const protect = async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     try {
+      // Get token from header
       token = req.headers.authorization.split(' ')[1];
+
+      // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.usuario = await Usuario.findById(decoded.id).select('-password');
+
+      // Get user from token
+      req.user = await User.findById(decoded.id).select('-password');
+
       return next();
     } catch (error) {
-      return res.status(401).json({ error: 'No autorizado, token inválido' });
+      return res.status(401).json({ error: 'Not authorized, invalid token' });
     }
   }
 
   if (!token) {
-    return res.status(401).json({ error: 'No autorizado, no hay token' });
+    return res.status(401).json({ error: 'Not authorized, no token provided' });
   }
 };
 
