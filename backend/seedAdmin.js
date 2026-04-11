@@ -1,27 +1,27 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const bcrypt = require('bcryptjs');
 
 dotenv.config();
 
-const conectar = async () => {
+const seedAdmin = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
-    console.log('MongoDB conectado');
+    console.log('MongoDB connected');
 
-    const bcrypt = require('bcryptjs');
     const salt = await bcrypt.genSalt(10);
-    const passwordCifrada = await bcrypt.hash('admin1234', salt);
+    const hashedPassword = await bcrypt.hash('admin1234', salt);
 
-    const resultado = await mongoose.connection.collection('usuarios').insertOne({
-      nombre: 'Pablo Sanz Aznar',
+    const result = await mongoose.connection.collection('users').insertOne({
+      name: 'Pablo Sanz Aznar',
       email: 'admin@feriaapp.com',
-      password: passwordCifrada,
-      rol: 'admin',
+      password: hashedPassword,
+      role: 'admin',
       createdAt: new Date(),
       updatedAt: new Date(),
     });
 
-    console.log('Administrador creado correctamente:', resultado.insertedId);
+    console.log('Admin created successfully:', result.insertedId);
     process.exit();
   } catch (error) {
     console.error(`Error: ${error.message}`);
@@ -29,4 +29,4 @@ const conectar = async () => {
   }
 };
 
-conectar();
+seedAdmin();

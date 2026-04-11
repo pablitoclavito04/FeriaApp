@@ -7,10 +7,10 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./src/config/swagger');
 const connectDB = require('./src/config/db');
 const authRoutes = require('./src/routes/authRoutes');
-const feriaRoutes = require('./src/routes/feriaRoutes');
+const fairRoutes = require('./src/routes/fairRoutes');
 const casetaRoutes = require('./src/routes/casetaRoutes');
 const menuRoutes = require('./src/routes/menuRoutes');
-const conciertoRoutes = require('./src/routes/conciertoRoutes');
+const concertRoutes = require('./src/routes/concertRoutes');
 
 dotenv.config();
 
@@ -23,23 +23,23 @@ app.use(helmet());
 app.use(morgan('dev'));
 app.use(cors());
 
-// Swagger
+// Swagger documentation
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Rutas
+// Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/ferias', feriaRoutes);
+app.use('/api/fairs', fairRoutes);
 app.use('/api/casetas', casetaRoutes);
 app.use('/api/menus', menuRoutes);
-app.use('/api/conciertos', conciertoRoutes);
+app.use('/api/concerts', concertRoutes);
 
-// Ruta de prueba
+// Health check
 app.get('/', (req, res) => {
-  res.json({ message: 'FeriaApp API funcionando correctamente' });
+  res.json({ message: 'FeriaApp API is running' });
 });
 
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en el puerto ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
