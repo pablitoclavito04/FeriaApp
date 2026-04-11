@@ -2,27 +2,27 @@ const mongoose = require('mongoose');
 
 const CasetaSchema = new mongoose.Schema(
   {
-    nombre: {
+    name: {
       type: String,
-      required: [true, 'El nombre es obligatorio'],
+      required: [true, 'Name is required'],
       trim: true,
     },
-    numero: {
+    number: {
       type: Number,
-      required: [true, 'El número es obligatorio'],
+      required: [true, 'Number is required'],
     },
-    descripcion: {
+    description: {
       type: String,
       trim: true,
     },
-    ubicacion: {
+    location: {
       x: { type: Number },
       y: { type: Number },
     },
-    feria: {
+    fair: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Feria',
-      required: [true, 'La feria es obligatoria'],
+      ref: 'Fair',
+      required: [true, 'Fair is required'],
     },
   },
   {
