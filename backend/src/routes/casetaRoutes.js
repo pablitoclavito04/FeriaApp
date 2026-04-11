@@ -1,23 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const {
-  getCasetas,
-  getCaseta,
-  crearCaseta,
-  actualizarCaseta,
-  eliminarCaseta,
-} = require('../controllers/casetaController');
+const { getCasetas, getCaseta, createCaseta, updateCaseta, deleteCaseta } = require('../controllers/casetaController');
 const { protect } = require('../middlewares/auth');
 
 /**
  * @swagger
  * /api/casetas:
  *   get:
- *     summary: Obtener todas las casetas
+ *     summary: Get all casetas
  *     tags: [Casetas]
  *     responses:
  *       200:
- *         description: Lista de casetas
+ *         description: List of casetas
  */
 router.get('/', getCasetas);
 
@@ -25,7 +19,7 @@ router.get('/', getCasetas);
  * @swagger
  * /api/casetas/{id}:
  *   get:
- *     summary: Obtener una caseta por ID
+ *     summary: Get a caseta by ID
  *     tags: [Casetas]
  *     parameters:
  *       - in: path
@@ -35,9 +29,9 @@ router.get('/', getCasetas);
  *           type: string
  *     responses:
  *       200:
- *         description: Caseta encontrada
+ *         description: Caseta found
  *       404:
- *         description: Caseta no encontrada
+ *         description: Caseta not found
  */
 router.get('/:id', getCaseta);
 
@@ -45,7 +39,7 @@ router.get('/:id', getCaseta);
  * @swagger
  * /api/casetas:
  *   post:
- *     summary: Crear una caseta
+ *     summary: Create a caseta
  *     tags: [Casetas]
  *     security:
  *       - bearerAuth: []
@@ -56,27 +50,27 @@ router.get('/:id', getCaseta);
  *           schema:
  *             type: object
  *             properties:
- *               nombre:
+ *               name:
  *                 type: string
- *               numero:
+ *               number:
  *                 type: number
- *               descripcion:
+ *               description:
  *                 type: string
- *               feria:
+ *               fair:
  *                 type: string
  *     responses:
  *       201:
- *         description: Caseta creada correctamente
+ *         description: Caseta created successfully
  *       401:
- *         description: No autorizado
+ *         description: Not authorized
  */
-router.post('/', protect, crearCaseta);
+router.post('/', protect, createCaseta);
 
 /**
  * @swagger
  * /api/casetas/{id}:
  *   put:
- *     summary: Actualizar una caseta
+ *     summary: Update a caseta
  *     tags: [Casetas]
  *     security:
  *       - bearerAuth: []
@@ -88,17 +82,17 @@ router.post('/', protect, crearCaseta);
  *           type: string
  *     responses:
  *       200:
- *         description: Caseta actualizada correctamente
+ *         description: Caseta updated successfully
  *       404:
- *         description: Caseta no encontrada
+ *         description: Caseta not found
  */
-router.put('/:id', protect, actualizarCaseta);
+router.put('/:id', protect, updateCaseta);
 
 /**
  * @swagger
  * /api/casetas/{id}:
  *   delete:
- *     summary: Eliminar una caseta
+ *     summary: Delete a caseta
  *     tags: [Casetas]
  *     security:
  *       - bearerAuth: []
@@ -110,10 +104,10 @@ router.put('/:id', protect, actualizarCaseta);
  *           type: string
  *     responses:
  *       200:
- *         description: Caseta eliminada correctamente
+ *         description: Caseta deleted successfully
  *       404:
- *         description: Caseta no encontrada
+ *         description: Caseta not found
  */
-router.delete('/:id', protect, eliminarCaseta);
+router.delete('/:id', protect, deleteCaseta);
 
 module.exports = router;

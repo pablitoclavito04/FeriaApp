@@ -1,32 +1,26 @@
 const express = require('express');
 const router = express.Router();
-const {
-  getConciertos,
-  getConciertosCC,
-  crearConcierto,
-  actualizarConcierto,
-  eliminarConcierto,
-} = require('../controllers/conciertoController');
+const { getConcerts, getConcertsByCaseta, createConcert, updateConcert, deleteConcert } = require('../controllers/concertController');
 const { protect } = require('../middlewares/auth');
 
 /**
  * @swagger
- * /api/conciertos:
+ * /api/concerts:
  *   get:
- *     summary: Obtener todos los conciertos
- *     tags: [Conciertos]
+ *     summary: Get all concerts
+ *     tags: [Concerts]
  *     responses:
  *       200:
- *         description: Lista de conciertos
+ *         description: List of concerts
  */
-router.get('/', getConciertos);
+router.get('/', getConcerts);
 
 /**
  * @swagger
- * /api/conciertos/caseta/{casetaId}:
+ * /api/concerts/caseta/{casetaId}:
  *   get:
- *     summary: Obtener conciertos de una caseta
- *     tags: [Conciertos]
+ *     summary: Get concerts by caseta
+ *     tags: [Concerts]
  *     parameters:
  *       - in: path
  *         name: casetaId
@@ -35,16 +29,16 @@ router.get('/', getConciertos);
  *           type: string
  *     responses:
  *       200:
- *         description: Lista de conciertos de la caseta
+ *         description: List of concerts for the caseta
  */
-router.get('/caseta/:casetaId', getConciertosCC);
+router.get('/caseta/:casetaId', getConcertsByCaseta);
 
 /**
  * @swagger
- * /api/conciertos:
+ * /api/concerts:
  *   post:
- *     summary: Crear un concierto
- *     tags: [Conciertos]
+ *     summary: Create a concert
+ *     tags: [Concerts]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -54,30 +48,30 @@ router.get('/caseta/:casetaId', getConciertosCC);
  *           schema:
  *             type: object
  *             properties:
- *               artista:
+ *               artist:
  *                 type: string
- *               genero:
+ *               genre:
  *                 type: string
- *               fecha:
+ *               date:
  *                 type: string
- *               hora:
+ *               time:
  *                 type: string
  *               caseta:
  *                 type: string
  *     responses:
  *       201:
- *         description: Concierto creado correctamente
+ *         description: Concert created successfully
  *       401:
- *         description: No autorizado
+ *         description: Not authorized
  */
-router.post('/', protect, crearConcierto);
+router.post('/', protect, createConcert);
 
 /**
  * @swagger
- * /api/conciertos/{id}:
+ * /api/concerts/{id}:
  *   put:
- *     summary: Actualizar un concierto
- *     tags: [Conciertos]
+ *     summary: Update a concert
+ *     tags: [Concerts]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -88,18 +82,18 @@ router.post('/', protect, crearConcierto);
  *           type: string
  *     responses:
  *       200:
- *         description: Concierto actualizado correctamente
+ *         description: Concert updated successfully
  *       404:
- *         description: Concierto no encontrado
+ *         description: Concert not found
  */
-router.put('/:id', protect, actualizarConcierto);
+router.put('/:id', protect, updateConcert);
 
 /**
  * @swagger
- * /api/conciertos/{id}:
+ * /api/concerts/{id}:
  *   delete:
- *     summary: Eliminar un concierto
- *     tags: [Conciertos]
+ *     summary: Delete a concert
+ *     tags: [Concerts]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -110,10 +104,10 @@ router.put('/:id', protect, actualizarConcierto);
  *           type: string
  *     responses:
  *       200:
- *         description: Concierto eliminado correctamente
+ *         description: Concert deleted successfully
  *       404:
- *         description: Concierto no encontrado
+ *         description: Concert not found
  */
-router.delete('/:id', protect, eliminarConcierto);
+router.delete('/:id', protect, deleteConcert);
 
 module.exports = router;

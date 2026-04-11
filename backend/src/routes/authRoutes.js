@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const { login, getPerfil } = require('../controllers/authController');
+const { login, getProfile } = require('../controllers/authController');
 const { protect } = require('../middlewares/auth');
 
 /**
  * @swagger
  * /api/auth/login:
  *   post:
- *     summary: Login del administrador
+ *     summary: Admin login
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -22,26 +22,26 @@ const { protect } = require('../middlewares/auth');
  *                 type: string
  *     responses:
  *       200:
- *         description: Login correcto, devuelve token JWT
+ *         description: Login successful, returns JWT token
  *       401:
- *         description: Credenciales incorrectas
+ *         description: Invalid credentials
  */
 router.post('/login', login);
 
 /**
  * @swagger
- * /api/auth/perfil:
+ * /api/auth/profile:
  *   get:
- *     summary: Obtener perfil del administrador
+ *     summary: Get admin profile
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Perfil del administrador
+ *         description: Admin profile
  *       401:
- *         description: No autorizado
+ *         description: Not authorized
  */
-router.get('/perfil', protect, getPerfil);
+router.get('/profile', protect, getProfile);
 
 module.exports = router;

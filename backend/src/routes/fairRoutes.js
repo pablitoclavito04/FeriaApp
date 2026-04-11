@@ -1,44 +1,46 @@
 const express = require('express');
 const router = express.Router();
-const { getMenus, getMenusByCaseta, createMenu, updateMenu, deleteMenu } = require('../controllers/menuController');
+const { getFairs, getFair, createFair, updateFair, deleteFair } = require('../controllers/fairController');
 const { protect } = require('../middlewares/auth');
 
 /**
  * @swagger
- * /api/menus:
+ * /api/fairs:
  *   get:
- *     summary: Get all menu items
- *     tags: [Menus]
+ *     summary: Get all fairs
+ *     tags: [Fairs]
  *     responses:
  *       200:
- *         description: List of menu items
+ *         description: List of fairs
  */
-router.get('/', getMenus);
+router.get('/', getFairs);
 
 /**
  * @swagger
- * /api/menus/caseta/{casetaId}:
+ * /api/fairs/{id}:
  *   get:
- *     summary: Get menu items by caseta
- *     tags: [Menus]
+ *     summary: Get a fair by ID
+ *     tags: [Fairs]
  *     parameters:
  *       - in: path
- *         name: casetaId
+ *         name: id
  *         required: true
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: List of menu items for the caseta
+ *         description: Fair found
+ *       404:
+ *         description: Fair not found
  */
-router.get('/caseta/:casetaId', getMenusByCaseta);
+router.get('/:id', getFair);
 
 /**
  * @swagger
- * /api/menus:
+ * /api/fairs:
  *   post:
- *     summary: Create a menu item
- *     tags: [Menus]
+ *     summary: Create a fair
+ *     tags: [Fairs]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -52,24 +54,26 @@ router.get('/caseta/:casetaId', getMenusByCaseta);
  *                 type: string
  *               description:
  *                 type: string
- *               price:
- *                 type: number
- *               caseta:
+ *               startDate:
+ *                 type: string
+ *               endDate:
+ *                 type: string
+ *               location:
  *                 type: string
  *     responses:
  *       201:
- *         description: Menu item created successfully
+ *         description: Fair created successfully
  *       401:
  *         description: Not authorized
  */
-router.post('/', protect, createMenu);
+router.post('/', protect, createFair);
 
 /**
  * @swagger
- * /api/menus/{id}:
+ * /api/fairs/{id}:
  *   put:
- *     summary: Update a menu item
- *     tags: [Menus]
+ *     summary: Update a fair
+ *     tags: [Fairs]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -80,18 +84,18 @@ router.post('/', protect, createMenu);
  *           type: string
  *     responses:
  *       200:
- *         description: Menu item updated successfully
+ *         description: Fair updated successfully
  *       404:
- *         description: Menu item not found
+ *         description: Fair not found
  */
-router.put('/:id', protect, updateMenu);
+router.put('/:id', protect, updateFair);
 
 /**
  * @swagger
- * /api/menus/{id}:
+ * /api/fairs/{id}:
  *   delete:
- *     summary: Delete a menu item
- *     tags: [Menus]
+ *     summary: Delete a fair
+ *     tags: [Fairs]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -102,10 +106,10 @@ router.put('/:id', protect, updateMenu);
  *           type: string
  *     responses:
  *       200:
- *         description: Menu item deleted successfully
+ *         description: Fair deleted successfully
  *       404:
- *         description: Menu item not found
+ *         description: Fair not found
  */
-router.delete('/:id', protect, deleteMenu);
+router.delete('/:id', protect, deleteFair);
 
 module.exports = router;
