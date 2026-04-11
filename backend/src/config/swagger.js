@@ -6,12 +6,12 @@ const options = {
     info: {
       title: 'FeriaApp API',
       version: '1.0.0',
-      description: 'API REST para la gestión de ferias locales',
+      description: 'REST API for local fair management',
     },
     servers: [
       {
         url: 'http://localhost:5000',
-        description: 'Servidor de desarrollo',
+        description: 'Development server',
       },
     ],
     components: {
