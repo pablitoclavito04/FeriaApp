@@ -1,56 +1,56 @@
-const Usuario = require('../models/Usuario');
+const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
-// Generar token JWT
-const generarToken = (id) => {
+// Generate JWT token
+const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: '30d',
   });
 };
 
-// @desc    Login administrador
+// @desc    Admin login
 // @route   POST /api/auth/login
 // @access  Public
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Buscar usuario por email
-    const usuario = await Usuario.findOne({ email });
+    // Find user by email
+    const user = await User.findOne({ email });
 
-    if (!usuario) {
-      return res.status(401).json({ error: 'Credenciales incorrectas' });
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // Comprobar contraseña
-    const passwordCorrecta = await usuario.compararPassword(password);
+    // Check password
+    const isMatch = await user.comparePassword(password);
 
-    if (!passwordCorrecta) {
-      return res.status(401).json({ error: 'Credenciales incorrectas' });
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     res.json({
-      _id: usuario._id,
-      nombre: usuario.nombre,
-      email: usuario.email,
-      rol: usuario.rol,
-      token: generarToken(usuario._id),
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      token: generateToken(user._id),
     });
   } catch (error) {
-    res.status(500).json({ error: 'Error en el servidor' });
+    res.status(500).json({ error: 'Server error' });
   }
 };
 
-// @desc    Obtener perfil del administrador
-// @route   GET /api/auth/perfil
+// @desc    Get admin profile
+// @route   GET /api/auth/profile
 // @access  Private
-const getPerfil = async (req, res) => {
+const getProfile = async (req, res) => {
   try {
-    const usuario = await Usuario.findById(req.usuario._id).select('-password');
-    res.json(usuario);
+    const user = await User.findById(req.user._id).select('-password');
+    res.json(user);
   } catch (error) {
-    res.status(500).json({ error: 'Error en el servidor' });
+    res.status(500).json({ error: 'Server error' });
   }
 };
 
-module.exports = { login, getPerfil };
+module.exports = { login, getProfile };

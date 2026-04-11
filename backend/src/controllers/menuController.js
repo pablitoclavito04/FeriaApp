@@ -1,72 +1,72 @@
 const Menu = require('../models/Menu');
 
-// @desc    Obtener todos los menús
+// @desc    Get all menu items
 // @route   GET /api/menus
 // @access  Public
 const getMenus = async (req, res) => {
   try {
-    const menus = await Menu.find().populate('caseta', 'nombre numero');
+    const menus = await Menu.find().populate('caseta', 'name number');
     res.json(menus);
   } catch (error) {
-    res.status(500).json({ error: 'Error en el servidor' });
+    res.status(500).json({ error: 'Server error' });
   }
 };
 
-// @desc    Obtener menús de una caseta
+// @desc    Get menu items by caseta
 // @route   GET /api/menus/caseta/:casetaId
 // @access  Public
-const getMenusCaseta = async (req, res) => {
+const getMenusByCaseta = async (req, res) => {
   try {
-    const menus = await Menu.find({ caseta: req.params.casetaId }).populate('caseta', 'nombre numero');
+    const menus = await Menu.find({ caseta: req.params.casetaId }).populate('caseta', 'name number');
     res.json(menus);
   } catch (error) {
-    res.status(500).json({ error: 'Error en el servidor' });
+    res.status(500).json({ error: 'Server error' });
   }
 };
 
-// @desc    Crear un plato del menú
+// @desc    Create a menu item
 // @route   POST /api/menus
 // @access  Private
-const crearMenu = async (req, res) => {
+const createMenu = async (req, res) => {
   try {
     const menu = await Menu.create(req.body);
     res.status(201).json(menu);
   } catch (error) {
-    res.status(500).json({ error: 'Error en el servidor' });
+    res.status(500).json({ error: 'Server error' });
   }
 };
 
-// @desc    Actualizar un plato del menú
+// @desc    Update a menu item
 // @route   PUT /api/menus/:id
 // @access  Private
-const actualizarMenu = async (req, res) => {
+const updateMenu = async (req, res) => {
   try {
     const menu = await Menu.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     });
     if (!menu) {
-      return res.status(404).json({ error: 'Plato no encontrado' });
+      return res.status(404).json({ error: 'Menu item not found' });
     }
     res.json(menu);
   } catch (error) {
-    res.status(500).json({ error: 'Error en el servidor' });
+    res.status(500).json({ error: 'Server error' });
   }
 };
 
-// @desc    Eliminar un plato del menú
+// @desc    Delete a menu item
 // @route   DELETE /api/menus/:id
 // @access  Private
-const eliminarMenu = async (req, res) => {
+const deleteMenu = async (req, res) => {
   try {
     const menu = await Menu.findByIdAndDelete(req.params.id);
     if (!menu) {
-      return res.status(404).json({ error: 'Plato no encontrado' });
+      return res.status(404).json({ error: 'Menu item not found' });
     }
-    res.json({ message: 'Plato eliminado correctamente' });
+    res.json({ message: 'Menu item deleted successfully' });
   } catch (error) {
-    res.status(500).json({ error: 'Error en el servidor' });
+    res.status(500).json({ error: 'Server error' });
   }
 };
 
-module.exports = { getMenus, getMenusCaseta, crearMenu, actualizarMenu, eliminarMenu };
+module.exports = { getMenus, getMenusByCaseta, createMenu, updateMenu, deleteMenu };
