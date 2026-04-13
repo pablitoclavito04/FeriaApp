@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import casetaService from '../services/casetaService';
 import fairService from '../services/fairService';
+import MapPicker from '../components/MapPicker';
 
 const Casetas = () => {
   const [casetas, setCasetas] = useState([]);
@@ -14,6 +15,7 @@ const Casetas = () => {
     number: '',
     description: '',
     fair: '',
+    location: { x: null, y: null },
   });
 
   useEffect(() => {
@@ -33,6 +35,13 @@ const Casetas = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleLocationSelect = (latlng) => {
+    setFormData((prev) => ({
+      ...prev,
+      location: { x: latlng.lat, y: latlng.lng },
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -59,6 +68,7 @@ const Casetas = () => {
       number: caseta.number,
       description: caseta.description,
       fair: caseta.fair?._id || caseta.fair,
+      location: caseta.location || { x: null, y: null },
     });
     setShowForm(true);
   };
@@ -80,6 +90,7 @@ const Casetas = () => {
       number: '',
       description: '',
       fair: '',
+      location: { x: null, y: null },
     });
   };
 
@@ -139,6 +150,22 @@ const Casetas = () => {
               ))}
             </select>
           </div>
+          <div className="form-group">
+            <label>Location on map</label>
+            <MapPicker
+              onLocationSelect={handleLocationSelect}
+              initialPosition={
+                formData.location?.x
+                  ? { lat: formData.location.x, lng: formData.location.y }
+                  : null
+              }
+            />
+            {formData.location?.x && (
+              <p className="location-info">
+                Selected: {formData.location.x.toFixed(4)}, {formData.location.y.toFixed(4)}
+              </p>
+            )}
+          </div>
           <div className="form-actions">
             <button type="submit">{editingCaseta ? 'Update' : 'Create'}</button>
             <button type="button" onClick={() => setShowForm(false)}>Cancel</button>
@@ -153,6 +180,7 @@ const Casetas = () => {
             <th>Name</th>
             <th>Description</th>
             <th>Fair</th>
+            <th>Location</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -163,6 +191,11 @@ const Casetas = () => {
               <td>{caseta.name}</td>
               <td>{caseta.description}</td>
               <td>{caseta.fair?.name}</td>
+              <td>
+                {caseta.location?.x
+                  ? `${caseta.location.x.toFixed(4)}, ${caseta.location.y.toFixed(4)}`
+                  : 'Not set'}
+              </td>
               <td>
                 <button onClick={() => handleEdit(caseta)}>Edit</button>
                 <button onClick={() => handleDelete(caseta._id)}>Delete</button>
