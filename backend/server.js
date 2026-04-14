@@ -11,6 +11,7 @@ const fairRoutes = require('./src/routes/fairRoutes');
 const casetaRoutes = require('./src/routes/casetaRoutes');
 const menuRoutes = require('./src/routes/menuRoutes');
 const concertRoutes = require('./src/routes/concertRoutes');
+const publishRoutes = require('./src/routes/publishRoutes');
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ app.use('/api/fairs', fairRoutes);
 app.use('/api/casetas', casetaRoutes);
 app.use('/api/menus', menuRoutes);
 app.use('/api/concerts', concertRoutes);
+app.use('/api/publish', publishRoutes);
 
 // Health check
 app.get('/', (req, res) => {
