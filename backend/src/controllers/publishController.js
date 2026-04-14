@@ -1,3 +1,4 @@
+require('dotenv').config();
 const octokit = require('../config/octokit');
 const Fair = require('../models/Fair');
 const Caseta = require('../models/Caseta');
