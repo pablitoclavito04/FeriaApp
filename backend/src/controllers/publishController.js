@@ -6,6 +6,7 @@ const Concert = require('../models/Concert');
 
 const owner = process.env.GITHUB_OWNER;
 const repo = process.env.GITHUB_REPO;
+const branch = 'gh-pages';
 
 // Helper to upload a file to GitHub
 const uploadFile = async (path, content) => {
@@ -13,7 +14,7 @@ const uploadFile = async (path, content) => {
 
   try {
     // Check if file already exists
-    const { data } = await octokit.repos.getContent({ owner, repo, path });
+    const { data } = await octokit.repos.getContent({ owner, repo, path, ref: branch });
     await octokit.repos.createOrUpdateFileContents({
       owner,
       repo,
@@ -21,6 +22,7 @@ const uploadFile = async (path, content) => {
       message: `Update ${path}`,
       content: contentBase64,
       sha: data.sha,
+      branch,
     });
   } catch {
     // File does not exist, create it
@@ -30,6 +32,7 @@ const uploadFile = async (path, content) => {
       path,
       message: `Create ${path}`,
       content: contentBase64,
+      branch,
     });
   }
 };
