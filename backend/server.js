@@ -12,6 +12,7 @@ const casetaRoutes = require('./src/routes/casetaRoutes');
 const menuRoutes = require('./src/routes/menuRoutes');
 const concertRoutes = require('./src/routes/concertRoutes');
 const publishRoutes = require('./src/routes/publishRoutes');
+const path = require('path');
 
 dotenv.config();
 
@@ -23,6 +24,9 @@ app.use(express.json());
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(cors());
+
+// Serve uploaded files
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Swagger documentation
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

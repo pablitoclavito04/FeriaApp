@@ -1,4 +1,5 @@
 const Caseta = require('../models/Caseta');
+const path = require('path');
 
 // @desc    Get all casetas
 // @route   GET /api/casetas
@@ -32,7 +33,11 @@ const getCaseta = async (req, res) => {
 // @access  Private
 const createCaseta = async (req, res) => {
   try {
-    const caseta = await Caseta.create(req.body);
+    const casetaData = { ...req.body };
+    if (req.file) {
+      casetaData.image = `/uploads/${req.file.filename}`;
+    }
+    const caseta = await Caseta.create(casetaData);
     res.status(201).json(caseta);
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
@@ -44,7 +49,11 @@ const createCaseta = async (req, res) => {
 // @access  Private
 const updateCaseta = async (req, res) => {
   try {
-    const caseta = await Caseta.findByIdAndUpdate(req.params.id, req.body, {
+    const casetaData = { ...req.body };
+    if (req.file) {
+      casetaData.image = `/uploads/${req.file.filename}`;
+    }
+    const caseta = await Caseta.findByIdAndUpdate(req.params.id, casetaData, {
       new: true,
       runValidators: true,
     });

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getCasetas, getCaseta, createCaseta, updateCaseta, deleteCaseta } = require('../controllers/casetaController');
 const { protect } = require('../middlewares/auth');
+const upload = require('../middlewares/upload');
 
 /**
  * @swagger
@@ -43,28 +44,13 @@ router.get('/:id', getCaseta);
  *     tags: [Casetas]
  *     security:
  *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               number:
- *                 type: number
- *               description:
- *                 type: string
- *               fair:
- *                 type: string
  *     responses:
  *       201:
  *         description: Caseta created successfully
  *       401:
  *         description: Not authorized
  */
-router.post('/', protect, createCaseta);
+router.post('/', protect, upload.single('image'), createCaseta);
 
 /**
  * @swagger
@@ -86,7 +72,7 @@ router.post('/', protect, createCaseta);
  *       404:
  *         description: Caseta not found
  */
-router.put('/:id', protect, updateCaseta);
+router.put('/:id', protect, upload.single('image'), updateCaseta);
 
 /**
  * @swagger
