@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Tu guía completa de la Feria de Jerez" />
+  <title>FeriaApp</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <meta name="theme-color" content="#C0392B" />
+</head>
+<body>
+
+  <!-- LANDING PAGE -->
+  <section id="landing" class="landing">
+    <div class="landing-content">
+      <h1>FeriaApp</h1>
+      <p>Tu guía completa de la Feria de Jerez</p>
+      <button onclick="showApp()">Explorar la Feria</button>
+    </div>
+  </section>
+
+  <!-- MAIN APP -->
+  <div id="app" class="app hidden">
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <h1>FeriaApp</h1>
+      <div class="nav-links">
+        <button onclick="showSection('map')">Mapa</button>
+        <button onclick="showSection('casetas')">Casetas</button>
+        <button onclick="showSection('schedule')">Programación</button>
+      </div>
+    </nav>
+
+    <!-- MAP SECTION -->
+    <section id="map-section" class="section">
+      <div class="section-header">
+        <h2>Mapa de la Feria</h2>
+      </div>
+      <div id="map" style="height: 500px; width: 100%;"></div>
+    </section>
+
+    <!-- CASETAS SECTION -->
+    <section id="casetas-section" class="section hidden">
+      <div class="section-header">
+        <h2>Casetas</h2>
+        <input type="text" id="search-input" placeholder="Buscar caseta..." oninput="searchCasetas()" />
+      </div>
+      <div id="casetas-list" class="casetas-grid"></div>
+    </section>
+
+    <!-- SCHEDULE SECTION -->
+    <section id="schedule-section" class="section hidden">
+      <div class="section-header">
+        <h2>Programación</h2>
+      </div>
+      <div id="schedule-list" class="schedule-list"></div>
+    </section>
+
+    <!-- CASETA DETAIL MODAL -->
+    <div id="caseta-modal" class="modal hidden">
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <div id="modal-body"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/fuse.js@7.0.0/dist/fuse.min.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(() => console.log('Service Worker registered'))
+          .catch((err) => console.error('Service Worker error:', err));
+      });
+    }
+  </script>
+
+</body>
+</html>
