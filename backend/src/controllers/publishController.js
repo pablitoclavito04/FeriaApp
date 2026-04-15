@@ -4,37 +4,53 @@ const Fair = require('../models/Fair');
 const Caseta = require('../models/Caseta');
 const Menu = require('../models/Menu');
 const Concert = require('../models/Concert');
+const fs = require('fs');
+const path = require('path');
 
 const owner = process.env.GITHUB_OWNER;
 const repo = process.env.GITHUB_REPO;
 const branch = 'gh-pages';
 
 // Helper to upload a file to GitHub
-const uploadFile = async (path, content) => {
-  const contentBase64 = Buffer.from(content).toString('base64');
+const uploadFile = async (filePath, content, isBase64 = false) => {
+  const contentBase64 = isBase64 ? content : Buffer.from(content).toString('base64');
 
   try {
-    // Check if file already exists
-    const { data } = await octokit.repos.getContent({ owner, repo, path, ref: branch });
+    const { data } = await octokit.repos.getContent({ owner, repo, path: filePath, ref: branch });
     await octokit.repos.createOrUpdateFileContents({
       owner,
       repo,
-      path,
-      message: `Update ${path}`,
+      path: filePath,
+      message: `Update ${filePath}`,
       content: contentBase64,
       sha: data.sha,
       branch,
     });
   } catch {
-    // File does not exist, create it
     await octokit.repos.createOrUpdateFileContents({
       owner,
       repo,
-      path,
-      message: `Create ${path}`,
+      path: filePath,
+      message: `Create ${filePath}`,
       content: contentBase64,
       branch,
     });
+  }
+};
+
+// Helper to upload images from uploads folder
+const uploadImages = async () => {
+  const uploadsDir = path.join(__dirname, '../../uploads');
+  
+  if (!fs.existsSync(uploadsDir)) return;
+  
+  const files = fs.readdirSync(uploadsDir);
+  
+  for (const file of files) {
+    const filePath = path.join(uploadsDir, file);
+    const fileContent = fs.readFileSync(filePath);
+    const base64Content = fileContent.toString('base64');
+    await uploadFile(`uploads/${file}`, base64Content, true);
   }
 };
 
@@ -54,6 +70,9 @@ const publish = async (req, res) => {
     await uploadFile('data/casetas.json', JSON.stringify(casetas, null, 2));
     await uploadFile('data/menus.json', JSON.stringify(menus, null, 2));
     await uploadFile('data/concerts.json', JSON.stringify(concerts, null, 2));
+
+    // Upload images
+    await uploadImages();
 
     res.json({ message: 'Published successfully' });
   } catch (error) {

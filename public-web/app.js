@@ -78,6 +78,10 @@ const renderCasetas = (data) => {
   }
   container.innerHTML = data.map((caseta) => `
     <div class="caseta-card" onclick="openCasetaModal('${caseta._id}')">
+      ${caseta.image
+        ? `<img src="${caseta.image.replace('/uploads/', '/FeriaApp/uploads/')}" alt="${caseta.name}" class="caseta-card-image" />`
+        : '<div class="caseta-no-image"></div>'
+      }
       <div class="caseta-number">${caseta.number}</div>
       <h3>${caseta.name}</h3>
       <p>${caseta.description || ''}</p>
@@ -144,6 +148,10 @@ const openCasetaModal = (id) => {
   const casetaConcerts = concerts.filter((c) => c.caseta?._id === id || c.caseta === id);
 
   document.getElementById('modal-body').innerHTML = `
+    ${caseta.image
+      ? `<img src="${caseta.image.replace('/uploads/', '/FeriaApp/uploads/')}" alt="${caseta.name}" style="width:100%;border-radius:8px;margin-bottom:1rem;max-height:200px;object-fit:cover;" />`
+      : ''
+    }
     <h2>${caseta.name}</h2>
     <p class="caseta-number-detail">Caseta nº ${caseta.number}</p>
     <p>${caseta.description || ''}</p>
