@@ -17,6 +17,8 @@ const Casetas = () => {
     fair: '',
     location: { x: null, y: null },
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -44,13 +46,32 @@ const Casetas = () => {
     }));
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const data = new FormData();
+      data.append('name', formData.name);
+      data.append('number', formData.number);
+      data.append('description', formData.description);
+      data.append('fair', formData.fair);
+      data.append('location[x]', formData.location.x);
+      data.append('location[y]', formData.location.y);
+      if (imageFile) {
+        data.append('image', imageFile);
+      }
+
       if (editingCaseta) {
-        await casetaService.updateCaseta(editingCaseta._id, formData);
+        await casetaService.updateCaseta(editingCaseta._id, data);
       } else {
-        await casetaService.createCaseta(formData);
+        await casetaService.createCaseta(data);
       }
       setShowForm(false);
       setEditingCaseta(null);
@@ -70,6 +91,7 @@ const Casetas = () => {
       fair: caseta.fair?._id || caseta.fair,
       location: caseta.location || { x: null, y: null },
     });
+    setImagePreview(caseta.image ? `http://localhost:5000${caseta.image}` : null);
     setShowForm(true);
   };
 
@@ -92,6 +114,8 @@ const Casetas = () => {
       fair: '',
       location: { x: null, y: null },
     });
+    setImageFile(null);
+    setImagePreview(null);
   };
 
   if (loading) return <p>Loading...</p>;
@@ -151,6 +175,21 @@ const Casetas = () => {
             </select>
           </div>
           <div className="form-group">
+            <label>Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+            />
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Preview"
+                style={{ width: '100%', maxHeight: '200px', objectFit: 'cover', marginTop: '0.5rem', borderRadius: '8px' }}
+              />
+            )}
+          </div>
+          <div className="form-group">
             <label>Location on map</label>
             <MapPicker
               onLocationSelect={handleLocationSelect}
@@ -180,6 +219,7 @@ const Casetas = () => {
             <th>Name</th>
             <th>Description</th>
             <th>Fair</th>
+            <th>Image</th>
             <th>Location</th>
             <th>Actions</th>
           </tr>
@@ -191,6 +231,11 @@ const Casetas = () => {
               <td>{caseta.name}</td>
               <td>{caseta.description}</td>
               <td>{caseta.fair?.name}</td>
+              <td>
+                {caseta.image
+                  ? <img src={`http://localhost:5000${caseta.image}`} alt={caseta.name} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }} />
+                  : 'No image'}
+              </td>
               <td>
                 {caseta.location?.x
                   ? `${caseta.location.x.toFixed(4)}, ${caseta.location.y.toFixed(4)}`

@@ -11,12 +11,16 @@ const getCaseta = async (id) => {
 };
 
 const createCaseta = async (casetaData) => {
-  const response = await api.post('/casetas', casetaData);
+  const response = await api.post('/casetas', casetaData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
   return response.data;
 };
 
 const updateCaseta = async (id, casetaData) => {
-  const response = await api.put(`/casetas/${id}`, casetaData);
+  const response = await api.put(`/casetas/${id}`, casetaData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
   return response.data;
 };
 
