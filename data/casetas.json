@@ -1,0 +1,38 @@
+[
+  {
+    "location": {
+      "x": 66.51290422857103,
+      "y": 537.4769578297937
+    },
+    "_id": "69dd5da2fd1547d3d8062513",
+    "name": "La casapuerta",
+    "number": 1,
+    "description": "Caseta número 1 de la Feria de Jerez",
+    "fair": {
+      "_id": "69dd5d6bfd1547d3d8062512",
+      "name": "Feria de Jerez 2026"
+    },
+    "createdAt": "2026-04-13T21:18:26.626Z",
+    "updatedAt": "2026-04-15T21:11:37.508Z",
+    "__v": 0,
+    "image": "/uploads/1776287497506-la-casapuerta-6479e57ff29017.20655193.jpg"
+  },
+  {
+    "location": {
+      "x": 108.56231902023822,
+      "y": 536.454071143791
+    },
+    "_id": "69dffd8d34fc18bcdc94e6d5",
+    "name": "Tio Jose de Paua",
+    "number": 2,
+    "description": "Caseta número 2 de la Feria de Jerez",
+    "image": "/uploads/1776287491386-penna_tio_jose_de_paula_jerez.webp",
+    "fair": {
+      "_id": "69dd5d6bfd1547d3d8062512",
+      "name": "Feria de Jerez 2026"
+    },
+    "createdAt": "2026-04-15T21:05:17.675Z",
+    "updatedAt": "2026-04-15T21:11:31.390Z",
+    "__v": 0
+  }
+]
