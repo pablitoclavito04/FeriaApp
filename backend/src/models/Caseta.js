@@ -15,6 +15,10 @@ const CasetaSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    image: {
+      type: String,
+      trim: true,
+    },
     location: {
       x: { type: Number },
       y: { type: Number },
