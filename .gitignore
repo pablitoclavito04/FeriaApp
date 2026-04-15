@@ -39,3 +39,5 @@ Thumbs.db
 # Insomnia
 docs/insomnia/*.json
 docs/insomnia/*.yaml
+
+frontend/node_modules/
