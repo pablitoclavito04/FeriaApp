@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../context/useAuth';
+import useToast from '../context/useToast';
 import logotipo from '../assets/logotipo.png';
 
 const Login = () => {
@@ -11,6 +12,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const { login } = useAuth();
+  const { showToast } = useToast();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -19,7 +21,8 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await login(email, password);
+      const data = await login(email, password);
+      showToast(`¡Bienvenido, ${data.name}!`, 'success');
       navigate('/dashboard');
     } catch {
       setError('Invalid email or password');

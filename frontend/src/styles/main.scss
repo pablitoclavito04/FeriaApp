@@ -3,8 +3,8 @@
 // ============================================
 // Static tokens (don't change with theme)
 // ============================================
-$primary: #6366f1;
-$primary-dark: #4f46e5;
+$primary: #3B82F6;
+$primary-dark: #2563EB;
 $error: #ef4444;
 $success: #10b981;
 $warning: #f59e0b;
@@ -17,9 +17,9 @@ $transition: 0.15s ease;
 // Light Theme (default)
 // ============================================
 :root {
-  --primary: #6366f1;
-  --primary-dark: #4f46e5;
-  --primary-light: #e0e7ff;
+  --primary: #3B82F6;
+  --primary-dark: #2563EB;
+  --primary-light: #dbeafe;
   --secondary: #f59e0b;
   --secondary-light: #fef3c7;
 
@@ -31,8 +31,8 @@ $transition: 0.15s ease;
   --sidebar-border: #cbd5e1;
   --sidebar-text: #64748b;
   --sidebar-text-active: #0f172a;
-  --sidebar-hover: #f1f5f9;
-  --sidebar-active-bg: rgba(99, 102, 241, 0.08);
+  --sidebar-hover: #e2e8f0;
+  --sidebar-active-bg: rgba(59, 130, 246, 0.08);
   --sidebar-section: #94a3b8;
 
   --text-primary: #0f172a;
@@ -60,9 +60,9 @@ $transition: 0.15s ease;
 // Dark Theme
 // ============================================
 [data-theme="dark"] {
-  --primary: #818cf8;
-  --primary-dark: #6366f1;
-  --primary-light: rgba(99, 102, 241, 0.15);
+  --primary: #60a5fa;
+  --primary-dark: #3B82F6;
+  --primary-light: rgba(59, 130, 246, 0.15);
   --secondary: #fbbf24;
   --secondary-light: rgba(251, 191, 36, 0.15);
 
@@ -75,7 +75,7 @@ $transition: 0.15s ease;
   --sidebar-text: #64748b;
   --sidebar-text-active: #e2e8f0;
   --sidebar-hover: rgba(255, 255, 255, 0.05);
-  --sidebar-active-bg: rgba(129, 140, 248, 0.12);
+  --sidebar-active-bg: rgba(96, 165, 250, 0.12);
   --sidebar-section: rgba(148, 163, 184, 0.4);
 
   --text-primary: #e2e8f0;
@@ -154,6 +154,14 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 0.75rem;
+
+    .sidebar-logo-img {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
 
     .sidebar-logo-text {
       h2 {
@@ -276,6 +284,7 @@ body {
     transition: all $transition;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.75rem;
 
     svg {
@@ -1023,5 +1032,233 @@ button {
   &.badge-muted {
     background: var(--border-light);
     color: var(--text-muted);
+  }
+}
+
+// ============================================
+// Modal
+// ============================================
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.15s ease;
+}
+
+.modal {
+  background: var(--surface);
+  border-radius: $radius-lg;
+  padding: 1.75rem;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+  animation: slideUp 0.2s ease;
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+  }
+
+  .modal-close {
+    width: 32px;
+    height: 32px;
+    border-radius: $radius-sm;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all $transition;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    &:hover {
+      background: var(--border-light);
+      color: var(--text-primary);
+    }
+  }
+
+  .modal-body {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 0.75rem;
+
+    button {
+      flex: 1;
+      padding: 0.7rem 1rem;
+      border-radius: $radius-sm;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all $transition;
+    }
+
+    .modal-btn-confirm {
+      background: var(--primary);
+      color: white;
+      border: none;
+
+      &:hover {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    .modal-btn-cancel {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1.5px solid var(--border-strong);
+
+      &:hover {
+        background: var(--border-light);
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// ============================================
+// Toast Notifications
+// ============================================
+.toast-container {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 0.5rem;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: $radius-md;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  min-width: 280px;
+  max-width: 420px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  animation: toastIn 0.3s ease;
+
+  &.toast-closing {
+    animation: toastOut 0.3s ease forwards;
+  }
+
+  .toast-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .toast-message {
+    flex: 1;
+  }
+
+  .toast-close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    padding: 0.15rem;
+    display: flex;
+    align-items: center;
+    transition: color $transition;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    &:hover {
+      color: white;
+    }
+  }
+
+  &.toast-success {
+    background: #10b981;
+  }
+
+  &.toast-info {
+    background: #3B82F6;
+  }
+
+  &.toast-error {
+    background: #ef4444;
+  }
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes toastOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(40px);
   }
 }
