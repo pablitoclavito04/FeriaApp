@@ -176,7 +176,11 @@ const Fairs = () => {
               <td>{fair.location}</td>
               <td>{new Date(fair.startDate).toLocaleDateString()}</td>
               <td>{new Date(fair.endDate).toLocaleDateString()}</td>
-              <td>{fair.active ? 'Yes' : 'No'}</td>
+              <td>
+                <span className={`badge ${fair.active ? 'badge-success' : 'badge-muted'}`}>
+                  {fair.active ? 'Active' : 'Inactive'}
+                </span>
+              </td>
               <td>
                 <button onClick={() => handleEdit(fair)}>Edit</button>
                 <button onClick={() => handleDelete(fair._id)}>Delete</button>

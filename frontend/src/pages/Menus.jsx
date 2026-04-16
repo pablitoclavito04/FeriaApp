@@ -90,7 +90,7 @@ const Menus = () => {
       <div className="page-header">
         <h1>Menus</h1>
         <button onClick={() => { resetForm(); setEditingMenu(null); setShowForm(true); }}>
-          + New Menu Item
+          + New Menu
         </button>
       </div>
 
