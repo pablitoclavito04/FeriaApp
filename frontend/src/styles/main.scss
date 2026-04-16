@@ -103,28 +103,192 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: $sidebar-bg;
+  background: url('../assets/yellow-lamps-shine-air.jpg') center/cover no-repeat fixed;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+  }
 
   .login-box {
     background: white;
-    padding: 2.5rem;
-    border-radius: 12px;
+    padding: 2rem 2.5rem 2.5rem;
+    border-radius: 16px;
     width: 100%;
-    max-width: 400px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    max-width: 420px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    position: relative;
+    z-index: 1;
 
-    h1 {
-      color: $primary;
-      font-size: 2rem;
+    .login-header {
       text-align: center;
+      margin-bottom: 1.25rem;
+
+      .login-brand {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+
+        .login-logo {
+          width: 72px;
+          height: 72px;
+          object-fit: contain;
+        }
+      }
+
+      h1 {
+        color: #000;
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+      }
+
+      .login-subtitle {
+        display: block;
+        color: #999;
+        font-size: 0.85rem;
+        margin-top: 0.15rem;
+      }
+    }
+
+    .login-welcome {
+      background: #fef9e7;
+      border: 1px solid #f9e79f;
+      border-radius: 10px;
+      padding: 0.6rem 1rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+
+      .login-welcome-title {
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: #333;
+        margin-bottom: 0.1rem;
+      }
+
+      .login-welcome-text {
+        font-size: 0.72rem;
+        color: #777;
+      }
     }
 
     h2 {
       text-align: center;
-      color: #666;
+      color: #333;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+    }
+
+    .login-error {
+      background: #fdecea;
+      color: $error;
+      padding: 0.7rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    .login-field {
+      margin-bottom: 1rem;
+
+      input {
+        width: 100%;
+        padding: 0.9rem 1rem;
+        border: none !important;
+        border-radius: 10px;
+        font-size: 0.95rem;
+        background: #3D3D3D !important;
+        color: #fff !important;
+        transition: background 0.2s, box-shadow 0.2s;
+
+        &::placeholder {
+          color: #aaa;
+        }
+
+        &:focus {
+          outline: none;
+          background: #4a4a4a !important;
+          box-shadow: 0 0 0 3px rgba($secondary, 0.3);
+        }
+
+        &:-webkit-autofill,
+        &:-webkit-autofill:hover {
+          -webkit-box-shadow: 0 0 0 1000px #3D3D3D inset !important;
+          -webkit-text-fill-color: #fff !important;
+          caret-color: #fff;
+        }
+
+        &:-webkit-autofill:focus {
+          -webkit-box-shadow: 0 0 0 1000px #4a4a4a inset !important;
+          box-shadow: 0 0 0 1000px #4a4a4a inset, 0 0 0 3px rgba($secondary, 0.3) !important;
+          -webkit-text-fill-color: #fff !important;
+          caret-color: #fff;
+        }
+      }
+
+      .login-password-wrapper {
+        position: relative;
+
+        input {
+          padding-right: 3rem;
+        }
+
+        .login-toggle-password {
+          position: absolute;
+          right: 0.75rem;
+          top: 50%;
+          transform: translateY(-50%);
+          background: none;
+          border: none;
+          color: #aaa;
+          cursor: pointer;
+          padding: 0.25rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: color 0.2s;
+
+          &:hover {
+            color: #fff;
+          }
+        }
+      }
+    }
+
+    .login-submit {
+      width: 100%;
+      padding: 0.9rem;
+      border: none;
+      border-radius: 10px;
       font-size: 1rem;
-      margin-bottom: 2rem;
-      font-weight: normal;
+      font-weight: 700;
+      background: $success;
+      color: white;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: all 0.2s;
+
+      &:hover:not(:disabled) {
+        background: darken($success, 5%);
+        transform: translateY(-1px);
+      }
+
+      &:active {
+        transform: translateY(0);
+        box-shadow: none;
+      }
+
+      &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+      }
     }
   }
 }
