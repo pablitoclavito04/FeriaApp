@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import fairService from '../services/fairService';
+import useToast from '../context/useToast';
 
 const Fairs = () => {
+  const { showToast } = useToast();
   const [fairs, setFairs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingFair, setEditingFair] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -36,8 +39,10 @@ const Fairs = () => {
     try {
       if (editingFair) {
         await fairService.updateFair(editingFair._id, formData);
+        showToast('Fair updated successfully', 'success');
       } else {
         await fairService.createFair(formData);
+        showToast('Fair created successfully', 'success');
       }
       setShowForm(false);
       setEditingFair(null);
@@ -45,6 +50,7 @@ const Fairs = () => {
       loadFairs();
     } catch {
       setError('Error saving fair');
+      showToast('Error saving fair', 'error');
     }
   };
 
@@ -61,14 +67,16 @@ const Fairs = () => {
     setShowForm(true);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this fair?')) {
-      try {
-        await fairService.deleteFair(id);
-        loadFairs();
-      } catch {
-        setError('Error deleting fair');
-      }
+  const confirmDelete = async () => {
+    try {
+      await fairService.deleteFair(deletingId);
+      showToast('Fair deleted successfully', 'success');
+      loadFairs();
+    } catch {
+      setError('Error deleting fair');
+      showToast('Error deleting fair', 'error');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -183,12 +191,33 @@ const Fairs = () => {
               </td>
               <td>
                 <button onClick={() => handleEdit(fair)}>Edit</button>
-                <button onClick={() => handleDelete(fair._id)}>Delete</button>
+                <button onClick={() => setDeletingId(fair._id)}>Delete</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {deletingId && (
+        <div className="modal-overlay" onClick={() => setDeletingId(null)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Delete Fair</h3>
+              <button className="modal-close" onClick={() => setDeletingId(null)}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+            <p className="modal-body">Are you sure you want to delete this fair?</p>
+            <div className="modal-actions">
+              <button className="modal-btn-confirm" onClick={confirmDelete}>Delete</button>
+              <button className="modal-btn-cancel" onClick={() => setDeletingId(null)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

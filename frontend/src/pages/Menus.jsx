@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
 import menuService from '../services/menuService';
 import casetaService from '../services/casetaService';
+import useToast from '../context/useToast';
 
 const Menus = () => {
+  const { showToast } = useToast();
   const [menus, setMenus] = useState([]);
   const [casetas, setCasetas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingMenu, setEditingMenu] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -40,8 +43,10 @@ const Menus = () => {
     try {
       if (editingMenu) {
         await menuService.updateMenu(editingMenu._id, formData);
+        showToast('Menu item updated successfully', 'success');
       } else {
         await menuService.createMenu(formData);
+        showToast('Menu item created successfully', 'success');
       }
       setShowForm(false);
       setEditingMenu(null);
@@ -49,6 +54,7 @@ const Menus = () => {
       loadData();
     } catch {
       setError('Error saving menu item');
+      showToast('Error saving menu item', 'error');
     }
   };
 
@@ -63,14 +69,16 @@ const Menus = () => {
     setShowForm(true);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this menu item?')) {
-      try {
-        await menuService.deleteMenu(id);
-        loadData();
-      } catch {
-        setError('Error deleting menu item');
-      }
+  const confirmDelete = async () => {
+    try {
+      await menuService.deleteMenu(deletingId);
+      showToast('Menu item deleted successfully', 'success');
+      loadData();
+    } catch {
+      setError('Error deleting menu item');
+      showToast('Error deleting menu item', 'error');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -166,12 +174,33 @@ const Menus = () => {
               <td>{menu.caseta?.name}</td>
               <td>
                 <button onClick={() => handleEdit(menu)}>Edit</button>
-                <button onClick={() => handleDelete(menu._id)}>Delete</button>
+                <button onClick={() => setDeletingId(menu._id)}>Delete</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {deletingId && (
+        <div className="modal-overlay" onClick={() => setDeletingId(null)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Delete Menu Item</h3>
+              <button className="modal-close" onClick={() => setDeletingId(null)}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+            <p className="modal-body">Are you sure you want to delete this menu item?</p>
+            <div className="modal-actions">
+              <button className="modal-btn-confirm" onClick={confirmDelete}>Delete</button>
+              <button className="modal-btn-cancel" onClick={() => setDeletingId(null)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -11,6 +11,7 @@ const Dashboard = () => {
   const [publishing, setPublishing] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [showPublishModal, setShowPublishModal] = useState(false);
   const [stats, setStats] = useState({ fairs: 0, casetas: 0, menus: 0, concerts: 0 });
 
   useEffect(() => {
@@ -35,7 +36,12 @@ const Dashboard = () => {
     loadStats();
   }, []);
 
-  const handlePublish = async () => {
+  const handlePublish = () => {
+    setShowPublishModal(true);
+  };
+
+  const confirmPublish = async () => {
+    setShowPublishModal(false);
     setPublishing(true);
     setMessage('');
     setError('');
@@ -96,7 +102,7 @@ const Dashboard = () => {
           </div>
           <div className="stat-info">
             <div className="stat-value">{stats.menus}</div>
-            <div className="stat-label">Menu items</div>
+            <div className="stat-label">Menu</div>
           </div>
         </div>
 
@@ -129,6 +135,27 @@ const Dashboard = () => {
           {publishing ? 'Publishing...' : 'Publish Website'}
         </button>
       </div>
+
+      {showPublishModal && (
+        <div className="modal-overlay" onClick={() => setShowPublishModal(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Publish Website</h3>
+              <button className="modal-close" onClick={() => setShowPublishModal(false)}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+            <p className="modal-body">Are you sure you want to publish?</p>
+            <div className="modal-actions">
+              <button className="modal-btn-confirm" onClick={confirmPublish}>Publish</button>
+              <button className="modal-btn-cancel" onClick={() => setShowPublishModal(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

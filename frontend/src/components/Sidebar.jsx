@@ -118,7 +118,7 @@ const Sidebar = () => {
         <div className="modal-overlay" onClick={() => setShowLogoutModal(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Cerrar sesion</h3>
+              <h3>Log out</h3>
               <button className="modal-close" onClick={() => setShowLogoutModal(false)}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18" />
@@ -126,10 +126,10 @@ const Sidebar = () => {
                 </svg>
               </button>
             </div>
-            <p className="modal-body">¿Quieres salir de la app?</p>
+            <p className="modal-body">Do you want to leave the app?</p>
             <div className="modal-actions">
-              <button className="modal-btn-confirm" onClick={handleConfirmLogout}>Aceptar</button>
-              <button className="modal-btn-cancel" onClick={() => setShowLogoutModal(false)}>Cancelar</button>
+              <button className="modal-btn-confirm" onClick={handleConfirmLogout}>Accept</button>
+              <button className="modal-btn-cancel" onClick={() => setShowLogoutModal(false)}>Cancel</button>
             </div>
           </div>
         </div>

@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
 import concertService from '../services/concertService';
 import casetaService from '../services/casetaService';
+import useToast from '../context/useToast';
 
 const Concerts = () => {
+  const { showToast } = useToast();
   const [concerts, setConcerts] = useState([]);
   const [casetas, setCasetas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingConcert, setEditingConcert] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
   const [formData, setFormData] = useState({
     artist: '',
     genre: '',
@@ -41,8 +44,10 @@ const Concerts = () => {
     try {
       if (editingConcert) {
         await concertService.updateConcert(editingConcert._id, formData);
+        showToast('Concert updated successfully', 'success');
       } else {
         await concertService.createConcert(formData);
+        showToast('Concert created successfully', 'success');
       }
       setShowForm(false);
       setEditingConcert(null);
@@ -50,6 +55,7 @@ const Concerts = () => {
       loadData();
     } catch {
       setError('Error saving concert');
+      showToast('Error saving concert', 'error');
     }
   };
 
@@ -65,14 +71,16 @@ const Concerts = () => {
     setShowForm(true);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this concert?')) {
-      try {
-        await concertService.deleteConcert(id);
-        loadData();
-      } catch {
-        setError('Error deleting concert');
-      }
+  const confirmDelete = async () => {
+    try {
+      await concertService.deleteConcert(deletingId);
+      showToast('Concert deleted successfully', 'success');
+      loadData();
+    } catch {
+      setError('Error deleting concert');
+      showToast('Error deleting concert', 'error');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -180,12 +188,33 @@ const Concerts = () => {
               <td>{concert.caseta?.name}</td>
               <td>
                 <button onClick={() => handleEdit(concert)}>Edit</button>
-                <button onClick={() => handleDelete(concert._id)}>Delete</button>
+                <button onClick={() => setDeletingId(concert._id)}>Delete</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {deletingId && (
+        <div className="modal-overlay" onClick={() => setDeletingId(null)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Delete Concert</h3>
+              <button className="modal-close" onClick={() => setDeletingId(null)}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+            <p className="modal-body">Are you sure you want to delete this concert?</p>
+            <div className="modal-actions">
+              <button className="modal-btn-confirm" onClick={confirmDelete}>Delete</button>
+              <button className="modal-btn-cancel" onClick={() => setDeletingId(null)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
