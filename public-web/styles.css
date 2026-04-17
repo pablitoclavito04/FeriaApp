@@ -214,11 +214,13 @@ body {
 }
 .feature-split-list li {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.7rem;
   color: var(--text);
   font-size: 0.95rem;
+  line-height: 1.45;
 }
+.feature-split-list li svg { margin-top: 2px; }
 .feature-split-list svg {
   flex-shrink: 0;
   width: 18px;
@@ -331,17 +333,33 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 2rem;
+  grid-template-columns: 1.2fr 1fr 1fr 1fr;
+  align-items: start;
+  gap: 2.5rem;
   padding-bottom: 1.75rem;
   border-bottom: 1px solid var(--border);
 }
+.footer-brand-col {
+  display: flex;
+  align-items: flex-start;
+}
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.footer-title {
+  margin: 0 0 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--dark);
+  text-transform: uppercase;
+}
 .footer-links {
   display: flex;
-  gap: 2rem;
-  justify-content: center;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.6rem;
 }
 .footer-links a {
   color: var(--dark);
@@ -351,6 +369,7 @@ body {
   padding-bottom: 4px;
   border-bottom: 2px solid transparent;
   transition: border-color .2s ease;
+  align-self: flex-start;
 }
 .footer-links a:hover { border-bottom-color: var(--dark); }
 .footer-social {
@@ -369,44 +388,47 @@ body {
   outline: none;
   transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, outline 0.2s ease;
 }
-.footer-social a:hover {
-  color: #ffffff;
-  transform: translateY(-2px);
-}
 .footer-social a:focus-visible {
   outline: 2px solid #3B82F6;
   outline-offset: 2px;
 }
 .footer-social svg { width: 20px; height: 20px; }
 
-.footer-social .social-x:hover {
-  background: #000000;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-}
-.footer-social .social-gh:hover {
-  background: #772F9D;
-  box-shadow: 0 6px 16px rgba(119, 47, 157, 0.35);
-}
-.footer-social .social-in:hover {
-  background: #0A66C2;
-  box-shadow: 0 6px 16px rgba(10, 102, 194, 0.35);
+@media (hover: hover) {
+  .footer-social a:hover {
+    color: #ffffff;
+    transform: translateY(-2px);
+  }
+  .footer-social .social-x:hover {
+    background: #000000;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  }
+  .footer-social .social-gh:hover {
+    background: #772F9D;
+    box-shadow: 0 6px 16px rgba(119, 47, 157, 0.35);
+  }
+  .footer-social .social-in:hover {
+    background: #0A66C2;
+    box-shadow: 0 6px 16px rgba(10, 102, 194, 0.35);
+  }
 }
 
 .footer-bottom {
   max-width: 1200px;
   margin: 1.25rem auto 0;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
   color: var(--muted);
   font-size: 0.85rem;
+  text-align: center;
 }
 .footer-legal {
   display: flex;
-  gap: 1.5rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.6rem;
 }
 .footer-legal a {
   color: var(--muted);
@@ -414,6 +436,7 @@ body {
   padding-bottom: 2px;
   border-bottom: 2px solid transparent;
   transition: border-color .2s ease;
+  align-self: flex-start;
 }
 .footer-legal a:hover { border-bottom-color: var(--muted); }
 
@@ -435,21 +458,29 @@ body {
     text-align: center;
   }
   .feature-split-text p { margin-left: auto; margin-right: auto; }
+  .feature-split-list { margin-left: auto; margin-right: auto; max-width: 340px; }
+  .feature-split-list li { text-align: left; }
   .feature-split-image img { height: 240px; }
   .features { padding: 0 1.5rem 3.5rem; }
   .features-grid { grid-template-columns: 1fr; }
   .cta-inner { padding: 3.5rem 1.5rem; }
-  .landing-footer { padding: 2rem 1.25rem 1.25rem; }
+  .landing-footer { padding: 2.5rem 1.75rem 1.5rem; }
   .footer-main {
     grid-template-columns: 1fr;
-    justify-items: center;
-    text-align: center;
-    gap: 1.25rem;
+    justify-items: start;
+    text-align: left;
+    gap: 2rem;
+    padding-bottom: 1.5rem;
   }
+  .footer-brand-col { justify-content: flex-start; }
+  .landing-footer .brand-logo { height: 64px; }
   .footer-bottom {
     flex-direction: column;
     text-align: center;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
   }
+  .footer-copy { font-size: 0.9rem; margin: 0; }
 }
 
 /* ===== Info modal (footer links) ===== */
