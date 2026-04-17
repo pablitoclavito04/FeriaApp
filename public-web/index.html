@@ -13,13 +13,137 @@
 <body>
 
   <!-- LANDING PAGE -->
-  <section id="landing" class="landing">
-    <div class="landing-content">
-      <h1>FeriaApp</h1>
-      <p>Tu guía completa de la Feria de Jerez</p>
-      <button onclick="showApp()">Explorar la Feria</button>
+  <div id="landing" class="landing">
+
+    <header class="landing-header">
+      <a href="#" class="brand" onclick="event.preventDefault()" aria-label="FeriaApp">
+        <img src="icons/logo.png" alt="FeriaApp" class="brand-logo" />
+      </a>
+      <nav class="landing-header-actions">
+        <button class="btn btn-ghost" onclick="showApp()">Entrar</button>
+        <button class="btn btn-dark" onclick="showApp()">Instalar</button>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="hero-media" aria-hidden="true"></div>
+      <div class="hero-overlay" aria-hidden="true"></div>
+      <div class="hero-inner">
+        <div class="hero-logo">
+          <img src="icons/logo.png" alt="FeriaApp" />
+        </div>
+        <div class="hero-copy">
+          <h1>Encuentra tu experiencia de cada feria en un solo lugar</h1>
+          <p>Descubre casetas, explora los próximos conciertos y planifica tus días de feria. FeriaApp reúne todo lo que necesitas para aprovechar al máximo cada celebración.</p>
+          <button class="btn btn-primary btn-lg" onclick="showApp()">Entrar</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="feature-split-wrap">
+      <div class="feature-split">
+        <div class="feature-split-text">
+          <h2>Todo al alcance de tus manos</h2>
+          <p>No más deambular. No más confusión. Solo la caseta que quieres, cuando la quieres.</p>
+          <button class="btn btn-primary" onclick="showApp()">Entrar</button>
+        </div>
+        <div class="feature-split-image">
+          <img src="images/image-welcome2.png" alt="Feriantes disfrutando de la feria" />
+        </div>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="features-head">
+        <h2>Qué nos hace diferentes</h2>
+        <p>Tres herramientas diseñadas para la experiencia del festival que te mereces.</p>
+      </div>
+      <div class="features-grid">
+        <article class="feature-card">
+          <div class="feature-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20 3 18V6l6 2 6-2 6 2v12l-6-2-6 2z"/><path d="M9 4v16"/><path d="M15 8v12"/></svg>
+          </div>
+          <h3>Mapa interactivo del festival</h3>
+          <p>Ve cada ubicación de caseta y planifica tu ruta con precisión.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          </div>
+          <h3>Calendario de conciertos y eventos</h3>
+          <p>Nunca te pierdas una presentación. Haz seguimiento de todos los próximos espectáculos en un solo lugar.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M10 21v-6h4v6"/></svg>
+          </div>
+          <h3>Directorio completo de casetas</h3>
+          <p>Consulta carta, horarios y actuaciones de cada caseta antes de llegar.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="cta-media" aria-hidden="true"></div>
+      <div class="cta-overlay" aria-hidden="true"></div>
+      <div class="cta-inner">
+        <h2>¿Listo para explorar?</h2>
+        <p>Únete a miles que están descubriendo su experiencia perfecta en la feria ahora mismo.</p>
+        <button class="btn btn-primary btn-lg" onclick="showApp()">Entrar</button>
+      </div>
+    </section>
+
+    <footer class="landing-footer">
+      <div class="footer-main">
+        <a href="#" class="brand" onclick="event.preventDefault()" aria-label="FeriaApp">
+          <img src="icons/logo.png" alt="FeriaApp" class="brand-logo" />
+        </a>
+        <nav class="footer-links">
+          <a href="#" data-info="about">Sobre nosotros</a>
+          <a href="#" data-info="features">Características</a>
+          <a href="#" data-info="how">Cómo funciona</a>
+          <a href="#" data-info="contact">Contacto</a>
+        </nav>
+        <div class="footer-social" aria-label="Redes sociales">
+          <a href="#" aria-label="X">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="#" aria-label="GitHub">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.73.5.77 5.47.77 11.73c0 4.97 3.22 9.18 7.69 10.67.56.1.77-.24.77-.54 0-.27-.01-1.15-.02-2.08-3.13.68-3.79-1.34-3.79-1.34-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.68.08-.68 1.13.08 1.72 1.16 1.72 1.16 1 1.72 2.63 1.22 3.27.93.1-.72.39-1.22.71-1.5-2.5-.28-5.13-1.25-5.13-5.58 0-1.23.44-2.24 1.16-3.03-.12-.28-.5-1.43.11-2.98 0 0 .95-.3 3.11 1.16.9-.25 1.87-.38 2.83-.38.96 0 1.93.13 2.83.38 2.16-1.46 3.11-1.16 3.11-1.16.61 1.55.23 2.7.11 2.98.72.79 1.16 1.8 1.16 3.03 0 4.34-2.64 5.3-5.15 5.58.4.35.76 1.03.76 2.08 0 1.5-.01 2.71-.01 3.08 0 .3.2.65.78.54 4.47-1.49 7.69-5.7 7.69-10.67C23.23 5.47 18.27.5 12 .5z"/></svg>
+          </a>
+          <a href="#" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM7.12 20.45H3.56V9h3.56zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <nav class="footer-legal">
+          <a href="#" data-info="privacy">Política de privacidad</a>
+          <a href="#" data-info="terms">Términos de servicio</a>
+          <a href="#" data-info="cookies">Configuración de cookies</a>
+        </nav>
+        <p class="footer-copy">© 2025 FeriaApp. Todos los derechos reservados.</p>
+      </div>
+    </footer>
+
+    <!-- Info modal (footer links) -->
+    <div id="info-modal" class="info-modal hidden" role="dialog" aria-modal="true" aria-labelledby="info-modal-title">
+      <div class="info-modal-backdrop" data-info-close></div>
+      <div class="info-modal-card" role="document">
+        <header class="info-modal-head">
+          <h2 id="info-modal-title"></h2>
+          <button class="info-modal-x" aria-label="Cerrar" data-info-close>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </header>
+        <div class="info-modal-body" id="info-modal-body"></div>
+        <footer class="info-modal-foot">
+          <button class="btn btn-ghost info-modal-close" data-info-close>Cerrar</button>
+        </footer>
+      </div>
     </div>
-  </section>
+
+  </div>
 
   <!-- MAIN APP -->
   <div id="app" class="app hidden">
@@ -72,6 +196,94 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/fuse.js@7.0.0/dist/fuse.min.js"></script>
   <script src="app.js"></script>
+
+  <script>
+    // Footer info modal
+    (() => {
+      const INFO = {
+        about: {
+          title: 'Sobre nosotros',
+          html: `<p><strong>FeriaApp</strong> nació de un problema real: encontrar información de las ferias locales es un caos. Nuestra misión es centralizar todo en un solo lugar, con datos oficiales y sin depender de cobertura móvil.</p>`
+        },
+        features: {
+          title: 'Características',
+          html: `<ul>
+            <li>Mapa interactivo con el plano oficial de la feria.</li>
+            <li>Menús y precios de cada caseta.</li>
+            <li>Programación completa de conciertos y actividades.</li>
+            <li>Funciona sin internet una vez instalada.</li>
+            <li>Buscador inteligente con tolerancia a errores.</li>
+          </ul>`
+        },
+        how: {
+          title: 'Cómo funciona',
+          html: `<ol>
+            <li>Abre FeriaApp desde el navegador o instálala en tu móvil.</li>
+            <li>Explora el mapa, busca casetas y consulta la programación del día.</li>
+            <li>Disfruta la feria sin perderte nada, aunque te quedes sin cobertura.</li>
+          </ol>`
+        },
+        contact: {
+          title: 'Contacto',
+          html: `<dl class="info-dl">
+            <dt>Email</dt><dd>contacto@feriaapp.es</dd>
+            <dt>Horario</dt><dd>Lunes a viernes: 9:00 – 18:00</dd>
+            <dt>Tiempo de respuesta</dt><dd>Normalmente respondemos en menos de 24 horas.</dd>
+          </dl>`
+        },
+        privacy: {
+          title: 'Política de privacidad',
+          html: `<p><strong>FeriaApp</strong> únicamente recopila los datos necesarios para el funcionamiento de la plataforma. No vendemos ni compartimos tu información con terceros. Los datos de registro se usan exclusivamente para gestionar tu cuenta de administrador. La información pública de ferias, casetas y programación proviene de fuentes oficiales de los ayuntamientos.</p>`
+        },
+        terms: {
+          title: 'Términos de servicio',
+          html: `<p>Al usar <strong>FeriaApp</strong> aceptas que la plataforma se ofrece tal como está, con datos obtenidos de fuentes oficiales públicas. FeriaApp no se hace responsable de cambios de última hora en la programación o en los precios de las casetas. El uso de la plataforma es gratuito para los visitantes.</p>`
+        },
+        cookies: {
+          title: 'Configuración de cookies',
+          html: `<p><strong>FeriaApp</strong> utiliza únicamente cookies técnicas necesarias para el funcionamiento de la aplicación. No usamos cookies de seguimiento ni publicitarias. Puedes desactivar las cookies desde la configuración de tu navegador, aunque esto puede afectar al funcionamiento de algunas funciones de la app.</p>`
+        },
+      };
+
+      const modal = document.getElementById('info-modal');
+      const titleEl = document.getElementById('info-modal-title');
+      const bodyEl = document.getElementById('info-modal-body');
+      let lastFocus = null;
+
+      const open = (key) => {
+        const item = INFO[key];
+        if (!item) return;
+        titleEl.textContent = item.title;
+        bodyEl.innerHTML = item.html;
+        lastFocus = document.activeElement;
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        const closeBtn = modal.querySelector('.info-modal-close');
+        if (closeBtn) closeBtn.focus();
+      };
+
+      const close = () => {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+        if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+      };
+
+      document.querySelectorAll('[data-info]').forEach((a) => {
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          open(a.getAttribute('data-info'));
+        });
+      });
+
+      modal.addEventListener('click', (e) => {
+        if (e.target.hasAttribute('data-info-close')) close();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) close();
+      });
+    })();
+  </script>
 
   <script>
     // Register service worker
