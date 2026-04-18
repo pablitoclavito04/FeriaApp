@@ -32,7 +32,8 @@ const createMenu = async (req, res) => {
     const menu = await Menu.create(req.body);
     res.status(201).json(menu);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+   console.error('Error creating menu:', error.message);
+   res.status(500).json({ error: error.message });
   }
 };
 

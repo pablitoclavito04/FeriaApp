@@ -1,23 +1,19 @@
 const mongoose = require('mongoose');
 
-const ConcertSchema = new mongoose.Schema(
+const MenuSchema = new mongoose.Schema(
   {
-    artist: {
+    name: {
       type: String,
-      required: [true, 'Artist is required'],
+      required: [true, 'Name is required'],
       trim: true,
     },
-    genre: {
+    description: {
       type: String,
       trim: true,
     },
-    date: {
-      type: Date,
-      required: [true, 'Date is required'],
-    },
-    time: {
-      type: String,
-      required: [true, 'Time is required'],
+    price: {
+      type: Number,
+      required: [true, 'Price is required'],
     },
     caseta: {
       type: mongoose.Schema.Types.ObjectId,
@@ -30,4 +26,4 @@ const ConcertSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('Concert', ConcertSchema);
+module.exports = mongoose.model('Menu', MenuSchema);

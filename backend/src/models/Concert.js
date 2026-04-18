@@ -1,28 +1,28 @@
 const mongoose = require('mongoose');
 
-const ConciertoSchema = new mongoose.Schema(
+const ConcertSchema = new mongoose.Schema(
   {
-    artista: {
+    artist: {
       type: String,
-      required: [true, 'El artista es obligatorio'],
+      required: [true, 'Artist is required'],
       trim: true,
     },
-    genero: {
+    genre: {
       type: String,
       trim: true,
     },
-    fecha: {
+    date: {
       type: Date,
-      required: [true, 'La fecha es obligatoria'],
+      required: [true, 'Date is required'],
     },
-    hora: {
+    time: {
       type: String,
-      required: [true, 'La hora es obligatoria'],
+      required: [true, 'Time is required'],
     },
     caseta: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Caseta',
-      required: [true, 'La caseta es obligatoria'],
+      required: [true, 'Caseta is required'],
     },
   },
   {
@@ -30,4 +30,4 @@ const ConciertoSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('Concierto', ConciertoSchema);
+module.exports = mongoose.model('Concert', ConcertSchema);

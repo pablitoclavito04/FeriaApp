@@ -3,24 +3,24 @@ import { AuthContext } from './AuthContextDef';
 import authService from '../services/authService';
 
 export const AuthProvider = ({ children }) => {
-  const token = localStorage.getItem('token');
-  const savedUser = localStorage.getItem('user');
+  const token = sessionStorage.getItem('token');
+  const savedUser = sessionStorage.getItem('user');
 
   const [user, setUser] = useState(savedUser ? JSON.parse(savedUser) : null);
   const [loading, setLoading] = useState(!token);
 
   const login = async (email, password) => {
     const data = await authService.login(email, password);
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data));
+    sessionStorage.setItem('token', data.token);
+    sessionStorage.setItem('user', JSON.stringify(data));
     setUser(data);
     setLoading(false);
     return data;
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
     setUser(null);
   };
 

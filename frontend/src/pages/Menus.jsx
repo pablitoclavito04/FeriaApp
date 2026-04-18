@@ -67,6 +67,7 @@ const Menus = () => {
       caseta: menu.caseta?._id || menu.caseta,
     });
     setShowForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const confirmDelete = async () => {
