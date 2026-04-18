@@ -599,7 +599,7 @@ body {
 
 /* ===== App ===== */
 .app {
-  background: #fff;
+  background: var(--cream-soft);
   color: var(--text);
   min-height: 100vh;
   display: flex;
@@ -741,7 +741,7 @@ body {
   width: 100%;
   padding: 0.95rem 1.25rem 0.95rem 3rem;
   border: 1px solid var(--border);
-  background: var(--cream-soft);
+  background: #fff;
   border-radius: 999px;
   font-family: inherit;
   font-size: 1rem;
@@ -773,7 +773,7 @@ body {
   gap: 1.5rem;
 }
 .caseta-card {
-  background: var(--cream-soft);
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 1rem;
@@ -855,7 +855,7 @@ body {
   gap: 1.25rem;
 }
 .menu-caseta-card {
-  background: var(--cream-soft);
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 1.25rem 1.35rem;
@@ -899,7 +899,7 @@ body {
   gap: 0.85rem;
 }
 .concert-card {
-  background: var(--cream-soft);
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 1rem 1.25rem;
@@ -1313,7 +1313,7 @@ body {
   background: var(--dark);
 }
 .detail-tab-card {
-  background: var(--cream-soft);
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 1.25rem 1.35rem;
