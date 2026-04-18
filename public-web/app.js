@@ -42,11 +42,35 @@ const loadData = async () => {
   }
 };
 
+const APP_STATE_KEY = 'feriaapp:last-state';
+const PERSISTED_SECTIONS = ['casetas', 'menus', 'schedule'];
+
+const persistAppState = (section) => {
+  try {
+    localStorage.setItem(APP_STATE_KEY, JSON.stringify({ inApp: true, section }));
+  } catch (_) {}
+};
+
+const clearAppState = () => {
+  try { localStorage.removeItem(APP_STATE_KEY); } catch (_) {}
+};
+
+const getPersistedAppState = () => {
+  try {
+    const raw = localStorage.getItem(APP_STATE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (_) { return null; }
+};
+
 // Show main app
-const showApp = () => {
+const showApp = (initialSection = 'casetas') => {
   document.getElementById('landing').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
   window.scrollTo(0, 0);
+  const section = PERSISTED_SECTIONS.includes(initialSection) ? initialSection : 'casetas';
+  if (section !== 'casetas') showSection(section);
+  persistAppState(section);
   loadData();
 };
 
@@ -69,8 +93,17 @@ const showSection = (section, options = {}) => {
     }
   }
 
+  if (PERSISTED_SECTIONS.includes(section)) persistAppState(section);
+
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
+
+window.addEventListener('DOMContentLoaded', () => {
+  const state = getPersistedAppState();
+  if (state && state.inApp) {
+    showApp(state.section || 'casetas');
+  }
+});
 
 const getActiveSectionId = () => {
   const active = document.querySelector('.app-nav-btn.is-active');
