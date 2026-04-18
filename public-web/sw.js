@@ -1,4 +1,4 @@
-const CACHE_NAME = 'feriaapp-v14';
+const CACHE_NAME = 'feriaapp-v15';
 const urlsToCache = [
   '/FeriaApp/',
   '/FeriaApp/index.html',

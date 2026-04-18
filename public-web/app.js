@@ -146,7 +146,7 @@ const renderMenus = (casetasData) => {
 
     const itemsHtml = items.length > 0
       ? items.map((m) => `<li><span>${m.name}</span><span class="price">${m.price}€</span></li>`).join('')
-      : '<li><span>Sin menú disponible</span><span></span></li>';
+      : '<li><span>Sin sugerencias disponible</span><span></span></li>';
 
     return `
       <article class="menu-caseta-card">
