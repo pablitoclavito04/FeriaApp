@@ -142,23 +142,23 @@
       </div>
     </footer>
 
-    <!-- Info modal (footer links) -->
-    <div id="info-modal" class="info-modal hidden" role="dialog" aria-modal="true" aria-labelledby="info-modal-title">
-      <div class="info-modal-backdrop" data-info-close></div>
-      <div class="info-modal-card" role="document">
-        <header class="info-modal-head">
-          <h2 id="info-modal-title"></h2>
-          <button class="info-modal-x" aria-label="Cerrar" data-info-close>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
-          </button>
-        </header>
-        <div class="info-modal-body" id="info-modal-body"></div>
-        <footer class="info-modal-foot">
-          <button class="btn btn-ghost info-modal-close" data-info-close>Cerrar</button>
-        </footer>
-      </div>
-    </div>
+  </div>
 
+  <!-- Info modal (shared between landing and app) -->
+  <div id="info-modal" class="info-modal hidden" role="dialog" aria-modal="true" aria-labelledby="info-modal-title">
+    <div class="info-modal-backdrop" data-info-close></div>
+    <div class="info-modal-card" role="document">
+      <header class="info-modal-head">
+        <h2 id="info-modal-title"></h2>
+        <button class="info-modal-x" aria-label="Cerrar" data-info-close>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </header>
+      <div class="info-modal-body" id="info-modal-body"></div>
+      <footer class="info-modal-foot">
+        <button class="btn btn-ghost info-modal-close" data-info-close>Cerrar</button>
+      </footer>
+    </div>
   </div>
 
   <!-- MAIN APP -->
@@ -394,19 +394,13 @@
       const bodyEl = document.getElementById('info-modal-body');
       let lastFocus = null;
 
-      let savedScrollY = 0;
-      const lockScroll = (e) => {
-        window.scrollTo(0, savedScrollY);
-      };
-
       const open = (key) => {
         const item = INFO[key];
         if (!item) return;
         titleEl.textContent = item.title;
         bodyEl.innerHTML = item.html;
         lastFocus = document.activeElement;
-        savedScrollY = window.scrollY;
-        window.addEventListener('scroll', lockScroll, { passive: true });
+        document.body.style.overflow = 'hidden';
         modal.classList.remove('hidden');
         const closeBtn = modal.querySelector('.info-modal-close');
         if (closeBtn) closeBtn.focus();
@@ -414,7 +408,7 @@
 
       const close = () => {
         modal.classList.add('hidden');
-        window.removeEventListener('scroll', lockScroll);
+        document.body.style.overflow = '';
         if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
       };
 
