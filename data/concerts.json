@@ -1,1 +1,62 @@
-[]
+[
+  {
+    "_id": "69e3c71d4c7e23ac8d93135c",
+    "artist": "Manuel de los Santos \"El Agujetas\"",
+    "genre": "Flamenco",
+    "date": "2026-05-10T00:00:00.000Z",
+    "time": "22:00",
+    "caseta": {
+      "_id": "69dd5da2fd1547d3d8062513",
+      "name": "La casapuerta",
+      "number": 1
+    },
+    "createdAt": "2026-04-18T18:02:06.004Z",
+    "updatedAt": "2026-04-18T18:02:06.004Z",
+    "__v": 0
+  },
+  {
+    "_id": "69e3c7604c7e23ac8d93135d",
+    "artist": "Grupo Sevillanas La Alegría",
+    "genre": "Sevillanas",
+    "date": "2026-05-12T00:00:00.000Z",
+    "time": "23:00",
+    "caseta": {
+      "_id": "69dd5da2fd1547d3d8062513",
+      "name": "La casapuerta",
+      "number": 1
+    },
+    "createdAt": "2026-04-18T18:03:12.957Z",
+    "updatedAt": "2026-04-18T18:03:12.957Z",
+    "__v": 0
+  },
+  {
+    "_id": "69e3c7b24c7e23ac8d93135e",
+    "artist": "Grupo Flamenco Los Cernícalos",
+    "genre": "Flamenco",
+    "date": "2026-05-09T00:00:00.000Z",
+    "time": "22:30",
+    "caseta": {
+      "_id": "69dffd8d34fc18bcdc94e6d5",
+      "name": "Tio Jose de Paua",
+      "number": 2
+    },
+    "createdAt": "2026-04-18T18:04:34.861Z",
+    "updatedAt": "2026-04-18T18:04:34.861Z",
+    "__v": 0
+  },
+  {
+    "_id": "69e3c7de4c7e23ac8d93135f",
+    "artist": "DJ Feria Sur",
+    "genre": "Electrónica",
+    "date": "2026-05-13T00:00:00.000Z",
+    "time": "00:00",
+    "caseta": {
+      "_id": "69dffd8d34fc18bcdc94e6d5",
+      "name": "Tio Jose de Paua",
+      "number": 2
+    },
+    "createdAt": "2026-04-18T18:05:18.964Z",
+    "updatedAt": "2026-04-18T18:05:18.964Z",
+    "__v": 0
+  }
+]
