@@ -48,7 +48,7 @@ html {
   --muted: #9ca3b5;
   --border: #2a3145;
 
-  --header-bg: rgba(15, 19, 32, 0.95);
+  --header-bg: #1A1F2E;
 
   --theme-toggle-bg: #242a3c;
   --theme-toggle-border: transparent;
@@ -66,6 +66,9 @@ html {
 [data-theme="dark"] .app { background: var(--cream-soft); color: var(--text); }
 [data-theme="dark"] .app-header,
 [data-theme="dark"] .landing-header { background: var(--header-bg); }
+[data-theme="dark"] .app-nav-btn { color: #ffffff; }
+[data-theme="dark"] .app-nav-btn::after { background: #3a4360; }
+[data-theme="dark"] .app-nav-btn.is-active::after { background: #ffffff; }
 [data-theme="dark"] .app-nav-btn:hover { background: #242a3c; }
 [data-theme="dark"] .feature-card,
 [data-theme="dark"] .caseta-card,
@@ -83,11 +86,11 @@ html {
 [data-theme="dark"] .footer-main,
 [data-theme="dark"] .app-footer-main { border-bottom-color: var(--border); }
 [data-theme="dark"] .footer-title,
-[data-theme="dark"] .app-footer-title { color: var(--muted); }
+[data-theme="dark"] .app-footer-title { color: #ffffff; }
 [data-theme="dark"] .footer-links a,
-[data-theme="dark"] .app-footer-links a { color: var(--text); }
+[data-theme="dark"] .app-footer-links a { color: #CBD5E1; }
 [data-theme="dark"] .footer-links a:hover,
-[data-theme="dark"] .app-footer-links a:hover { border-bottom-color: var(--text); }
+[data-theme="dark"] .app-footer-links a:hover { border-bottom-color: #CBD5E1; }
 [data-theme="dark"] .footer-legal a,
 [data-theme="dark"] .app-footer-legal a,
 [data-theme="dark"] .footer-copy,
@@ -712,26 +715,34 @@ body {
 .app-nav-btn {
   background: transparent;
   border: none;
-  color: var(--muted);
+  color: var(--dark);
   font-family: inherit;
   font-size: 0.98rem;
   font-weight: 600;
   padding: 0.55rem 1rem;
   border-radius: 10px;
   cursor: pointer;
+  position: relative;
   transition: color .2s ease, background-color .2s ease;
 }
-.app-nav-btn:hover { color: var(--dark); background: #f3ece6; }
-.app-nav-btn.is-active {
-  color: var(--dark);
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 6px;
+.app-nav-btn::after {
+  content: '';
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 0;
+  height: 2px;
+  background: #cbd5e1;
+  border-radius: 2px;
+}
+.app-nav-btn:hover { background: #f3ece6; }
+.app-nav-btn.is-active::after {
+  background: var(--dark);
 }
 .app-header-actions {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 1.25rem;
 }
 
 /* Theme toggle (round) */
@@ -1165,10 +1176,10 @@ body {
   gap: 0.6rem;
 }
 .app-footer-links a {
-  color: var(--dark);
+  color: #475569;
   text-decoration: none;
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: 400;
   padding-bottom: 4px;
   border-bottom: 2px solid transparent;
   transition: border-color .2s ease;
