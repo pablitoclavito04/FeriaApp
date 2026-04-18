@@ -147,11 +147,11 @@ body {
 }
 
 .btn-primary {
-  background: #5a8dc7;
+  background: #2280A4;
   color: #fff;
-  box-shadow: 0 6px 18px rgba(90, 141, 199, 0.25);
+  box-shadow: 0 6px 18px rgba(34, 128, 164, 0.28);
 }
-.btn-primary:hover { background: #4a78ad; }
+.btn-primary:hover { background: #006687; color: #fff; }
 
 .btn-ghost {
   background: #cfe0f7;
@@ -965,7 +965,7 @@ body {
   margin-top: 1rem;
   background: #FCE073;
   color: #1e293b;
-  border: none;
+  border: 2px solid #000;
   border-radius: 12px;
   font-family: inherit;
   font-size: 1rem;
@@ -1101,35 +1101,52 @@ body {
 .schedule-days::-webkit-scrollbar { display: none; }
 .schedule-day {
   flex: 0 0 auto;
-  min-width: 72px;
+  min-width: 78px;
+  height: 74px;
   padding: 0.6rem 1rem;
   background: var(--card);
-  border: 1px solid var(--border);
+  border: 2px solid #000;
   border-radius: 12px;
   color: var(--dark);
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 0.15rem;
-  transition: background-color .2s ease, border-color .2s ease, color .2s ease, transform .15s ease;
+  transition: background-color .2s ease, color .2s ease, transform .15s ease;
 }
-.schedule-day:hover { border-color: #5a8dc7; transform: translateY(-1px); }
+.schedule-day:hover { background: #FFDFA0; transform: translateY(-1px); }
 .schedule-day.is-active {
-  background: #5a8dc7;
-  border-color: #5a8dc7;
-  color: #fff;
+  background: #F6BE39;
+  color: #000;
 }
+.schedule-day-all { justify-content: center; }
 .schedule-day-weekday {
   font-size: 0.78rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  opacity: 0.85;
 }
 .schedule-day-number {
   font-size: 1.15rem;
   font-weight: 700;
+}
+.schedule-day-calendar {
+  position: relative;
+  padding: 0.6rem;
+  min-width: 74px;
+}
+.schedule-day-calendar svg { width: 24px; height: 24px; }
+.schedule-day-date-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  border: 0;
+  padding: 0;
 }
 
 /* Schedule */
@@ -1602,6 +1619,42 @@ body {
 .detail-schedule-list li .time {
   color: #5a8dc7;
   font-weight: 700;
+  font-size: 1.05rem;
+}
+.detail-schedule-list .detail-schedule-day-header {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.6rem 0 0.25rem;
+  border-bottom: 1px dashed var(--border);
+}
+.detail-schedule-list .detail-schedule-day-header:first-child { padding-top: 0; }
+.detail-schedule-list .detail-schedule-item {
+  align-items: center;
+  padding: 0.35rem 0;
+  border-bottom: 1px dashed var(--border);
+}
+.detail-schedule-list .detail-schedule-item:last-child { border-bottom: none; }
+.detail-schedule-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+.detail-schedule-artist {
+  font-weight: 700;
+  color: var(--dark);
+}
+.detail-schedule-meta {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.detail-schedule-empty {
+  color: var(--muted);
+  font-style: italic;
 }
 .detail-download {
   width: 100%;
