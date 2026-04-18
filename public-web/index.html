@@ -7,8 +7,7 @@
   <title>FeriaApp</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <meta name="theme-color" content="#C0392B" />
+  <meta name="theme-color" content="#1a1a2e" />
 </head>
 <body>
 
@@ -164,52 +163,132 @@
   <!-- MAIN APP -->
   <div id="app" class="app hidden">
 
-    <!-- NAVBAR -->
-    <nav class="navbar">
-      <h1>FeriaApp</h1>
-      <div class="nav-links">
-        <button onclick="showSection('map')">Mapa</button>
-        <button onclick="showSection('casetas')">Casetas</button>
-        <button onclick="showSection('schedule')">Programación</button>
+    <!-- APP HEADER -->
+    <header class="app-header">
+      <a href="#" class="app-brand" onclick="event.preventDefault()" aria-label="FeriaApp">
+        <img src="icons/logo.png" alt="FeriaApp" class="app-brand-logo" />
+      </a>
+      <nav class="app-nav" aria-label="Secciones">
+        <button class="app-nav-btn is-active" data-section="casetas" onclick="showSection('casetas')">Casetas</button>
+        <button class="app-nav-btn" data-section="menus" onclick="showSection('menus')">Menús</button>
+        <button class="app-nav-btn" data-section="schedule" onclick="showSection('schedule')">Programación</button>
+      </nav>
+      <div class="app-header-actions">
+        <button id="app-install-btn" class="btn btn-dark" onclick="installApp()" style="display:none;">Instalar</button>
       </div>
-    </nav>
+    </header>
 
-    <!-- MAP SECTION -->
-    <section id="map-section" class="section">
-      <div class="section-header">
-        <h2>Mapa de la Feria</h2>
+    <!-- PWA install banner -->
+    <div id="install-banner" class="install-banner" hidden>
+      <div class="install-banner-inner">
+        <div class="install-banner-text">
+          <h3>Añade FeriaApp a tu pantalla de inicio</h3>
+          <p>Instala FeriaApp directamente en el dispositivo para acceder al evento al instante. Sin esperar, sin buscar: solo abre y explora.</p>
+        </div>
+        <div class="install-banner-actions">
+          <button class="btn btn-primary" onclick="installApp()">Instalar</button>
+          <button class="install-banner-close" aria-label="Cerrar" onclick="dismissInstallBanner()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
       </div>
-      <div id="map" style="height: 500px; width: 100%;"></div>
-    </section>
+    </div>
 
     <!-- CASETAS SECTION -->
-    <section id="casetas-section" class="section hidden">
-      <div class="section-header">
-        <h2>Casetas</h2>
-        <input type="text" id="search-input" placeholder="Buscar caseta..." oninput="searchCasetas()" />
+    <section id="casetas-section" class="app-section">
+      <div class="app-search">
+        <svg class="app-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"/>
+          <path d="m20 20-3.5-3.5"/>
+        </svg>
+        <input type="text" id="search-input" placeholder="Buscar casetas..." oninput="searchCasetas()" />
       </div>
       <div id="casetas-list" class="casetas-grid"></div>
     </section>
 
+    <!-- MENUS SECTION -->
+    <section id="menus-section" class="app-section hidden">
+      <div class="app-section-head">
+        <h2>Menús</h2>
+        <p>Consulta los menús disponibles en cada caseta.</p>
+      </div>
+      <div id="menus-list" class="menus-grid"></div>
+    </section>
+
     <!-- SCHEDULE SECTION -->
-    <section id="schedule-section" class="section hidden">
-      <div class="section-header">
+    <section id="schedule-section" class="app-section hidden">
+      <div class="app-section-head">
         <h2>Programación</h2>
+        <p>Todos los conciertos y actuaciones de la feria.</p>
       </div>
       <div id="schedule-list" class="schedule-list"></div>
     </section>
 
+    <!-- APP FOOTER -->
+    <footer class="app-footer">
+      <div class="app-footer-main">
+        <div class="app-footer-brand">
+          <img src="icons/logo.png" alt="FeriaApp" />
+        </div>
+        <div class="app-footer-col">
+          <h4 class="app-footer-title">EXPLORAR</h4>
+          <nav class="app-footer-links">
+            <a href="#" onclick="event.preventDefault(); showSection('casetas')">Casetas</a>
+            <a href="#" onclick="event.preventDefault(); showSection('menus')">Menús</a>
+            <a href="#" onclick="event.preventDefault(); showSection('schedule')">Programación</a>
+          </nav>
+        </div>
+        <div class="app-footer-col">
+          <h4 class="app-footer-title">CONTACTO</h4>
+          <nav class="app-footer-links">
+            <a href="#" data-info="contact">Soporte</a>
+            <a href="#" data-info="terms">Términos</a>
+            <a href="#" data-info="privacy">Privacidad</a>
+          </nav>
+        </div>
+        <div class="app-footer-col">
+          <h4 class="app-footer-title">RECURSOS</h4>
+          <nav class="app-footer-links">
+            <a href="#" onclick="event.preventDefault(); installApp()">Descargar app</a>
+          </nav>
+        </div>
+        <div class="app-footer-col">
+          <h4 class="app-footer-title">SÍGUENOS</h4>
+          <div class="app-footer-social" aria-label="Redes sociales">
+            <a href="https://x.com/PabloSanzA27140" target="_blank" rel="noopener noreferrer" aria-label="X" class="social-x">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="https://github.com/pablitoclavito04" target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="social-gh">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.73.5.77 5.47.77 11.73c0 4.97 3.22 9.18 7.69 10.67.56.1.77-.24.77-.54 0-.27-.01-1.15-.02-2.08-3.13.68-3.79-1.34-3.79-1.34-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.68.08-.68 1.13.08 1.72 1.16 1.72 1.16 1 1.72 2.63 1.22 3.27.93.1-.72.39-1.22.71-1.5-2.5-.28-5.13-1.25-5.13-5.58 0-1.23.44-2.24 1.16-3.03-.12-.28-.5-1.43.11-2.98 0 0 .95-.3 3.11 1.16.9-.25 1.87-.38 2.83-.38.96 0 1.93.13 2.83.38 2.16-1.46 3.11-1.16 3.11-1.16.61 1.55.23 2.7.11 2.98.72.79 1.16 1.8 1.16 3.03 0 4.34-2.64 5.3-5.15 5.58.4.35.76 1.03.76 2.08 0 1.5-.01 2.71-.01 3.08 0 .3.2.65.78.54 4.47-1.49 7.69-5.7 7.69-10.67C23.23 5.47 18.27.5 12 .5z"/></svg>
+            </a>
+            <a href="https://www.linkedin.com/in/pablo-sanz-aznar-56a2bb399/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="social-in">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM7.12 20.45H3.56V9h3.56zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="app-footer-bottom">
+        <nav class="app-footer-legal">
+          <a href="#" data-info="privacy">Política de privacidad</a>
+          <a href="#" data-info="terms">Términos de servicio</a>
+          <a href="#" data-info="cookies">Configuración de cookies</a>
+        </nav>
+        <p class="app-footer-copy">© 2025 FeriaApp. Todos los derechos reservados.</p>
+      </div>
+    </footer>
+
     <!-- CASETA DETAIL MODAL -->
     <div id="caseta-modal" class="modal hidden">
       <div class="modal-content">
-        <button class="modal-close" onclick="closeModal()">✕</button>
+        <button class="modal-close" onclick="closeModal()" aria-label="Cerrar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
         <div id="modal-body"></div>
       </div>
     </div>
 
   </div>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/fuse.js@7.0.0/dist/fuse.min.js"></script>
   <script src="app.js"></script>
 
