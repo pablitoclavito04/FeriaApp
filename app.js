@@ -154,7 +154,7 @@ const renderMenus = (casetasData) => {
         ${image}
         <h4 class="menu-caseta-subtitle">Sugerencias del chef</h4>
         <ul class="menu-items">${itemsHtml}</ul>
-        <button class="menu-caseta-pdf" type="button">Descargar menú completo (PDF)</button>
+        <button class="btn btn-primary menu-caseta-pdf" type="button">Descargar menú completo (PDF)</button>
       </article>
     `;
   }).join('');
