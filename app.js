@@ -128,31 +128,47 @@ const renderCasetas = (data) => {
 const renderMenus = (casetasData) => {
   const container = document.getElementById('menus-list');
   if (!container) return;
-  const withMenus = casetasData
-    .map((caseta) => ({
-      caseta,
-      items: menus.filter((m) => m.caseta?._id === caseta._id || m.caseta === caseta._id),
-    }))
-    .filter((entry) => entry.items.length > 0);
 
-  if (withMenus.length === 0) {
-    container.innerHTML = '<p class="no-results">No hay menús disponibles</p>';
+  if (casetasData.length === 0) {
+    container.innerHTML = '<p class="no-results">No se han encontrado casetas</p>';
     return;
   }
 
-  container.innerHTML = withMenus.map(({ caseta, items }) => `
-    <article class="menu-caseta-card">
-      <h3>${caseta.name}</h3>
-      <ul class="menu-items">
-        ${items.map((m) => `
-          <li>
-            <span>${m.name}</span>
-            <span class="price">${m.price}€</span>
-          </li>
-        `).join('')}
-      </ul>
-    </article>
-  `).join('');
+  const entries = casetasData.map((caseta) => ({
+    caseta,
+    items: menus.filter((m) => m.caseta?._id === caseta._id || m.caseta === caseta._id),
+  }));
+
+  container.innerHTML = entries.map(({ caseta, items }) => {
+    const image = caseta.image
+      ? `<img src="${caseta.image.replace('/uploads/', '/FeriaApp/uploads/')}" alt="${caseta.name}" class="menu-caseta-image" />`
+      : '<div class="menu-caseta-no-image"></div>';
+
+    const itemsHtml = items.length > 0
+      ? items.map((m) => `<li><span>${m.name}</span><span class="price">${m.price}€</span></li>`).join('')
+      : '<li><span>Sin menú disponible</span><span></span></li>';
+
+    return `
+      <article class="menu-caseta-card">
+        <h3>${caseta.name}</h3>
+        ${image}
+        <h4 class="menu-caseta-subtitle">Sugerencias del chef</h4>
+        <ul class="menu-items">${itemsHtml}</ul>
+        <button class="menu-caseta-pdf" type="button">Descargar menú completo (PDF)</button>
+      </article>
+    `;
+  }).join('');
+};
+
+// Search menus by caseta name
+const searchMenus = () => {
+  const query = document.getElementById('menus-search-input').value;
+  if (!query) {
+    renderMenus(casetas);
+    return;
+  }
+  const results = fuse.search(query).map((r) => r.item);
+  renderMenus(results);
 };
 
 // Render schedule
