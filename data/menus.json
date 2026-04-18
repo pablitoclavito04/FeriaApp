@@ -1,1 +1,44 @@
-[]
+[
+  {
+    "_id": "69e3c54bce2d950b16b7089b",
+    "name": "Jamón ibérico de bellota",
+    "description": "",
+    "price": 12,
+    "caseta": {
+      "_id": "69dd5da2fd1547d3d8062513",
+      "name": "La casapuerta",
+      "number": 1
+    },
+    "createdAt": "2026-04-18T17:54:19.310Z",
+    "updatedAt": "2026-04-18T17:54:19.310Z",
+    "__v": 0
+  },
+  {
+    "_id": "69e3c561ce2d950b16b7089c",
+    "name": "Pescaíto frito",
+    "description": "",
+    "price": 9,
+    "caseta": {
+      "_id": "69dd5da2fd1547d3d8062513",
+      "name": "La casapuerta",
+      "number": 1
+    },
+    "createdAt": "2026-04-18T17:54:41.072Z",
+    "updatedAt": "2026-04-18T17:54:41.072Z",
+    "__v": 0
+  },
+  {
+    "_id": "69e3c56ece2d950b16b7089d",
+    "name": "Tortilla de patatas",
+    "description": "",
+    "price": 6,
+    "caseta": {
+      "_id": "69dd5da2fd1547d3d8062513",
+      "name": "La casapuerta",
+      "number": 1
+    },
+    "createdAt": "2026-04-18T17:54:54.836Z",
+    "updatedAt": "2026-04-18T17:54:54.836Z",
+    "__v": 0
+  }
+]
