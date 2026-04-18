@@ -180,6 +180,9 @@
 
     <!-- APP HEADER -->
     <header class="app-header">
+      <button class="app-hamburger" type="button" aria-label="Abrir menú" aria-controls="app-mobile-nav" aria-expanded="false" onclick="toggleMobileNav()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+      </button>
       <a href="#" class="app-brand" onclick="event.preventDefault()" aria-label="FeriaApp">
         <img src="icons/logo.png" alt="FeriaApp" class="app-brand-logo" />
       </a>
@@ -196,6 +199,21 @@
         <button id="app-install-btn" class="btn btn-dark" onclick="installApp()" style="display:none;">Instalar</button>
       </div>
     </header>
+
+    <!-- MOBILE NAV DRAWER -->
+    <div id="app-mobile-nav" class="app-mobile-nav" hidden>
+      <div class="app-mobile-nav-backdrop" onclick="closeMobileNav()"></div>
+      <aside class="app-mobile-nav-panel" role="dialog" aria-label="Secciones">
+        <button class="app-mobile-nav-close" type="button" aria-label="Cerrar menú" onclick="closeMobileNav()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <nav class="app-mobile-nav-links">
+          <button class="app-mobile-nav-btn" data-section="casetas" onclick="selectMobileSection('casetas')">Casetas</button>
+          <button class="app-mobile-nav-btn" data-section="menus" onclick="selectMobileSection('menus')">Menús</button>
+          <button class="app-mobile-nav-btn" data-section="schedule" onclick="selectMobileSection('schedule')">Programación</button>
+        </nav>
+      </aside>
+    </div>
 
     <!-- PWA install banner -->
     <div id="install-banner" class="install-banner" hidden>
@@ -336,29 +354,26 @@
     <!-- APP FOOTER -->
     <footer class="app-footer">
       <div class="app-footer-main">
-        <div class="app-footer-brand">
-          <img src="icons/logo.png" alt="FeriaApp" />
+        <div class="app-footer-brand-col">
+          <a href="#" class="app-brand" onclick="event.preventDefault()" aria-label="FeriaApp">
+            <img src="icons/logo.png" alt="FeriaApp" class="app-footer-brand-logo" />
+          </a>
         </div>
         <div class="app-footer-col">
-          <h4 class="app-footer-title">EXPLORAR</h4>
+          <h4 class="app-footer-title">ENLACES</h4>
           <nav class="app-footer-links">
-            <a href="#" onclick="event.preventDefault(); showSection('casetas')">Casetas</a>
-            <a href="#" onclick="event.preventDefault(); showSection('menus')">Menús</a>
-            <a href="#" onclick="event.preventDefault(); showSection('schedule')">Programación</a>
+            <a href="#" data-info="about">Sobre nosotros</a>
+            <a href="#" data-info="features">Características</a>
+            <a href="#" data-info="how">Cómo funciona</a>
+            <a href="#" data-info="contact">Contacto</a>
           </nav>
         </div>
         <div class="app-footer-col">
-          <h4 class="app-footer-title">CONTACTO</h4>
-          <nav class="app-footer-links app-footer-links--bold">
-            <a href="#" data-info="support">Soporte</a>
-            <a href="#" data-info="terms">Términos</a>
-            <a href="#" data-info="privacy">Privacidad</a>
-          </nav>
-        </div>
-        <div class="app-footer-col">
-          <h4 class="app-footer-title">RECURSOS</h4>
-          <nav class="app-footer-links app-footer-links--bold">
-            <a href="#" onclick="event.preventDefault(); installApp()">Descargar app</a>
+          <h4 class="app-footer-title">LEGAL</h4>
+          <nav class="app-footer-legal">
+            <a href="#" data-info="privacy">Política de privacidad</a>
+            <a href="#" data-info="terms">Términos de servicio</a>
+            <a href="#" data-info="cookies">Configuración de cookies</a>
           </nav>
         </div>
         <div class="app-footer-col">
@@ -377,11 +392,6 @@
         </div>
       </div>
       <div class="app-footer-bottom">
-        <nav class="app-footer-legal">
-          <a href="#" data-info="privacy">Política de privacidad</a>
-          <a href="#" data-info="terms">Términos de servicio</a>
-          <a href="#" data-info="cookies">Configuración de cookies</a>
-        </nav>
         <p class="app-footer-copy">© 2025 FeriaApp. Todos los derechos reservados.</p>
       </div>
     </footer>
