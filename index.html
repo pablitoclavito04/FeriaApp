@@ -7,6 +7,7 @@
   <title>FeriaApp</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <meta name="theme-color" content="#1a1a2e" />
 </head>
 <body>
@@ -224,6 +225,58 @@
       <div id="schedule-list" class="schedule-list"></div>
     </section>
 
+    <!-- CASETA DETAIL SECTION -->
+    <section id="detail-section" class="app-section hidden">
+      <button class="detail-back" onclick="showSection('casetas')" aria-label="Volver">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M19 12H5"/>
+          <path d="m12 19-7-7 7-7"/>
+        </svg>
+        <span>Volver</span>
+      </button>
+
+      <div class="detail-top">
+        <div class="detail-media" id="detail-media"></div>
+        <div class="detail-info">
+          <h2 id="detail-name"></h2>
+          <p id="detail-description"></p>
+        </div>
+      </div>
+
+      <div class="detail-bottom">
+        <div class="detail-panel">
+          <div class="detail-tabs" role="tablist">
+            <button class="detail-tab is-active" data-tab="menu" onclick="showDetailTab('menu')" role="tab" aria-selected="true">MENÚ</button>
+            <button class="detail-tab" data-tab="schedule" onclick="showDetailTab('schedule')" role="tab" aria-selected="false">PROGRAMACIÓN</button>
+          </div>
+          <div class="detail-tab-content" id="detail-tab-menu">
+            <div class="detail-tab-card">
+              <h3 id="detail-menu-title">Sugerencias del chef</h3>
+              <ul class="detail-menu-list" id="detail-menu-list"></ul>
+              <button class="btn btn-ghost detail-download" type="button" disabled>Descargar menú completo (PDF)</button>
+            </div>
+          </div>
+          <div class="detail-tab-content hidden" id="detail-tab-schedule">
+            <div class="detail-tab-card">
+              <ul class="detail-schedule-list" id="detail-schedule-list"></ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-map-wrap">
+          <div id="detail-map" class="detail-map"></div>
+        </div>
+      </div>
+
+      <div class="detail-nearby">
+        <div class="detail-nearby-head">
+          <h3>Casetas cercanas</h3>
+          <a href="#" class="detail-nearby-link" onclick="event.preventDefault(); showSection('casetas')">Ver todas las casetas</a>
+        </div>
+        <div id="detail-nearby-list" class="casetas-grid"></div>
+      </div>
+    </section>
+
     <!-- APP FOOTER -->
     <footer class="app-footer">
       <div class="app-footer-main">
@@ -277,18 +330,9 @@
       </div>
     </footer>
 
-    <!-- CASETA DETAIL MODAL -->
-    <div id="caseta-modal" class="modal hidden">
-      <div class="modal-content">
-        <button class="modal-close" onclick="closeModal()" aria-label="Cerrar">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
-        </button>
-        <div id="modal-body"></div>
-      </div>
-    </div>
-
   </div>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/fuse.js@7.0.0/dist/fuse.min.js"></script>
   <script src="app.js"></script>
 
