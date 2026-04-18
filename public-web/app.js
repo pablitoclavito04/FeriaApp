@@ -72,10 +72,29 @@ const showSection = (section, options = {}) => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
+const getActiveSectionId = () => {
+  const active = document.querySelector('.app-nav-btn.is-active');
+  if (active) return active.dataset.section;
+  const visible = document.querySelector('.app-section:not(.hidden)');
+  if (!visible) return 'casetas';
+  return visible.id.replace('-section', '');
+};
+
+const syncMobileNavActive = () => {
+  const active = getActiveSectionId();
+  document.querySelectorAll('.app-mobile-nav-btn').forEach((btn) => {
+    btn.classList.toggle('is-active', btn.dataset.section === active);
+  });
+};
+
 const openMobileNav = () => {
   const drawer = document.getElementById('app-mobile-nav');
   const btn = document.querySelector('.app-hamburger');
   if (!drawer) return;
+  syncMobileNavActive();
+  const installBtn = document.getElementById('mobile-install-btn');
+  const appInstallBtn = document.getElementById('app-install-btn');
+  if (installBtn) installBtn.hidden = !(appInstallBtn && appInstallBtn.style.display !== 'none');
   drawer.hidden = false;
   requestAnimationFrame(() => drawer.classList.add('is-open'));
   if (btn) btn.setAttribute('aria-expanded', 'true');
@@ -102,6 +121,11 @@ const toggleMobileNav = () => {
 const selectMobileSection = (section) => {
   closeMobileNav();
   showSection(section);
+};
+
+const installFromMobileNav = () => {
+  closeMobileNav();
+  installApp();
 };
 
 // Initialize Fuse.js for smart search
