@@ -56,7 +56,7 @@ const showSection = (section, options = {}) => {
   const target = document.getElementById(`${section}-section`);
   if (target) target.classList.remove('hidden');
 
-  document.querySelectorAll('.app-nav-btn').forEach((btn) => {
+  document.querySelectorAll('.app-nav-btn, .app-mobile-nav-btn').forEach((btn) => {
     const isActive = btn.dataset.section === section;
     btn.classList.toggle('is-active', isActive);
   });
@@ -70,6 +70,38 @@ const showSection = (section, options = {}) => {
   }
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+const openMobileNav = () => {
+  const drawer = document.getElementById('app-mobile-nav');
+  const btn = document.querySelector('.app-hamburger');
+  if (!drawer) return;
+  drawer.hidden = false;
+  requestAnimationFrame(() => drawer.classList.add('is-open'));
+  if (btn) btn.setAttribute('aria-expanded', 'true');
+  document.body.style.overflow = 'hidden';
+};
+
+const closeMobileNav = () => {
+  const drawer = document.getElementById('app-mobile-nav');
+  const btn = document.querySelector('.app-hamburger');
+  if (!drawer) return;
+  drawer.classList.remove('is-open');
+  if (btn) btn.setAttribute('aria-expanded', 'false');
+  document.body.style.overflow = '';
+  setTimeout(() => { drawer.hidden = true; }, 200);
+};
+
+const toggleMobileNav = () => {
+  const drawer = document.getElementById('app-mobile-nav');
+  if (!drawer) return;
+  if (drawer.hidden) openMobileNav();
+  else closeMobileNav();
+};
+
+const selectMobileSection = (section) => {
+  closeMobileNav();
+  showSection(section);
 };
 
 // Initialize Fuse.js for smart search
