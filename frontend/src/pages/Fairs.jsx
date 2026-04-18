@@ -65,7 +65,7 @@ const Fairs = () => {
       active: fair.active,
     });
     setShowForm(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.querySelector('.main-content')?.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const confirmDelete = async () => {

@@ -227,9 +227,25 @@
 
     <!-- MENUS SECTION -->
     <section id="menus-section" class="app-section hidden">
-      <div class="app-section-head">
-        <h2>Menús</h2>
-        <p>Consulta los menús disponibles en cada caseta.</p>
+      <button class="menus-back-btn" type="button" onclick="showSection('casetas')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 14 4 9l5-5"/>
+          <path d="M4 9h11a5 5 0 0 1 0 10h-1"/>
+        </svg>
+        <span>Volver</span>
+      </button>
+      <div class="menus-head">
+        <div class="menus-head-text">
+          <h2>Menús</h2>
+          <p>¡No te pierdas ni un solo sabor de la experiencia. Consulta los menús disponibles para cada jornada!</p>
+        </div>
+        <div class="app-search menus-search">
+          <svg class="app-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="m20 20-3.5-3.5"/>
+          </svg>
+          <input type="text" id="menus-search-input" placeholder="Buscar casetas..." oninput="searchMenus()" />
+        </div>
       </div>
       <div id="menus-list" class="menus-grid"></div>
     </section>

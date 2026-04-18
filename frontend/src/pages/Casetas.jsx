@@ -99,7 +99,7 @@ const Casetas = () => {
     });
     setImagePreview(caseta.image ? `http://localhost:5000${caseta.image}` : null);
     setShowForm(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.querySelector('.main-content')?.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const confirmDelete = async () => {
