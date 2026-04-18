@@ -12,6 +12,7 @@ let currentDetailId = null;
 
 // Schedule filters
 let selectedScheduleDay = 'all';
+let scheduleCasetaFilter = null;
 
 // Base URL for data files
 const BASE_URL = '/FeriaApp/data';
@@ -50,7 +51,7 @@ const showApp = () => {
 };
 
 // Show section
-const showSection = (section) => {
+const showSection = (section, options = {}) => {
   document.querySelectorAll('.app-section').forEach((s) => s.classList.add('hidden'));
   const target = document.getElementById(`${section}-section`);
   if (target) target.classList.remove('hidden');
@@ -59,6 +60,14 @@ const showSection = (section) => {
     const isActive = btn.dataset.section === section;
     btn.classList.toggle('is-active', isActive);
   });
+
+  if (section !== 'schedule' || !options.keepScheduleFilter) {
+    if (scheduleCasetaFilter) {
+      scheduleCasetaFilter = null;
+      updateScheduleCasetaFilterUI();
+      renderSchedule();
+    }
+  }
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
@@ -262,6 +271,7 @@ const renderSchedule = () => {
   const query = (queryEl?.value || '').trim().toLowerCase();
 
   const filtered = concerts
+    .filter((c) => !scheduleCasetaFilter || (c.caseta?._id || c.caseta) === scheduleCasetaFilter)
     .filter((c) => selectedScheduleDay === 'all' || concertDayKey(c) === selectedScheduleDay)
     .filter((c) => !query || c.artist.toLowerCase().includes(query))
     .sort((a, b) => {
@@ -271,9 +281,14 @@ const renderSchedule = () => {
     });
 
   if (filtered.length === 0) {
-    const msg = selectedScheduleDay !== 'all'
-      ? 'Este día no hay nada programado'
-      : 'No hay conciertos que coincidan';
+    let msg;
+    if (scheduleCasetaFilter) {
+      msg = 'Actualmente esta caseta no celebra nada';
+    } else if (selectedScheduleDay !== 'all') {
+      msg = 'Este día no hay nada programado';
+    } else {
+      msg = 'No hay conciertos que coincidan';
+    }
     container.innerHTML = `<p class="no-results">${msg}</p>`;
     return;
   }
@@ -295,6 +310,37 @@ const renderSchedule = () => {
 };
 
 const filterSchedule = () => renderSchedule();
+
+const updateScheduleCasetaFilterUI = () => {
+  const banner = document.getElementById('schedule-caseta-filter');
+  const nameEl = document.getElementById('schedule-caseta-filter-name');
+  if (!banner || !nameEl) return;
+  if (scheduleCasetaFilter) {
+    const caseta = casetas.find((c) => c._id === scheduleCasetaFilter);
+    nameEl.textContent = caseta?.name || '';
+    banner.classList.remove('hidden');
+  } else {
+    banner.classList.add('hidden');
+  }
+};
+
+const openFullScheduleForCurrentCaseta = () => {
+  if (!currentDetailId) return;
+  scheduleCasetaFilter = currentDetailId;
+  selectedScheduleDay = 'all';
+  const searchEl = document.getElementById('schedule-search-input');
+  if (searchEl) searchEl.value = '';
+  updateScheduleCasetaFilterUI();
+  renderScheduleDays();
+  renderSchedule();
+  showSection('schedule', { keepScheduleFilter: true });
+};
+
+const clearScheduleCasetaFilter = () => {
+  scheduleCasetaFilter = null;
+  updateScheduleCasetaFilterUI();
+  renderSchedule();
+};
 
 // ===== Caseta detail page =====
 const openCasetaDetail = (id) => {

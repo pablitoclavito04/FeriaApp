@@ -270,6 +270,12 @@
           <input type="text" id="schedule-search-input" placeholder="Buscar artistas..." oninput="filterSchedule()" />
         </div>
       </div>
+      <div id="schedule-caseta-filter" class="schedule-caseta-filter hidden">
+        <span>Mostrando solo: <strong id="schedule-caseta-filter-name"></strong></span>
+        <button type="button" onclick="clearScheduleCasetaFilter()" aria-label="Quitar filtro">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
       <div id="schedule-days" class="schedule-days"></div>
       <div id="schedule-list" class="schedule-list"></div>
     </section>
@@ -307,6 +313,7 @@
           <div class="detail-tab-content hidden" id="detail-tab-schedule">
             <div class="detail-tab-card">
               <ul class="detail-schedule-list" id="detail-schedule-list"></ul>
+              <button class="btn btn-primary detail-schedule-more" type="button" onclick="openFullScheduleForCurrentCaseta()">Ver programación completa</button>
             </div>
           </div>
         </div>
