@@ -10,6 +10,9 @@ let detailMap = null;
 let detailMarker = null;
 let currentDetailId = null;
 
+// Schedule filters
+let selectedScheduleDay = 'all';
+
 // Base URL for data files
 const BASE_URL = '/FeriaApp/data';
 
@@ -31,7 +34,8 @@ const loadData = async () => {
     initFuse();
     renderCasetas(casetas);
     renderMenus(casetas);
-    renderSchedule(concerts);
+    renderScheduleDays();
+    renderSchedule();
   } catch (error) {
     console.error('Error loading data:', error);
   }
@@ -171,25 +175,81 @@ const searchMenus = () => {
   renderMenus(results);
 };
 
-// Render schedule
-const renderSchedule = (data) => {
+// Build a stable YYYY-MM-DD key from a concert date (avoids TZ shifts)
+const concertDayKey = (concert) => {
+  const d = new Date(concert.date);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
+const DAY_NAMES = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+
+// Render day chips (one per distinct concert date) + an "All" chip
+const renderScheduleDays = () => {
+  const container = document.getElementById('schedule-days');
+  if (!container) return;
+
+  const uniqueKeys = [...new Set(concerts.map(concertDayKey))].sort();
+
+  const chip = (key, label) => `
+    <button type="button" class="schedule-day ${selectedScheduleDay === key ? 'is-active' : ''}" onclick="selectScheduleDay('${key}')">
+      ${label}
+    </button>
+  `;
+
+  const dayChips = uniqueKeys.map((key) => {
+    const d = new Date(`${key}T00:00:00`);
+    const label = `<span class="schedule-day-weekday">${DAY_NAMES[d.getDay()]}</span><span class="schedule-day-number">${d.getDate()}</span>`;
+    return chip(key, label);
+  }).join('');
+
+  container.innerHTML = chip('all', '<span class="schedule-day-weekday">Todos</span>') + dayChips;
+};
+
+const selectScheduleDay = (key) => {
+  selectedScheduleDay = key;
+  renderScheduleDays();
+  renderSchedule();
+};
+
+// Render filtered schedule list
+const renderSchedule = () => {
   const container = document.getElementById('schedule-list');
   if (!container) return;
-  if (data.length === 0) {
-    container.innerHTML = '<p class="no-results">No hay conciertos programados</p>';
+
+  const queryEl = document.getElementById('schedule-search-input');
+  const query = (queryEl?.value || '').trim().toLowerCase();
+
+  const filtered = concerts
+    .filter((c) => selectedScheduleDay === 'all' || concertDayKey(c) === selectedScheduleDay)
+    .filter((c) => !query || c.artist.toLowerCase().includes(query))
+    .sort((a, b) => {
+      const keyDiff = concertDayKey(a).localeCompare(concertDayKey(b));
+      if (keyDiff !== 0) return keyDiff;
+      return (a.time || '').localeCompare(b.time || '');
+    });
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<p class="no-results">No hay conciertos que coincidan</p>';
     return;
   }
-  container.innerHTML = data.map((concert) => `
-    <div class="concert-card">
-      <div class="concert-time">${concert.time}</div>
-      <div class="concert-info">
-        <h3>${concert.artist}</h3>
-        <p>${concert.genre || ''} · ${concert.caseta?.name || ''}</p>
-        <p class="concert-date">${new Date(concert.date).toLocaleDateString('es-ES')}</p>
+
+  container.innerHTML = filtered.map((concert) => {
+    const casetaId = concert.caseta?._id || concert.caseta;
+    const clickAttr = casetaId ? `onclick="openCasetaDetail('${casetaId}')"` : '';
+    return `
+      <div class="concert-card" ${clickAttr}>
+        <div class="concert-time">${concert.time}</div>
+        <div class="concert-info">
+          <h3>${concert.artist}</h3>
+          <p>${concert.genre || ''} · ${concert.caseta?.name || ''}</p>
+          <p class="concert-date">${new Date(concert.date).toLocaleDateString('es-ES')}</p>
+        </div>
       </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 };
+
+const filterSchedule = () => renderSchedule();
 
 // ===== Caseta detail page =====
 const openCasetaDetail = (id) => {
