@@ -72,7 +72,6 @@ html {
 [data-theme="dark"] .app-nav-btn.is-active::after { background: #ffffff; }
 [data-theme="dark"] .app-nav-btn:hover { background: #242a3c; }
 [data-theme="dark"] .feature-card,
-[data-theme="dark"] .caseta-card,
 [data-theme="dark"] .detail-tab-card,
 [data-theme="dark"] .install-banner-inner { background: var(--card); border-color: var(--border); }
 [data-theme="dark"] .detail-media { background: var(--card); }
@@ -876,7 +875,7 @@ body {
   transform: translateY(-50%);
   width: 20px;
   height: 20px;
-  color: var(--muted);
+  color: #6B6B76;
   pointer-events: none;
 }
 
@@ -887,8 +886,8 @@ body {
   gap: 1.5rem;
 }
 .caseta-card {
-  background: var(--card);
-  border: 1px solid var(--border);
+  background: #2F4467;
+  border: 1px solid #2F4467;
   border-radius: 16px;
   padding: 1rem;
   cursor: pointer;
@@ -899,10 +898,14 @@ body {
 @media (hover: hover) {
   .caseta-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 12px 28px rgba(26, 26, 46, 0.1);
-    border-color: #d9c4b3;
+    box-shadow: 0 12px 28px rgba(26, 26, 46, 0.18);
+    border-color: #3d5a80;
   }
 }
+.caseta-card h3 { color: #ffffff; }
+.caseta-card .caseta-status { color: #cbd5e1; }
+.caseta-card .caseta-status.is-open { color: #6ee7a3; }
+.caseta-card .caseta-status.is-closed { color: #f5a3a3; }
 .caseta-card-image,
 .caseta-no-image {
   width: 100%;
@@ -953,30 +956,30 @@ body {
 .caseta-status.is-open { color: #3a8f5a; }
 .caseta-status.is-closed { color: #b04a4a; }
 .caseta-card-btn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.55rem;
-  margin-top: auto;
-  align-self: flex-start;
-  background: #FCD34D;
+  width: 100%;
+  margin-top: 1rem;
+  background: #F4C542;
   color: #1e293b;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-family: inherit;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 700;
-  padding: 0.6rem 1.1rem;
+  padding: 0.75rem 1.1rem;
   cursor: pointer;
   transition: background-color .2s ease, transform .15s ease, box-shadow .2s ease;
 }
 .caseta-card-btn:hover {
-  background: #F5B949;
+  background: #E5B530;
   transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(252, 211, 77, 0.35);
+  box-shadow: 0 6px 14px rgba(244, 197, 66, 0.35);
 }
 .caseta-card-btn:active { transform: translateY(0); }
-.caseta-card-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+.caseta-card-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
 
 /* Menus grid */
 .menus-grid {
