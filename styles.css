@@ -84,6 +84,8 @@ html {
 [data-theme="dark"] .detail-back { background: #1C2739; color: #f8fafc; border-color: #3d5a80; }
 [data-theme="dark"] .detail-back:hover { background: #243347; }
 [data-theme="dark"] .btn-ghost { background: #2a3145; color: var(--text); border-color: #3a4360; }
+[data-theme="dark"] .btn-primary { background: #459AC0; color: #fff; }
+[data-theme="dark"] .btn-primary:hover { background: #63B5DC; color: #0f1320; }
 [data-theme="dark"] .btn-dark { background: #f3efe9; color: #0f1320; }
 
 [data-theme="dark"] .landing-footer,
@@ -1116,11 +1118,12 @@ body {
   gap: 0.15rem;
   transition: background-color .2s ease, color .2s ease, transform .15s ease;
 }
-.schedule-day:hover { background: #FFDFA0; transform: translateY(-1px); }
+.schedule-day:hover { background: #FFDFA0; color: #000; transform: translateY(-1px); }
 .schedule-day.is-active {
   background: #F6BE39;
   color: #000;
 }
+[data-theme="dark"] .schedule-day { border-color: #f3efe9; }
 .schedule-day-all { justify-content: center; }
 .schedule-day-weekday {
   font-size: 0.78rem;
@@ -1656,6 +1659,37 @@ body {
   color: var(--muted);
   font-style: italic;
 }
+.detail-schedule-more {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+/* Schedule caseta filter banner */
+.schedule-caseta-filter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  background: #FFEFD5;
+  border: 2px solid #000;
+  border-radius: 12px;
+  color: var(--dark);
+  font-size: 0.95rem;
+}
+.schedule-caseta-filter button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+.schedule-caseta-filter button svg { width: 18px; height: 18px; }
+[data-theme="dark"] .schedule-caseta-filter { background: #2F4467; color: #fff; border-color: #f3efe9; }
 .detail-download {
   width: 100%;
   margin-top: 0.5rem;
