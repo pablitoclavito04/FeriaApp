@@ -3,7 +3,6 @@ let fairs = [];
 let casetas = [];
 let menus = [];
 let concerts = [];
-let map = null;
 let fuse = null;
 
 // Base URL for data files
@@ -26,8 +25,8 @@ const loadData = async () => {
 
     initFuse();
     renderCasetas(casetas);
+    renderMenus(casetas);
     renderSchedule(concerts);
-    initMap();
   } catch (error) {
     console.error('Error loading data:', error);
   }
@@ -37,17 +36,21 @@ const loadData = async () => {
 const showApp = () => {
   document.getElementById('landing').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
+  window.scrollTo(0, 0);
   loadData();
 };
 
 // Show section
 const showSection = (section) => {
-  document.querySelectorAll('.section').forEach((s) => s.classList.add('hidden'));
-  document.getElementById(`${section}-section`).classList.remove('hidden');
+  document.querySelectorAll('.app-section').forEach((s) => s.classList.add('hidden'));
+  const target = document.getElementById(`${section}-section`);
+  if (target) target.classList.remove('hidden');
 
-  if (section === 'map' && map) {
-    setTimeout(() => map.invalidateSize(), 100);
-  }
+  document.querySelectorAll('.app-nav-btn').forEach((btn) => {
+    btn.classList.toggle('is-active', btn.dataset.section === section);
+  });
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 // Initialize Fuse.js for smart search
@@ -69,31 +72,79 @@ const searchCasetas = () => {
   renderCasetas(results);
 };
 
+// Determine if a caseta is currently open
+const isCasetaOpen = (caseta) => {
+  if (typeof caseta.isOpen === 'boolean') return caseta.isOpen;
+  if (caseta.status === 'open' || caseta.status === 'abierta') return true;
+  if (caseta.status === 'closed' || caseta.status === 'cerrada') return false;
+  return false;
+};
+
 // Render casetas grid
 const renderCasetas = (data) => {
   const container = document.getElementById('casetas-list');
+  if (!container) return;
   if (data.length === 0) {
-    container.innerHTML = '<p class="no-results">No casetas found</p>';
+    container.innerHTML = '<p class="no-results">No se han encontrado casetas</p>';
     return;
   }
-  container.innerHTML = data.map((caseta) => `
-    <div class="caseta-card" onclick="openCasetaModal('${caseta._id}')">
-      ${caseta.image
-        ? `<img src="${caseta.image.replace('/uploads/', '/FeriaApp/uploads/')}" alt="${caseta.name}" class="caseta-card-image" />`
-        : '<div class="caseta-no-image"></div>'
-      }
-      <div class="caseta-number">${caseta.number}</div>
+  container.innerHTML = data.map((caseta) => {
+    const open = isCasetaOpen(caseta);
+    const statusClass = open ? 'is-open' : 'is-closed';
+    const statusLabel = open ? 'Abierta' : 'Cerrado';
+    const image = caseta.image
+      ? `<img src="${caseta.image.replace('/uploads/', '/FeriaApp/uploads/')}" alt="${caseta.name}" class="caseta-card-image" />`
+      : '<div class="caseta-no-image"></div>';
+    return `
+      <article class="caseta-card" onclick="openCasetaModal('${caseta._id}')">
+        ${image}
+        <div class="caseta-card-head">
+          <h3>${caseta.name}</h3>
+          <span class="caseta-status ${statusClass}">${statusLabel}</span>
+        </div>
+        <a class="caseta-card-link" href="#" onclick="event.preventDefault(); event.stopPropagation(); openCasetaModal('${caseta._id}')">Ver menú</a>
+      </article>
+    `;
+  }).join('');
+};
+
+// Render menus grouped by caseta
+const renderMenus = (casetasData) => {
+  const container = document.getElementById('menus-list');
+  if (!container) return;
+  const withMenus = casetasData
+    .map((caseta) => ({
+      caseta,
+      items: menus.filter((m) => m.caseta?._id === caseta._id || m.caseta === caseta._id),
+    }))
+    .filter((entry) => entry.items.length > 0);
+
+  if (withMenus.length === 0) {
+    container.innerHTML = '<p class="no-results">No hay menús disponibles</p>';
+    return;
+  }
+
+  container.innerHTML = withMenus.map(({ caseta, items }) => `
+    <article class="menu-caseta-card">
       <h3>${caseta.name}</h3>
-      <p>${caseta.description || ''}</p>
-    </div>
+      <ul class="menu-items">
+        ${items.map((m) => `
+          <li>
+            <span>${m.name}</span>
+            <span class="price">${m.price}€</span>
+          </li>
+        `).join('')}
+      </ul>
+    </article>
   `).join('');
 };
 
 // Render schedule
 const renderSchedule = (data) => {
   const container = document.getElementById('schedule-list');
+  if (!container) return;
   if (data.length === 0) {
-    container.innerHTML = '<p class="no-results">No concerts scheduled</p>';
+    container.innerHTML = '<p class="no-results">No hay conciertos programados</p>';
     return;
   }
   container.innerHTML = data.map((concert) => `
@@ -108,37 +159,6 @@ const renderSchedule = (data) => {
   `).join('');
 };
 
-// Initialize map
-const initMap = () => {
-  if (map) return;
-
-  const bounds = [[0, 0], [1052, 1514]];
-
-  map = L.map('map', {
-    crs: L.CRS.Simple,
-    minZoom: -2,
-    maxZoom: 3,
-    maxBounds: bounds,
-    maxBoundsViscosity: 1.0,
-  });
-
-  L.imageOverlay('/FeriaApp/plano_feria.png', bounds).addTo(map);
-  map.fitBounds(bounds);
-
-  // Add caseta markers
-  casetas.forEach((caseta) => {
-    if (caseta.location?.x) {
-      const marker = L.marker([caseta.location.x, caseta.location.y]);
-      marker.bindPopup(`
-        <strong>${caseta.name}</strong><br>
-        Caseta nº ${caseta.number}<br>
-        <button onclick="openCasetaModal('${caseta._id}')">Ver detalles</button>
-      `);
-      marker.addTo(map);
-    }
-  });
-};
-
 // Open caseta modal
 const openCasetaModal = (id) => {
   const caseta = casetas.find((c) => c._id === id);
@@ -149,7 +169,7 @@ const openCasetaModal = (id) => {
 
   document.getElementById('modal-body').innerHTML = `
     ${caseta.image
-      ? `<img src="${caseta.image.replace('/uploads/', '/FeriaApp/uploads/')}" alt="${caseta.name}" style="width:100%;border-radius:8px;margin-bottom:1rem;max-height:200px;object-fit:cover;" />`
+      ? `<img src="${caseta.image.replace('/uploads/', '/FeriaApp/uploads/')}" alt="${caseta.name}" style="width:100%;border-radius:12px;margin-bottom:1rem;max-height:220px;object-fit:cover;" />`
       : ''
     }
     <h2>${caseta.name}</h2>
@@ -166,7 +186,7 @@ const openCasetaModal = (id) => {
             </li>
           `).join('')}
         </ul>`
-      : '<p>No menu available</p>'
+      : '<p>Sin menú disponible</p>'
     }
 
     <h3>Programación</h3>
@@ -179,7 +199,7 @@ const openCasetaModal = (id) => {
             </li>
           `).join('')}
         </ul>`
-      : '<p>No concerts scheduled</p>'
+      : '<p>Sin conciertos programados</p>'
     }
   `;
 
@@ -190,3 +210,55 @@ const openCasetaModal = (id) => {
 const closeModal = () => {
   document.getElementById('caseta-modal').classList.add('hidden');
 };
+
+// PWA Install
+let deferredPrompt;
+const INSTALL_BANNER_DISMISSED_KEY = 'feriaapp:install-banner-dismissed';
+
+const showInstallUI = () => {
+  const installBtn = document.getElementById('install-btn');
+  const appInstallBtn = document.getElementById('app-install-btn');
+  const banner = document.getElementById('install-banner');
+  if (installBtn) installBtn.style.display = 'inline-flex';
+  if (appInstallBtn) appInstallBtn.style.display = 'inline-flex';
+  if (banner && !localStorage.getItem(INSTALL_BANNER_DISMISSED_KEY)) {
+    banner.hidden = false;
+  }
+};
+
+const hideInstallUI = () => {
+  const installBtn = document.getElementById('install-btn');
+  const appInstallBtn = document.getElementById('app-install-btn');
+  const banner = document.getElementById('install-banner');
+  if (installBtn) installBtn.style.display = 'none';
+  if (appInstallBtn) appInstallBtn.style.display = 'none';
+  if (banner) banner.hidden = true;
+};
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  showInstallUI();
+});
+
+const installApp = () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then((result) => {
+    if (result.outcome === 'accepted') {
+      console.log('App installed');
+    }
+    deferredPrompt = null;
+    hideInstallUI();
+  });
+};
+
+const dismissInstallBanner = () => {
+  const banner = document.getElementById('install-banner');
+  if (banner) banner.hidden = true;
+  localStorage.setItem(INSTALL_BANNER_DISMISSED_KEY, '1');
+};
+
+window.addEventListener('appinstalled', () => {
+  hideInstallUI();
+});
