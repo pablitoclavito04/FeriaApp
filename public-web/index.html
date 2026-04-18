@@ -251,10 +251,26 @@
 
     <!-- SCHEDULE SECTION -->
     <section id="schedule-section" class="app-section hidden">
-      <div class="app-section-head">
-        <h2>Programación</h2>
-        <p>Todos los conciertos y actuaciones de la feria.</p>
+      <button class="detail-back" onclick="showSection('casetas')" aria-label="Volver">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m15 18-6-6 6-6"/>
+        </svg>
+        <span>Volver</span>
+      </button>
+      <div class="menus-head">
+        <div class="menus-head-text">
+          <h2>Programación</h2>
+          <p>No te pierdas ni un solo momento de la magia. Consulta los espectáculos y actividades de cada jornada.</p>
+        </div>
+        <div class="app-search menus-search">
+          <svg class="app-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="m20 20-3.5-3.5"/>
+          </svg>
+          <input type="text" id="schedule-search-input" placeholder="Buscar artistas..." oninput="filterSchedule()" />
+        </div>
       </div>
+      <div id="schedule-days" class="schedule-days"></div>
       <div id="schedule-list" class="schedule-list"></div>
     </section>
 

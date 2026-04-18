@@ -1062,19 +1062,73 @@ body {
 }
 .menu-caseta-card .menu-items li {
   display: flex;
-  justify-content: space-between;
-  gap: 0.75rem;
+  align-items: baseline;
+  gap: 0.5rem;
   font-size: 0.93rem;
   color: var(--text);
   padding-bottom: 0.4rem;
   border-bottom: 1px dashed var(--border);
 }
+.menu-caseta-card .menu-items li::before {
+  content: '';
+  flex: 1;
+  order: 2;
+  border-bottom: 1px dotted var(--muted);
+  transform: translateY(-0.25em);
+  opacity: 0.55;
+}
+.menu-caseta-card .menu-items li > span:first-child { order: 1; }
+.menu-caseta-card .menu-items li > span:last-child { order: 3; }
 .menu-caseta-card .menu-items li:last-child {
   border-bottom: none;
   padding-bottom: 0;
 }
 .menu-caseta-card .menu-items .price {
   color: #5a8dc7;
+  font-weight: 700;
+}
+
+/* Schedule day chips */
+.schedule-days {
+  display: flex;
+  gap: 0.6rem;
+  overflow-x: auto;
+  padding: 0.25rem 0 1.5rem;
+  margin-bottom: 0.25rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.schedule-days::-webkit-scrollbar { display: none; }
+.schedule-day {
+  flex: 0 0 auto;
+  min-width: 72px;
+  padding: 0.6rem 1rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--dark);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  transition: background-color .2s ease, border-color .2s ease, color .2s ease, transform .15s ease;
+}
+.schedule-day:hover { border-color: #5a8dc7; transform: translateY(-1px); }
+.schedule-day.is-active {
+  background: #5a8dc7;
+  border-color: #5a8dc7;
+  color: #fff;
+}
+.schedule-day-weekday {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  opacity: 0.85;
+}
+.schedule-day-number {
+  font-size: 1.15rem;
   font-weight: 700;
 }
 
@@ -1087,12 +1141,15 @@ body {
 .concert-card {
   background: var(--card);
   border: 1px solid var(--border);
+  cursor: pointer;
+  transition: border-color .2s ease, transform .15s ease;
   border-radius: 14px;
   padding: 1rem 1.25rem;
   display: flex;
   align-items: center;
   gap: 1.25rem;
 }
+.concert-card:hover { border-color: #5a8dc7; transform: translateY(-1px); }
 .concert-time {
   background: var(--dark);
   color: #fff;
