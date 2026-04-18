@@ -5,6 +5,11 @@ let menus = [];
 let concerts = [];
 let fuse = null;
 
+// Detail page state
+let detailMap = null;
+let detailMarker = null;
+let currentDetailId = null;
+
 // Base URL for data files
 const BASE_URL = '/FeriaApp/data';
 
@@ -47,7 +52,8 @@ const showSection = (section) => {
   if (target) target.classList.remove('hidden');
 
   document.querySelectorAll('.app-nav-btn').forEach((btn) => {
-    btn.classList.toggle('is-active', btn.dataset.section === section);
+    const isActive = btn.dataset.section === section;
+    btn.classList.toggle('is-active', isActive);
   });
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -80,6 +86,26 @@ const isCasetaOpen = (caseta) => {
   return false;
 };
 
+// Build caseta card markup
+const buildCasetaCard = (caseta) => {
+  const open = isCasetaOpen(caseta);
+  const statusClass = open ? 'is-open' : 'is-closed';
+  const statusLabel = open ? 'Abierta' : 'Cerrado';
+  const image = caseta.image
+    ? `<img src="${caseta.image.replace('/uploads/', '/FeriaApp/uploads/')}" alt="${caseta.name}" class="caseta-card-image" />`
+    : '<div class="caseta-no-image"></div>';
+  return `
+    <article class="caseta-card" onclick="openCasetaDetail('${caseta._id}')">
+      ${image}
+      <div class="caseta-card-head">
+        <h3>${caseta.name}</h3>
+        <span class="caseta-status ${statusClass}">${statusLabel}</span>
+      </div>
+      <a class="caseta-card-link" href="#" onclick="event.preventDefault(); event.stopPropagation(); openCasetaDetail('${caseta._id}')">Ver menú</a>
+    </article>
+  `;
+};
+
 // Render casetas grid
 const renderCasetas = (data) => {
   const container = document.getElementById('casetas-list');
@@ -88,24 +114,7 @@ const renderCasetas = (data) => {
     container.innerHTML = '<p class="no-results">No se han encontrado casetas</p>';
     return;
   }
-  container.innerHTML = data.map((caseta) => {
-    const open = isCasetaOpen(caseta);
-    const statusClass = open ? 'is-open' : 'is-closed';
-    const statusLabel = open ? 'Abierta' : 'Cerrado';
-    const image = caseta.image
-      ? `<img src="${caseta.image.replace('/uploads/', '/FeriaApp/uploads/')}" alt="${caseta.name}" class="caseta-card-image" />`
-      : '<div class="caseta-no-image"></div>';
-    return `
-      <article class="caseta-card" onclick="openCasetaModal('${caseta._id}')">
-        ${image}
-        <div class="caseta-card-head">
-          <h3>${caseta.name}</h3>
-          <span class="caseta-status ${statusClass}">${statusLabel}</span>
-        </div>
-        <a class="caseta-card-link" href="#" onclick="event.preventDefault(); event.stopPropagation(); openCasetaModal('${caseta._id}')">Ver menú</a>
-      </article>
-    `;
-  }).join('');
+  container.innerHTML = data.map(buildCasetaCard).join('');
 };
 
 // Render menus grouped by caseta
@@ -159,56 +168,117 @@ const renderSchedule = (data) => {
   `).join('');
 };
 
-// Open caseta modal
-const openCasetaModal = (id) => {
+// ===== Caseta detail page =====
+const openCasetaDetail = (id) => {
   const caseta = casetas.find((c) => c._id === id);
   if (!caseta) return;
+  currentDetailId = id;
 
-  const casetaMenus = menus.filter((m) => m.caseta?._id === id || m.caseta === id);
-  const casetaConcerts = concerts.filter((c) => c.caseta?._id === id || c.caseta === id);
+  const mediaEl = document.getElementById('detail-media');
+  mediaEl.innerHTML = caseta.image
+    ? `<img src="${caseta.image.replace('/uploads/', '/FeriaApp/uploads/')}" alt="${caseta.name}" />`
+    : '<span>Imagen no disponible</span>';
 
-  document.getElementById('modal-body').innerHTML = `
-    ${caseta.image
-      ? `<img src="${caseta.image.replace('/uploads/', '/FeriaApp/uploads/')}" alt="${caseta.name}" style="width:100%;border-radius:12px;margin-bottom:1rem;max-height:220px;object-fit:cover;" />`
-      : ''
-    }
-    <h2>${caseta.name}</h2>
-    <p class="caseta-number-detail">Caseta nº ${caseta.number}</p>
-    <p>${caseta.description || ''}</p>
+  document.getElementById('detail-name').textContent = caseta.name;
+  document.getElementById('detail-description').innerHTML = caseta.description
+    ? `<strong>Descripción:</strong> ${caseta.description}`
+    : `<strong>Caseta nº ${caseta.number}</strong>`;
 
-    <h3>Menú</h3>
-    ${casetaMenus.length > 0
-      ? `<ul class="menu-list">
-          ${casetaMenus.map((m) => `
-            <li>
-              <span>${m.name}</span>
-              <span class="price">${m.price}€</span>
-            </li>
-          `).join('')}
-        </ul>`
-      : '<p>Sin menú disponible</p>'
-    }
+  renderDetailMenu(id);
+  renderDetailSchedule(id);
+  renderDetailNearby(caseta);
 
-    <h3>Programación</h3>
-    ${casetaConcerts.length > 0
-      ? `<ul class="concert-list">
-          ${casetaConcerts.map((c) => `
-            <li>
-              <span>${c.time} - ${c.artist}</span>
-              <span class="genre">${c.genre || ''}</span>
-            </li>
-          `).join('')}
-        </ul>`
-      : '<p>Sin conciertos programados</p>'
-    }
-  `;
-
-  document.getElementById('caseta-modal').classList.remove('hidden');
+  showDetailTab('menu');
+  showSection('detail');
+  setTimeout(() => initDetailMap(caseta), 150);
 };
 
-// Close modal
-const closeModal = () => {
-  document.getElementById('caseta-modal').classList.add('hidden');
+const renderDetailMenu = (id) => {
+  const casetaMenus = menus.filter((m) => m.caseta?._id === id || m.caseta === id);
+  const list = document.getElementById('detail-menu-list');
+  if (casetaMenus.length === 0) {
+    list.innerHTML = '<li><span>Sin menú disponible</span><span></span></li>';
+    return;
+  }
+  list.innerHTML = casetaMenus.map((m) => `
+    <li>
+      <span>${m.name}</span>
+      <span class="price">${m.price}€</span>
+    </li>
+  `).join('');
+};
+
+const renderDetailSchedule = (id) => {
+  const casetaConcerts = concerts.filter((c) => c.caseta?._id === id || c.caseta === id);
+  const list = document.getElementById('detail-schedule-list');
+  if (casetaConcerts.length === 0) {
+    list.innerHTML = '<li><span>Sin conciertos programados</span><span></span></li>';
+    return;
+  }
+  list.innerHTML = casetaConcerts.map((c) => `
+    <li>
+      <span>${c.artist}${c.genre ? ` · ${c.genre}` : ''}</span>
+      <span class="time">${c.time}</span>
+    </li>
+  `).join('');
+};
+
+const renderDetailNearby = (caseta) => {
+  const currentNum = Number(caseta.number);
+  const sorted = [...casetas]
+    .filter((c) => c._id !== caseta._id && !Number.isNaN(Number(c.number)))
+    .sort((a, b) => Math.abs(Number(a.number) - currentNum) - Math.abs(Number(b.number) - currentNum));
+  const nearby = sorted.slice(0, 3);
+  const container = document.getElementById('detail-nearby-list');
+  if (nearby.length === 0) {
+    container.innerHTML = '<p class="no-results">No hay más casetas</p>';
+    return;
+  }
+  container.innerHTML = nearby.map(buildCasetaCard).join('');
+};
+
+const showDetailTab = (tab) => {
+  document.querySelectorAll('.detail-tab').forEach((btn) => {
+    const active = btn.dataset.tab === tab;
+    btn.classList.toggle('is-active', active);
+    btn.setAttribute('aria-selected', active ? 'true' : 'false');
+  });
+  document.getElementById('detail-tab-menu').classList.toggle('hidden', tab !== 'menu');
+  document.getElementById('detail-tab-schedule').classList.toggle('hidden', tab !== 'schedule');
+};
+
+const initDetailMap = (caseta) => {
+  const mapEl = document.getElementById('detail-map');
+  if (!mapEl) return;
+
+  const bounds = [[0, 0], [1052, 1514]];
+
+  if (!detailMap) {
+    detailMap = L.map(mapEl, {
+      crs: L.CRS.Simple,
+      minZoom: -2,
+      maxZoom: 3,
+      maxBounds: bounds,
+      maxBoundsViscosity: 1.0,
+      zoomControl: true,
+      attributionControl: false,
+    });
+    L.imageOverlay('/FeriaApp/plano_feria.png', bounds).addTo(detailMap);
+  }
+
+  detailMap.invalidateSize();
+
+  if (detailMarker) {
+    detailMap.removeLayer(detailMarker);
+    detailMarker = null;
+  }
+
+  if (caseta.location?.x != null && caseta.location?.y != null) {
+    detailMarker = L.marker([caseta.location.x, caseta.location.y]).addTo(detailMap);
+    detailMap.setView([caseta.location.x, caseta.location.y], 1);
+  } else {
+    detailMap.fitBounds(bounds);
+  }
 };
 
 // PWA Install
