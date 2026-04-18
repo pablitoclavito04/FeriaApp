@@ -101,7 +101,15 @@ const buildCasetaCard = (caseta) => {
         <h3>${caseta.name}</h3>
         <span class="caseta-status ${statusClass}">${statusLabel}</span>
       </div>
-      <a class="caseta-card-link" href="#" onclick="event.preventDefault(); event.stopPropagation(); openCasetaDetail('${caseta._id}')">Ver menú</a>
+      <button class="caseta-card-btn" type="button" onclick="event.stopPropagation(); openCasetaDetail('${caseta._id}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"/>
+          <circle cx="12" cy="12" r="2.5"/>
+          <line x1="3" y1="12" x2="9.5" y2="12"/>
+          <line x1="14.5" y1="12" x2="21" y2="12"/>
+        </svg>
+        <span>Más información</span>
+      </button>
     </article>
   `;
 };

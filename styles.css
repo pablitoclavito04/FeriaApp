@@ -66,6 +66,7 @@ html {
 [data-theme="dark"] .app { background: var(--cream-soft); color: var(--text); }
 [data-theme="dark"] .app-header,
 [data-theme="dark"] .landing-header { background: var(--header-bg); }
+[data-theme="dark"] .detail-tabs { border-bottom-color: #475569; }
 [data-theme="dark"] .app-nav-btn { color: #ffffff; }
 [data-theme="dark"] .app-nav-btn::after { background: #3a4360; }
 [data-theme="dark"] .app-nav-btn.is-active::after { background: #ffffff; }
@@ -854,19 +855,18 @@ body {
 .app-search input {
   width: 100%;
   padding: 0.95rem 1.25rem 0.95rem 3rem;
-  border: 1px solid var(--border);
-  background: #fff;
-  border-radius: 999px;
+  border: 2px solid #BCC1F1;
+  background: #E2E8F0;
+  border-radius: 16px;
   font-family: inherit;
   font-size: 1rem;
-  color: var(--text);
+  color: #1e293b;
   outline: none;
   transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
 }
-.app-search input::placeholder { color: var(--muted); }
+.app-search input::placeholder { color: #64748b; }
 .app-search input:focus {
   border-color: #5a8dc7;
-  background: #fff;
   box-shadow: 0 0 0 4px rgba(90, 141, 199, 0.15);
 }
 .app-search-icon {
@@ -952,15 +952,31 @@ body {
 }
 .caseta-status.is-open { color: #3a8f5a; }
 .caseta-status.is-closed { color: #b04a4a; }
-.caseta-card-link {
-  color: var(--dark);
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+.caseta-card-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
   margin-top: auto;
-  padding-top: 0.5rem;
+  align-self: flex-start;
+  background: #FCD34D;
+  color: #1e293b;
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 0.6rem 1.1rem;
+  cursor: pointer;
+  transition: background-color .2s ease, transform .15s ease, box-shadow .2s ease;
 }
+.caseta-card-btn:hover {
+  background: #F5B949;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(252, 211, 77, 0.35);
+}
+.caseta-card-btn:active { transform: translateY(0); }
+.caseta-card-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
 
 /* Menus grid */
 .menus-grid {
@@ -1185,6 +1201,7 @@ body {
   transition: border-color .2s ease;
   align-self: flex-start;
 }
+.app-footer-links--bold a { font-weight: 700; }
 .app-footer-links a:hover { border-bottom-color: var(--dark); }
 .app-footer-social {
   display: flex;
@@ -1403,8 +1420,9 @@ body {
 .detail-panel { min-width: 0; }
 .detail-tabs {
   display: flex;
-  gap: 1.75rem;
-  border-bottom: 1px solid var(--border);
+  justify-content: center;
+  gap: 2.5rem;
+  border-bottom: 2px solid #cbd5e1;
   margin-bottom: 1rem;
 }
 .detail-tab {
@@ -1427,7 +1445,7 @@ body {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -1px;
+  bottom: -2px;
   height: 2px;
   background: var(--dark);
 }
