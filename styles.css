@@ -87,6 +87,7 @@ html {
 [data-theme="dark"] .btn-primary { background: #459AC0; color: #fff; }
 [data-theme="dark"] .btn-primary:hover { background: #63B5DC; color: #0f1320; }
 [data-theme="dark"] .btn-dark { background: #f3efe9; color: #0f1320; }
+[data-theme="dark"] .btn-dark:hover { background: #e4ddd3; color: #0f1320; }
 
 [data-theme="dark"] .landing-footer,
 [data-theme="dark"] .app-footer { background: var(--surface); border-top-color: var(--border); }
@@ -1180,6 +1181,7 @@ body {
   min-width: 80px;
   text-align: center;
 }
+[data-theme="dark"] .concert-time { background: #f3efe9; color: #0f1320; }
 .concert-info {
   flex: 1;
   min-width: 0;
@@ -1602,7 +1604,6 @@ body {
   flex-direction: column;
   gap: 0.55rem;
 }
-.detail-menu-list li,
 .detail-schedule-list li {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -1611,12 +1612,35 @@ body {
   font-size: 0.95rem;
   color: var(--text);
 }
-.detail-menu-list li .dots {
-  border-bottom: 2px dotted var(--muted);
-  transform: translateY(-4px);
+.detail-menu-list {
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--border);
+}
+.detail-menu-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.93rem;
+  color: var(--text);
+  padding-bottom: 0.4rem;
+  border-bottom: 1px dashed var(--border);
+}
+.detail-menu-list li::before {
+  content: '';
+  flex: 1;
+  order: 2;
+  border-bottom: 1px dotted var(--muted);
+  transform: translateY(-0.25em);
+  opacity: 0.55;
+}
+.detail-menu-list li > span:first-child { order: 1; }
+.detail-menu-list li > span:last-child { order: 3; }
+.detail-menu-list li:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 .detail-menu-list li .price {
-  color: var(--primary);
+  color: #5a8dc7;
   font-weight: 700;
 }
 .detail-schedule-list li .time {
@@ -1692,17 +1716,19 @@ body {
 [data-theme="dark"] .schedule-caseta-filter { background: #2F4467; color: #fff; border-color: #f3efe9; }
 .detail-download {
   width: 100%;
-  margin-top: 0.5rem;
-  opacity: 0.85;
-  cursor: not-allowed;
+  margin-top: 1.75rem;
 }
-.detail-download:disabled { pointer-events: none; }
 
 .detail-map-wrap {
   min-width: 0;
   isolation: isolate;
   position: relative;
   z-index: 0;
+}
+.detail-map-title {
+  font-size: 1.05rem;
+  color: var(--dark);
+  margin: 0 0 0.85rem;
 }
 .detail-map {
   width: 100%;
