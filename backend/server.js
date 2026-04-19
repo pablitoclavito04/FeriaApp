@@ -3,6 +3,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const mongoose = require('mongoose');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./src/config/swagger');
 const connectDB = require('./src/config/db');
@@ -17,6 +18,15 @@ const path = require('path');
 dotenv.config();
 
 connectDB();
+
+// Remove legacy Spanish collection if it exists
+mongoose.connection.once('open', async () => {
+  const collections = await mongoose.connection.db.listCollections({ name: 'conciertos' }).toArray();
+  if (collections.length > 0) {
+    await mongoose.connection.db.dropCollection('conciertos');
+    console.log('Removed legacy collection: conciertos');
+  }
+});
 
 const app = express();
 
