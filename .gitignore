@@ -41,3 +41,4 @@ docs/insomnia/*.json
 docs/insomnia/*.yaml
 
 frontend/node_modules/
+backend/node_modules/
