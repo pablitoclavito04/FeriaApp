@@ -106,8 +106,18 @@ const showSection = (section, options = {}) => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-// Always start at the landing/welcome page on load. App state is only
-// persisted so that section selection survives within the current app session.
+const restoreAppState = () => {
+  const state = getPersistedAppState();
+  if (state && state.inApp) {
+    showApp(state.section || 'casetas');
+  }
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', restoreAppState);
+} else {
+  restoreAppState();
+}
 
 const getActiveSectionId = () => {
   const active = document.querySelector('.app-nav-btn.is-active');
@@ -339,10 +349,9 @@ const renderScheduleDays = () => {
         <rect x="3" y="4" width="18" height="17" rx="2"/>
         <path d="M16 2v4M8 2v4M3 10h18"/>
       </svg>
-      <input type="date" class="schedule-day-date-input"
+      <input type="date" class="schedule-day-date-input" aria-hidden="true" tabindex="-1"
         min="${allKeys[0]}" max="${allKeys[allKeys.length - 1]}"
         value="${calendarActive ? selectedScheduleDay : ''}"
-        onclick="event.stopPropagation()"
         onchange="selectScheduleDay(this.value)" />
     </button>
   ` : '';
