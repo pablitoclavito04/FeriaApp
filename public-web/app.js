@@ -18,36 +18,41 @@ let scheduleCasetaFilter = null;
 const BASE_URL = '/FeriaApp/data';
 
 // Load all data from JSON files
-const loadData = async () => {
-  try {
-    const [fairsRes, casetasRes, menusRes, concertsRes] = await Promise.all([
-      fetch(`${BASE_URL}/fairs.json`),
-      fetch(`${BASE_URL}/casetas.json`),
-      fetch(`${BASE_URL}/menus.json`),
-      fetch(`${BASE_URL}/concerts.json`),
-    ]);
+let loadDataPromise = null;
+const loadData = () => {
+  if (loadDataPromise) return loadDataPromise;
+  loadDataPromise = (async () => {
+    try {
+      const [fairsRes, casetasRes, menusRes, concertsRes] = await Promise.all([
+        fetch(`${BASE_URL}/fairs.json`),
+        fetch(`${BASE_URL}/casetas.json`),
+        fetch(`${BASE_URL}/menus.json`),
+        fetch(`${BASE_URL}/concerts.json`),
+      ]);
 
-    fairs = await fairsRes.json();
-    casetas = await casetasRes.json();
-    menus = await menusRes.json();
-    concerts = await concertsRes.json();
+      fairs = await fairsRes.json();
+      casetas = await casetasRes.json();
+      menus = await menusRes.json();
+      concerts = await concertsRes.json();
 
-    initFuse();
-    renderCasetas(casetas);
-    renderMenus(casetas);
-    renderScheduleDays();
-    renderSchedule();
-  } catch (error) {
-    console.error('Error loading data:', error);
-  }
+      initFuse();
+      renderCasetas(casetas);
+      renderMenus(casetas);
+      renderScheduleDays();
+      renderSchedule();
+    } catch (error) {
+      console.error('Error loading data:', error);
+    }
+  })();
+  return loadDataPromise;
 };
 
 const APP_STATE_KEY = 'feriaapp:last-state';
 const PERSISTED_SECTIONS = ['casetas', 'menus', 'schedule'];
 
-const persistAppState = (section) => {
+const persistAppState = (section, extra = {}) => {
   try {
-    sessionStorage.setItem(APP_STATE_KEY, JSON.stringify({ inApp: true, section }));
+    sessionStorage.setItem(APP_STATE_KEY, JSON.stringify({ inApp: true, section, ...extra }));
   } catch (_) {}
 };
 
@@ -63,15 +68,28 @@ const getPersistedAppState = () => {
   } catch (_) { return null; }
 };
 
+// History helpers: push a state entry unless we're responding to popstate
+let suppressHistoryPush = false;
+const pushHistory = (state) => {
+  if (suppressHistoryPush) return;
+  history.pushState(state, '');
+};
+
 // Show main app
-const showApp = (initialSection = 'casetas') => {
+const showApp = (initialSection = 'casetas', options = {}) => {
   document.getElementById('landing').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
   window.scrollTo(0, 0);
-  const section = PERSISTED_SECTIONS.includes(initialSection) ? initialSection : 'casetas';
-  if (section !== 'casetas') showSection(section);
+  const wantsDetail = initialSection === 'detail' && options.detailId;
+  const section = wantsDetail
+    ? 'casetas'
+    : (PERSISTED_SECTIONS.includes(initialSection) ? initialSection : 'casetas');
+  if (!wantsDetail && section !== 'casetas') showSection(section);
   persistAppState(section);
-  loadData();
+  pushHistory({ view: 'app', section });
+  loadData().then(() => {
+    if (wantsDetail) openCasetaDetail(options.detailId);
+  });
 };
 
 // Back to landing / welcome page
@@ -79,6 +97,7 @@ const showLanding = () => {
   document.getElementById('app').classList.add('hidden');
   document.getElementById('landing').classList.remove('hidden');
   clearAppState();
+  pushHistory({ view: 'landing' });
   window.scrollTo(0, 0);
 };
 
@@ -102,16 +121,45 @@ const showSection = (section, options = {}) => {
   }
 
   if (PERSISTED_SECTIONS.includes(section)) persistAppState(section);
+  if (section !== 'detail') pushHistory({ view: 'app', section });
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 const restoreAppState = () => {
+  history.replaceState({ view: 'landing' }, '');
   const state = getPersistedAppState();
   if (state && state.inApp) {
-    showApp(state.section || 'casetas');
+    if (state.section === 'detail' && state.detailId) {
+      showApp('detail', { detailId: state.detailId });
+    } else {
+      showApp(state.section || 'casetas');
+    }
   }
 };
+
+window.addEventListener('popstate', (event) => {
+  const target = event.state || { view: 'landing' };
+  suppressHistoryPush = true;
+  try {
+    if (target.view === 'landing') {
+      showLanding();
+    } else if (target.section === 'detail' && target.detailId) {
+      const caseta = casetas.find((c) => c._id === target.detailId);
+      if (caseta) {
+        openCasetaDetail(target.detailId);
+      } else {
+        showApp('detail', { detailId: target.detailId });
+      }
+    } else {
+      document.getElementById('landing').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+      showSection(target.section || 'casetas');
+    }
+  } finally {
+    suppressHistoryPush = false;
+  }
+});
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', restoreAppState);
@@ -387,7 +435,12 @@ const renderSchedule = () => {
   const filtered = concerts
     .filter((c) => !scheduleCasetaFilter || (c.caseta?._id || c.caseta) === scheduleCasetaFilter)
     .filter((c) => selectedScheduleDay === 'all' || concertDayKey(c) === selectedScheduleDay)
-    .filter((c) => !query || c.artist.toLowerCase().includes(query))
+    .filter((c) => {
+      if (!query) return true;
+      const artist = (c.artist || '').toLowerCase();
+      const casetaName = (c.caseta?.name || '').toLowerCase();
+      return artist.includes(query) || casetaName.includes(query);
+    })
     .sort((a, b) => {
       const keyDiff = concertDayKey(a).localeCompare(concertDayKey(b));
       if (keyDiff !== 0) return keyDiff;
@@ -478,6 +531,8 @@ const openCasetaDetail = (id) => {
 
   showDetailTab('menu');
   showSection('detail');
+  persistAppState('detail', { detailId: id });
+  pushHistory({ view: 'app', section: 'detail', detailId: id });
   setTimeout(() => initDetailMap(caseta), 150);
 };
 
@@ -546,10 +601,14 @@ const renderDetailSchedule = (id) => {
 
 const renderDetailNearby = (caseta) => {
   const currentNum = Number(caseta.number);
-  const sorted = [...casetas]
+  const ordered = [...casetas]
     .filter((c) => c._id !== caseta._id && !Number.isNaN(Number(c.number)))
-    .sort((a, b) => Math.abs(Number(a.number) - currentNum) - Math.abs(Number(b.number) - currentNum));
-  const nearby = sorted.slice(0, 3);
+    .sort((a, b) => Number(a.number) - Number(b.number));
+
+  const idx = ordered.findIndex((c) => Number(c.number) > currentNum);
+  const rotated = idx === -1 ? ordered : ordered.slice(idx).concat(ordered.slice(0, idx));
+  const nearby = rotated.slice(0, 3);
+
   const container = document.getElementById('detail-nearby-list');
   if (nearby.length === 0) {
     container.innerHTML = '<p class="no-results">No hay más casetas</p>';
