@@ -3,12 +3,12 @@
     "_id": "69dd5d6bfd1547d3d8062512",
     "name": "Feria de Jerez 2026",
     "description": "La Feria del caballo de Jerez de la Frontera",
-    "startDate": "2026-05-06T00:00:00.000Z",
-    "endDate": "2026-05-11T00:00:00.000Z",
+    "startDate": "2026-05-09T00:00:00.000Z",
+    "endDate": "2026-05-16T00:00:00.000Z",
     "location": "Real de la Feria, Jerez de la Frontera",
     "active": true,
     "createdAt": "2026-04-13T21:17:31.983Z",
-    "updatedAt": "2026-04-13T21:17:31.983Z",
+    "updatedAt": "2026-04-19T00:20:55.272Z",
     "__v": 0
   }
 ]
