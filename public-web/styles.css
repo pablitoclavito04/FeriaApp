@@ -119,6 +119,9 @@ body {
   display: none !important;
 }
 
+html[data-boot="app"] #landing { display: none !important; }
+html[data-boot="app"] #app { display: block !important; }
+
 /* ===== Landing ===== */
 .landing {
   background: #fff;
@@ -1212,29 +1215,31 @@ body {
   padding: 0.25rem 0 1rem;
   margin-bottom: 0.5rem;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
+  scrollbar-width: auto;
+  scrollbar-color: #94a3b8 #e5e7eb;
   scrollbar-gutter: stable;
 }
 .schedule-days::-webkit-scrollbar {
-  height: 8px;
+  height: 10px;
   -webkit-appearance: none;
   appearance: none;
+  display: block;
 }
 .schedule-days::-webkit-scrollbar-track {
-  background: transparent;
+  background: #e5e7eb;
+  border-radius: 5px;
 }
 .schedule-days::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-  border: 1px solid transparent;
+  background: #94a3b8;
+  border-radius: 5px;
 }
 .schedule-days::-webkit-scrollbar-thumb:hover {
   background: var(--muted);
 }
-[data-theme="dark"] .schedule-days { scrollbar-color: #3a4360 transparent; }
-[data-theme="dark"] .schedule-days::-webkit-scrollbar-thumb { background: #3a4360; }
-[data-theme="dark"] .schedule-days::-webkit-scrollbar-thumb:hover { background: #4a5470; }
+[data-theme="dark"] .schedule-days { scrollbar-color: #4a5470 #1f2433; }
+[data-theme="dark"] .schedule-days::-webkit-scrollbar-track { background: #1f2433; }
+[data-theme="dark"] .schedule-days::-webkit-scrollbar-thumb { background: #4a5470; }
+[data-theme="dark"] .schedule-days::-webkit-scrollbar-thumb:hover { background: #5a6480; }
 .schedule-day {
   flex: 0 0 auto;
   min-width: 78px;
@@ -1886,38 +1891,40 @@ body {
   .detail-nearby-head h3 { font-size: 1rem; }
   .detail-nearby-link { font-size: 0.78rem; }
   .detail-nearby #detail-nearby-list {
-    display: flex;
-    grid-template-columns: none;
-    gap: 0.85rem;
+    display: flex !important;
+    grid-template-columns: none !important;
+    gap: 1rem;
     overflow-x: scroll;
     padding-bottom: 0.75rem;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: #cbd5e1 transparent;
+    scrollbar-width: auto;
+    scrollbar-color: #94a3b8 #e5e7eb;
     scrollbar-gutter: stable;
   }
   .detail-nearby #detail-nearby-list::-webkit-scrollbar {
-    height: 8px;
+    height: 10px;
     -webkit-appearance: none;
     appearance: none;
+    display: block;
   }
-  .detail-nearby #detail-nearby-list::-webkit-scrollbar-track { background: transparent; }
+  .detail-nearby #detail-nearby-list::-webkit-scrollbar-track {
+    background: #e5e7eb;
+    border-radius: 5px;
+  }
   .detail-nearby #detail-nearby-list::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 4px;
+    background: #94a3b8;
+    border-radius: 5px;
   }
   .detail-nearby #detail-nearby-list::-webkit-scrollbar-thumb:hover { background: var(--muted); }
-  [data-theme="dark"] .detail-nearby #detail-nearby-list::-webkit-scrollbar-thumb { background: #3a4360; }
-  .detail-nearby #detail-nearby-list .caseta-card {
-    flex: 0 0 72%;
-    max-width: 280px;
-    scroll-snap-align: start;
-    padding: 0.65rem;
+  [data-theme="dark"] .detail-nearby #detail-nearby-list {
+    scrollbar-color: #4a5470 #1f2433;
   }
-  .detail-nearby #detail-nearby-list .caseta-card h3 { font-size: 0.9rem; }
-  .detail-nearby #detail-nearby-list .caseta-card .caseta-status { font-size: 0.75rem; }
-  .detail-nearby #detail-nearby-list .caseta-card-image,
-  .detail-nearby #detail-nearby-list .caseta-no-image { height: 130px; }
-  .detail-nearby #detail-nearby-list .caseta-card .btn { font-size: 0.85rem; padding: 0.55rem 0.9rem; }
+  [data-theme="dark"] .detail-nearby #detail-nearby-list::-webkit-scrollbar-track { background: #1f2433; }
+  [data-theme="dark"] .detail-nearby #detail-nearby-list::-webkit-scrollbar-thumb { background: #4a5470; }
+  .detail-nearby #detail-nearby-list .caseta-card {
+    flex: 0 0 88%;
+    max-width: 360px;
+    scroll-snap-align: start;
+  }
 }
