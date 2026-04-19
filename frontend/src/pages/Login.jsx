@@ -22,7 +22,7 @@ const Login = () => {
 
     try {
       const data = await login(email, password);
-      showToast(`¡Bienvenido, ${data.name}!`, 'success');
+      showToast(`Welcome, ${data.name}!`, 'success');
       navigate('/dashboard');
     } catch {
       setError('Invalid email or password');

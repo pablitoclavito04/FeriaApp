@@ -37,7 +37,7 @@ const Sidebar = () => {
 
   const handleConfirmLogout = () => {
     setShowLogoutModal(false);
-    showToast('Has cerrado sesion correctamente', 'info');
+    showToast('You have logged out successfully', 'info');
     logout();
   };
 
