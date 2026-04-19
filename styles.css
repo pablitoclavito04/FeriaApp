@@ -1288,7 +1288,17 @@ html[data-boot="app"] #app { display: block !important; }
   align-items: center;
   gap: 1.25rem;
 }
-.concert-card:hover { border-color: #5a8dc7; transform: translateY(-1px); }
+.concert-card:hover {
+  border-color: #2c5f9e;
+  background: #ffe9c2;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(44, 95, 158, 0.18);
+}
+[data-theme="dark"] .concert-card:hover {
+  border-color: #f6be39;
+  background: #2a3142;
+  box-shadow: 0 6px 16px rgba(246, 190, 57, 0.25);
+}
 .concert-time {
   background: var(--dark);
   color: #fff;
