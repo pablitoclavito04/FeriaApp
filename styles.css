@@ -1255,6 +1255,7 @@ html[data-boot="app"] #app { display: block !important; }
   align-items: center;
   justify-content: center;
   gap: 0.15rem;
+  font: inherit;
   transition: background-color .2s ease, color .2s ease, transform .15s ease;
 }
 .schedule-day:hover { background: #FFDFA0; color: #000; transform: translateY(-1px); }
