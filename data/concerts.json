@@ -58,5 +58,125 @@
     "createdAt": "2026-04-18T18:05:18.964Z",
     "updatedAt": "2026-04-18T18:05:18.964Z",
     "__v": 0
+  },
+  {
+    "_id": "69e4203f63a9a122fd4187da",
+    "artist": "Cantaores de Jerez",
+    "genre": "Flamenco",
+    "date": "2026-05-11T00:00:00.000Z",
+    "time": "23:00",
+    "caseta": {
+      "_id": "69e3bca1c3f5bd820912593e",
+      "name": "Los cabales",
+      "number": 3
+    },
+    "createdAt": "2026-04-19T00:22:23.775Z",
+    "updatedAt": "2026-04-19T00:22:23.775Z",
+    "__v": 0
+  },
+  {
+    "_id": "69e4206163a9a122fd4187db",
+    "artist": "Orquesta Feria del Caballo",
+    "genre": "Sevillanas",
+    "date": "2026-05-14T00:00:00.000Z",
+    "time": "23:30",
+    "caseta": {
+      "_id": "69e3bca1c3f5bd820912593e",
+      "name": "Los cabales",
+      "number": 3
+    },
+    "createdAt": "2026-04-19T00:22:57.031Z",
+    "updatedAt": "2026-04-19T00:22:57.031Z",
+    "__v": 0
+  },
+  {
+    "_id": "69e4209c63a9a122fd4187dc",
+    "artist": "Zambomba Flamenca",
+    "genre": "Flamenco",
+    "date": "2026-05-10T00:00:00.000Z",
+    "time": "21:00",
+    "caseta": {
+      "_id": "69e3bd02c3f5bd820912593f",
+      "name": "La crujía",
+      "number": 4
+    },
+    "createdAt": "2026-04-19T00:23:56.081Z",
+    "updatedAt": "2026-04-19T00:23:56.081Z",
+    "__v": 0
+  },
+  {
+    "_id": "69e420bb63a9a122fd4187dd",
+    "artist": "Los Romeros de la Puebla",
+    "genre": "Sevillanas",
+    "date": "2026-04-15T00:00:00.000Z",
+    "time": "22:00",
+    "caseta": {
+      "_id": "69e3bd02c3f5bd820912593f",
+      "name": "La crujía",
+      "number": 4
+    },
+    "createdAt": "2026-04-19T00:24:27.289Z",
+    "updatedAt": "2026-04-19T00:24:27.289Z",
+    "__v": 0
+  },
+  {
+    "_id": "69e4210263a9a122fd4187de",
+    "artist": "Baile Flamenco Gala",
+    "genre": "Flamenco",
+    "date": "2026-04-13T00:00:00.000Z",
+    "time": "21:30",
+    "caseta": {
+      "_id": "69e3bd02c3f5bd820912593f",
+      "name": "La crujía",
+      "number": 4
+    },
+    "createdAt": "2026-04-19T00:25:38.376Z",
+    "updatedAt": "2026-04-19T00:25:38.376Z",
+    "__v": 0
+  },
+  {
+    "_id": "69e4212763a9a122fd4187df",
+    "artist": "La Tana",
+    "genre": "Flamenco",
+    "date": "2026-05-11T00:00:00.000Z",
+    "time": "22:00",
+    "caseta": {
+      "_id": "69e3bddac3f5bd8209125940",
+      "name": "Amigos del patio",
+      "number": 5
+    },
+    "createdAt": "2026-04-19T00:26:15.932Z",
+    "updatedAt": "2026-04-19T00:26:15.932Z",
+    "__v": 0
+  },
+  {
+    "_id": "69e4215563a9a122fd4187e0",
+    "artist": "Grupo de Sevillanas Jerezanas",
+    "genre": "Sevillanas",
+    "date": "2026-05-14T00:00:00.000Z",
+    "time": "23:00",
+    "caseta": {
+      "_id": "69e3be7bc3f5bd8209125941",
+      "name": "La catorce",
+      "number": 6
+    },
+    "createdAt": "2026-04-19T00:27:01.816Z",
+    "updatedAt": "2026-04-19T00:27:01.816Z",
+    "__v": 0
+  },
+  {
+    "_id": "69e4218e63a9a122fd4187e1",
+    "artist": "Orquesta Maravella",
+    "genre": "Sevillanas",
+    "date": "2026-05-15T00:00:00.000Z",
+    "time": "23:00",
+    "caseta": {
+      "_id": "69e3be7bc3f5bd8209125941",
+      "name": "La catorce",
+      "number": 6
+    },
+    "createdAt": "2026-04-19T00:27:58.774Z",
+    "updatedAt": "2026-04-19T00:27:58.774Z",
+    "__v": 0
   }
 ]
