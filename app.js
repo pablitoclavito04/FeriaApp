@@ -308,8 +308,9 @@ const renderMenus = (casetasData) => {
       ? `<img src="${caseta.image.replace('/uploads/', '/FeriaApp/uploads/')}" alt="${caseta.name}" class="menu-caseta-image" />`
       : '<div class="menu-caseta-no-image"></div>';
 
-    const itemsHtml = items.length > 0
-      ? items.map((m) => `<li><span>${m.name}</span><span class="price">${m.price}€</span></li>`).join('')
+    const suggestions = items.slice(0, 3);
+    const itemsHtml = suggestions.length > 0
+      ? suggestions.map((m) => `<li><span>${m.name}</span><span class="price">${m.price}€</span></li>`).join('')
       : '<li><span>Sin sugerencias disponible</span><span></span></li>';
 
     return `
@@ -318,7 +319,7 @@ const renderMenus = (casetasData) => {
         ${image}
         <h4 class="menu-caseta-subtitle">Sugerencias del chef</h4>
         <ul class="menu-items">${itemsHtml}</ul>
-        <button class="btn btn-primary menu-caseta-pdf" type="button">Descargar menú completo (PDF)</button>
+        <button class="btn btn-primary menu-caseta-pdf" type="button" onclick="downloadMenuPDF('${caseta._id}')">Descargar menú completo (PDF)</button>
       </article>
     `;
   }).join('');
@@ -536,6 +537,46 @@ const openCasetaDetail = (id) => {
   setTimeout(() => initDetailMap(caseta), 150);
 };
 
+const downloadMenuPDF = (id) => {
+  if (!id) return;
+  const caseta = casetas.find((c) => c._id === id);
+  if (!caseta) return;
+  const casetaMenus = menus.filter((m) => m.caseta?._id === id || m.caseta === id);
+
+  const { jsPDF } = window.jspdf || {};
+  if (!jsPDF) return;
+  const doc = new jsPDF();
+
+  doc.setFontSize(20);
+  doc.text(`Menú - ${caseta.name}`, 20, 20);
+
+  doc.setFontSize(12);
+  doc.text(`Caseta nº ${caseta.number}`, 20, 30);
+
+  doc.setLineWidth(0.5);
+  doc.line(20, 35, 190, 35);
+
+  let y = 45;
+  doc.setFontSize(11);
+
+  casetaMenus.forEach((m) => {
+    doc.text(m.name, 20, y);
+    doc.text(`${m.price}€`, 170, y, { align: 'right' });
+    if (m.description) {
+      y += 6;
+      doc.setFontSize(9);
+      doc.setTextColor(120);
+      doc.text(m.description, 25, y);
+      doc.setFontSize(11);
+      doc.setTextColor(0);
+    }
+    y += 10;
+  });
+
+  const safeName = caseta.name.toLowerCase().replace(/\s+/g, '-');
+  doc.save(`menu-${safeName}.pdf`);
+};
+
 const renderDetailMenu = (id) => {
   const casetaMenus = menus.filter((m) => m.caseta?._id === id || m.caseta === id);
   const list = document.getElementById('detail-menu-list');
@@ -543,7 +584,8 @@ const renderDetailMenu = (id) => {
     list.innerHTML = '<li><span>Sin menú disponible</span><span></span></li>';
     return;
   }
-  list.innerHTML = casetaMenus.map((m) => `
+  const suggestions = casetaMenus.slice(0, 3);
+  list.innerHTML = suggestions.map((m) => `
     <li>
       <span>${m.name}</span>
       <span class="price">${m.price}€</span>

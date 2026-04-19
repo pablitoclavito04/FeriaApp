@@ -335,7 +335,7 @@
             <div class="detail-tab-card">
               <h3 id="detail-menu-title">Sugerencias del chef</h3>
               <ul class="detail-menu-list" id="detail-menu-list"></ul>
-              <button class="btn btn-primary detail-download" type="button">Descargar menú completo (PDF)</button>
+              <button class="btn btn-primary detail-download" type="button" onclick="downloadMenuPDF(currentDetailId)">Descargar menú completo (PDF)</button>
             </div>
           </div>
           <div class="detail-tab-content hidden" id="detail-tab-schedule">
@@ -410,6 +410,7 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/fuse.js@7.0.0/dist/fuse.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="app.js"></script>
 
   <script>
