@@ -74,6 +74,14 @@ const showApp = (initialSection = 'casetas') => {
   loadData();
 };
 
+// Back to landing / welcome page
+const showLanding = () => {
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('landing').classList.remove('hidden');
+  clearAppState();
+  window.scrollTo(0, 0);
+};
+
 // Show section
 const showSection = (section, options = {}) => {
   document.querySelectorAll('.app-section').forEach((s) => s.classList.add('hidden'));
@@ -98,18 +106,8 @@ const showSection = (section, options = {}) => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-const restoreAppState = () => {
-  const state = getPersistedAppState();
-  if (state && state.inApp) {
-    showApp(state.section || 'casetas');
-  }
-};
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', restoreAppState);
-} else {
-  restoreAppState();
-}
+// Always start at the landing/welcome page on load. App state is only
+// persisted so that section selection survives within the current app session.
 
 const getActiveSectionId = () => {
   const active = document.querySelector('.app-nav-btn.is-active');
@@ -336,7 +334,7 @@ const renderScheduleDays = () => {
 
   const calendarActive = selectedScheduleDay !== 'all' && !dayKeys.includes(selectedScheduleDay);
   const calendarChip = allKeys.length > 7 ? `
-    <label class="schedule-day schedule-day-calendar ${calendarActive ? 'is-active' : ''}" title="Elegir otro día">
+    <button type="button" class="schedule-day schedule-day-calendar ${calendarActive ? 'is-active' : ''}" title="Elegir otro día" onclick="openScheduleDatePicker(event)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <rect x="3" y="4" width="18" height="17" rx="2"/>
         <path d="M16 2v4M8 2v4M3 10h18"/>
@@ -344,8 +342,9 @@ const renderScheduleDays = () => {
       <input type="date" class="schedule-day-date-input"
         min="${allKeys[0]}" max="${allKeys[allKeys.length - 1]}"
         value="${calendarActive ? selectedScheduleDay : ''}"
+        onclick="event.stopPropagation()"
         onchange="selectScheduleDay(this.value)" />
-    </label>
+    </button>
   ` : '';
 
   container.innerHTML = allChip + dayChips + calendarChip;
@@ -355,6 +354,17 @@ const selectScheduleDay = (key) => {
   selectedScheduleDay = key;
   renderScheduleDays();
   renderSchedule();
+};
+
+const openScheduleDatePicker = (event) => {
+  const btn = event.currentTarget;
+  const input = btn && btn.querySelector('.schedule-day-date-input');
+  if (!input) return;
+  if (typeof input.showPicker === 'function') {
+    try { input.showPicker(); return; } catch (_) {}
+  }
+  input.focus();
+  input.click();
 };
 
 // Render filtered schedule list

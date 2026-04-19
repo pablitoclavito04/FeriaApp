@@ -17,15 +17,7 @@
       var stored = localStorage.getItem('theme');
       var theme = stored === 'dark' || stored === 'light' ? stored : 'light';
       document.documentElement.setAttribute('data-theme', theme);
-      try {
-        var raw = sessionStorage.getItem('feriaapp:last-state');
-        if (raw) {
-          var parsed = JSON.parse(raw);
-          if (parsed && parsed.inApp) {
-            document.documentElement.setAttribute('data-boot', 'app');
-          }
-        }
-      } catch (e) {}
+      try { sessionStorage.removeItem('feriaapp:last-state'); } catch (e) {}
     })();
     function toggleTheme() {
       var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
@@ -189,7 +181,7 @@
 
     <!-- APP HEADER -->
     <header class="app-header">
-      <a href="#" class="app-brand" onclick="event.preventDefault()" aria-label="FeriaApp">
+      <a href="#" class="app-brand" onclick="event.preventDefault(); showLanding()" aria-label="Ir a la página de bienvenida">
         <img src="icons/logo.png" alt="FeriaApp" class="app-brand-logo" />
       </a>
       <nav class="app-nav" aria-label="Secciones">
