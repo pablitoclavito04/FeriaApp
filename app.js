@@ -47,17 +47,17 @@ const PERSISTED_SECTIONS = ['casetas', 'menus', 'schedule'];
 
 const persistAppState = (section) => {
   try {
-    localStorage.setItem(APP_STATE_KEY, JSON.stringify({ inApp: true, section }));
+    sessionStorage.setItem(APP_STATE_KEY, JSON.stringify({ inApp: true, section }));
   } catch (_) {}
 };
 
 const clearAppState = () => {
-  try { localStorage.removeItem(APP_STATE_KEY); } catch (_) {}
+  try { sessionStorage.removeItem(APP_STATE_KEY); } catch (_) {}
 };
 
 const getPersistedAppState = () => {
   try {
-    const raw = localStorage.getItem(APP_STATE_KEY);
+    const raw = sessionStorage.getItem(APP_STATE_KEY);
     if (!raw) return null;
     return JSON.parse(raw);
   } catch (_) { return null; }
