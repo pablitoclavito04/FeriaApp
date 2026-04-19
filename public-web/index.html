@@ -18,7 +18,7 @@
       var theme = stored === 'dark' || stored === 'light' ? stored : 'light';
       document.documentElement.setAttribute('data-theme', theme);
       try {
-        var raw = localStorage.getItem('feriaapp:last-state');
+        var raw = sessionStorage.getItem('feriaapp:last-state');
         if (raw) {
           var parsed = JSON.parse(raw);
           if (parsed && parsed.inApp) {
