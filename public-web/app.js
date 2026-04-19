@@ -706,6 +706,7 @@ const initDetailMap = (caseta) => {
 // PWA Install
 let deferredPrompt;
 const INSTALL_BANNER_DISMISSED_KEY = 'feriaapp:install-banner-dismissed';
+try { localStorage.removeItem(INSTALL_BANNER_DISMISSED_KEY); } catch (_) {}
 
 const showInstallUI = () => {
   const installBtn = document.getElementById('install-btn');
@@ -713,7 +714,7 @@ const showInstallUI = () => {
   const banner = document.getElementById('install-banner');
   if (installBtn) installBtn.style.display = 'inline-flex';
   if (appInstallBtn) appInstallBtn.style.display = 'inline-flex';
-  if (banner && !localStorage.getItem(INSTALL_BANNER_DISMISSED_KEY)) {
+  if (banner && !sessionStorage.getItem(INSTALL_BANNER_DISMISSED_KEY)) {
     banner.hidden = false;
   }
 };
@@ -748,7 +749,7 @@ const installApp = () => {
 const dismissInstallBanner = () => {
   const banner = document.getElementById('install-banner');
   if (banner) banner.hidden = true;
-  localStorage.setItem(INSTALL_BANNER_DISMISSED_KEY, '1');
+  sessionStorage.setItem(INSTALL_BANNER_DISMISSED_KEY, '1');
 };
 
 window.addEventListener('appinstalled', () => {
