@@ -40,5 +40,61 @@
     "createdAt": "2026-04-18T17:54:54.836Z",
     "updatedAt": "2026-04-18T17:54:54.836Z",
     "__v": 0
+  },
+  {
+    "_id": "69e4de1a1aef9a89a22cae01",
+    "name": "Gambas al ajillo",
+    "description": "",
+    "price": 11,
+    "caseta": {
+      "_id": "69dd5da2fd1547d3d8062513",
+      "name": "La casapuerta",
+      "number": 1
+    },
+    "createdAt": "2026-04-19T13:52:26.657Z",
+    "updatedAt": "2026-04-19T13:52:26.657Z",
+    "__v": 0
+  },
+  {
+    "_id": "69e4de2a1aef9a89a22cae02",
+    "name": "Croquetas caseras",
+    "description": "",
+    "price": 7,
+    "caseta": {
+      "_id": "69dd5da2fd1547d3d8062513",
+      "name": "La casapuerta",
+      "number": 1
+    },
+    "createdAt": "2026-04-19T13:52:42.881Z",
+    "updatedAt": "2026-04-19T13:52:42.881Z",
+    "__v": 0
+  },
+  {
+    "_id": "69e4de391aef9a89a22cae03",
+    "name": "Solomillo al whisky",
+    "description": "",
+    "price": 14,
+    "caseta": {
+      "_id": "69dffd8d34fc18bcdc94e6d5",
+      "name": "Tio Jose de Paua",
+      "number": 2
+    },
+    "createdAt": "2026-04-19T13:52:57.870Z",
+    "updatedAt": "2026-04-19T13:52:57.870Z",
+    "__v": 0
+  },
+  {
+    "_id": "69e4de4e1aef9a89a22cae04",
+    "name": "Revuelto de setas",
+    "description": "",
+    "price": 9,
+    "caseta": {
+      "_id": "69dffd8d34fc18bcdc94e6d5",
+      "name": "Tio Jose de Paua",
+      "number": 2
+    },
+    "createdAt": "2026-04-19T13:53:18.926Z",
+    "updatedAt": "2026-04-19T13:53:18.926Z",
+    "__v": 0
   }
 ]
