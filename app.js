@@ -98,12 +98,18 @@ const showSection = (section, options = {}) => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-window.addEventListener('DOMContentLoaded', () => {
+const restoreAppState = () => {
   const state = getPersistedAppState();
   if (state && state.inApp) {
     showApp(state.section || 'casetas');
   }
-});
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', restoreAppState);
+} else {
+  restoreAppState();
+}
 
 const getActiveSectionId = () => {
   const active = document.querySelector('.app-nav-btn.is-active');
