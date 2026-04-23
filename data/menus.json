@@ -96,5 +96,19 @@
     "createdAt": "2026-04-19T13:53:18.926Z",
     "updatedAt": "2026-04-19T13:53:18.926Z",
     "__v": 0
+  },
+  {
+    "_id": "69ea58caaa8475e60765a8a3",
+    "name": "Mejillones",
+    "description": "",
+    "price": 10,
+    "caseta": {
+      "_id": "69dd5da2fd1547d3d8062513",
+      "name": "La casapuerta",
+      "number": 1
+    },
+    "createdAt": "2026-04-23T17:37:14.540Z",
+    "updatedAt": "2026-04-23T17:37:14.540Z",
+    "__v": 0
   }
 ]
