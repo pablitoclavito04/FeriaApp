@@ -1,0 +1,48 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: feriaapp-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongo:27017/feriaApp
+      - JWT_SECRET=feriaApp_secret_key_2026
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - GITHUB_OWNER=${GITHUB_OWNER}
+      - GITHUB_REPO=${GITHUB_REPO}
+    depends_on:
+      - mongo
+    networks:
+      - feriaapp-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: feriaapp-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - feriaapp-network
+
+  mongo:
+    image: mongo:7
+    container_name: feriaapp-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - feriaapp-network
+
+volumes:
+  mongo-data:
+
+networks:
+  feriaapp-network:
+    driver: bridge
