@@ -37,6 +37,35 @@ const createMenu = async (req, res) => {
   }
 };
 
+// @desc    Create multiple menu items at once for the same caseta
+// @route   POST /api/menus/bulk
+// @access  Private
+const createMenusBulk = async (req, res) => {
+  try {
+    const { caseta, items } = req.body;
+
+    if (!caseta) {
+      return res.status(400).json({ error: 'Caseta is required' });
+    }
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: 'At least one menu item is required' });
+    }
+
+    const docs = items.map((item) => ({
+      name: item.name,
+      description: item.description,
+      price: item.price,
+      caseta,
+    }));
+
+    const created = await Menu.insertMany(docs, { ordered: true });
+    res.status(201).json(created);
+  } catch (error) {
+    console.error('Error creating menus in bulk:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // @desc    Update a menu item
 // @route   PUT /api/menus/:id
 // @access  Private
@@ -70,4 +99,4 @@ const deleteMenu = async (req, res) => {
   }
 };
 
-module.exports = { getMenus, getMenusByCaseta, createMenu, updateMenu, deleteMenu };
+module.exports = { getMenus, getMenusByCaseta, createMenu, createMenusBulk, updateMenu, deleteMenu };

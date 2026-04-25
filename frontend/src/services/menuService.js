@@ -15,6 +15,11 @@ const createMenu = async (menuData) => {
   return response.data;
 };
 
+const createMenusBulk = async (caseta, items) => {
+  const response = await api.post('/menus/bulk', { caseta, items });
+  return response.data;
+};
+
 const updateMenu = async (id, menuData) => {
   const response = await api.put(`/menus/${id}`, menuData);
   return response.data;
@@ -25,4 +30,4 @@ const deleteMenu = async (id) => {
   return response.data;
 };
 
-export default { getMenus, getMenusByCaseta, createMenu, updateMenu, deleteMenu };
+export default { getMenus, getMenusByCaseta, createMenu, createMenusBulk, updateMenu, deleteMenu };

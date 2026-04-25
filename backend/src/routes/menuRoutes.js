@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getMenus, getMenusByCaseta, createMenu, updateMenu, deleteMenu } = require('../controllers/menuController');
+const { getMenus, getMenusByCaseta, createMenu, createMenusBulk, updateMenu, deleteMenu } = require('../controllers/menuController');
 const { protect } = require('../middlewares/auth');
 
 /**
@@ -63,6 +63,44 @@ router.get('/caseta/:casetaId', getMenusByCaseta);
  *         description: Not authorized
  */
 router.post('/', protect, createMenu);
+
+/**
+ * @swagger
+ * /api/menus/bulk:
+ *   post:
+ *     summary: Create multiple menu items for the same caseta
+ *     tags: [Menus]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               caseta:
+ *                 type: string
+ *               items:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                     description:
+ *                       type: string
+ *                     price:
+ *                       type: number
+ *     responses:
+ *       201:
+ *         description: Menu items created successfully
+ *       400:
+ *         description: Invalid input
+ *       401:
+ *         description: Not authorized
+ */
+router.post('/bulk', protect, createMenusBulk);
 
 /**
  * @swagger

@@ -717,6 +717,122 @@ body {
 }
 
 // ============================================
+// Bulk menu rows
+// ============================================
+.form-hint {
+  margin: -0.5rem 0 1.25rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.bulk-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.bulk-rows-header {
+  display: grid;
+  grid-template-columns: 2fr 3fr 1fr 36px;
+  gap: 0.6rem;
+  padding: 0 0.2rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.bulk-row {
+  display: grid;
+  grid-template-columns: 2fr 3fr 1fr 36px;
+  gap: 0.6rem;
+  align-items: center;
+
+  input {
+    width: 100%;
+    padding: 0.55rem 0.75rem;
+    border: 1.5px solid var(--border);
+    border-radius: $radius-sm;
+    background: var(--surface);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    transition: border-color $transition;
+
+    &:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+  }
+}
+
+.bulk-row-remove {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-sm;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: all $transition;
+
+  &:hover:not(:disabled) {
+    background: var(--border-light);
+    color: var(--text-primary);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.bulk-row-add {
+  align-self: flex-start;
+  margin-top: 0.4rem;
+  padding: 0.5rem 1rem;
+  border: 1.5px dashed var(--border);
+  border-radius: $radius-sm;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all $transition;
+
+  &:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+}
+
+@media (max-width: 720px) {
+  .bulk-rows-header { display: none; }
+  .bulk-row {
+    grid-template-columns: 1fr 36px;
+    grid-template-areas:
+      "name remove"
+      "desc desc"
+      "price price";
+    gap: 0.4rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border-light);
+
+    input:nth-child(1) { grid-area: name; }
+    input:nth-child(2) { grid-area: desc; }
+    input:nth-child(3) { grid-area: price; }
+    .bulk-row-remove { grid-area: remove; }
+  }
+}
+
+// ============================================
 // Data Table
 // ============================================
 .data-table {
