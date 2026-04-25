@@ -46,9 +46,7 @@ const loadData = () => {
       renderMenus(casetas);
       renderScheduleDays();
       renderSchedule();
-      if (getActiveSectionId() === 'casetas') {
-        setTimeout(initCasetasMap, 150);
-      }
+      setTimeout(initCasetasMap, 150);
     } catch (error) {
       console.error('Error loading data:', error);
     }
