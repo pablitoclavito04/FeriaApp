@@ -1,10 +1,11 @@
-const CACHE_NAME = 'feriaapp-v38';
+const CACHE_NAME = 'feriaapp-v39';
 const urlsToCache = [
   '/FeriaApp/',
   '/FeriaApp/index.html',
   '/FeriaApp/app.js',
   '/FeriaApp/styles.css',
   '/FeriaApp/manifest.json',
+  '/FeriaApp/plano_feria.png',
   '/FeriaApp/data/fairs.json',
   '/FeriaApp/data/casetas.json',
   '/FeriaApp/data/menus.json',
