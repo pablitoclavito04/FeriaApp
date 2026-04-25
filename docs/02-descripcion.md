@@ -1,147 +1,147 @@
-# 02. Descripción.
+# 02. Description.
 
-## Descripción general:
+## General overview.
 
-FeriaApp es una plataforma web con arquitectura híbrida compuesta por dos partes diferenciadas: un panel de administración desarrollado con el stack MERN, y una web pública estática generada automáticamente y publicada en GitHub Pages. Esta arquitectura garantiza un rendimiento óptimo para el visitante y una gestión sencilla para el administrador.
+FeriaApp is a web platform with a hybrid architecture composed of two distinct parts: an administration panel developed with the MERN stack, and a static public website automatically generated and published on GitHub Pages. This architecture guarantees optimal performance for the visitor and straightforward management for the administrator.
 
-Toda la información proviene de fuentes públicas oficiales como el Ayuntamiento de Jerez de la Frontera, y es gestionada directamente por el administrador desde el panel interno, sin depender de terceros. La plataforma está diseñada para reutilizarse en cada nueva edición de la feria y para escalar a otros eventos en el futuro.
-
----
-
-## Funcionalidades principales.
-
-### 1. Autenticación y roles:
-
-El sistema de autenticación está basado en JSON Web Tokens (JWT). Existen dos roles diferenciados:
-
-- **Administrador:** Acceso completo al panel de administración. Puede gestionar ferias, casetas, menús, conciertos y generar la web pública.
-- **Visitante:** Acceso a la web pública estática. No requiere registro ni autenticación.
-
-### 2. Gestión de ferias:
-
-El administrador puede crear, editar y eliminar ferias con los siguientes datos:
-
-- Nombre de la feria.
-- Descripción.
-- Fechas de inicio y fin.
-- Ubicación general.
-
-### 3. Gestión de casetas:
-
-El administrador puede dar de alta, editar y eliminar casetas con los siguientes datos:
-
-- Nombre y número de caseta
-- Descripción
-- Ubicación sobre el mapa del recinto
-
-### 4. Gestión de menús:
-
-Cada caseta puede tener asociado un menú con:
-
-- Nombre del plato o bebida.
-- Precio.
-- Descripción opcional.
-
-### 5. Gestión de programación:
-
-El administrador puede gestionar la programación de conciertos y actividades con:
-
-- Nombre del artista o actividad.
-- Fecha y hora.
-- Caseta asociada.
-
-### 6. Generación automática de página estática:
-
-Cada vez que el administrador guarda cambios en el panel, el backend genera automáticamente los archivos estáticos actualizados y los publica en GitHub Pages mediante la API de GitHub con Octokit. Esto garantiza que la web pública siempre esté actualizada y no requiera un servidor para funcionar.
-
-### 7. Web pública como PWA instalable:
-
-La web que consultan los visitantes es una página estática diseñada como Progressive Web App (PWA):
-
-- Instalable en el móvil como si fuera una app nativa.
-- Funciona sin conexión a internet una vez cargada, gracias a los Service Workers.
-- Especialmente útil cuando la cobertura móvil en el recinto ferial es limitada.
-
-### 8. Importación del mapa oficial:
-
-El administrador puede subir la imagen o PDF del mapa oficial publicado por el Ayuntamiento de Jerez. Ese mapa se muestra como fondo en el panel y el administrador simplemente pincha sobre él para marcar la ubicación de cada caseta, reduciendo al mínimo la introducción manual de datos.
-
-### 9. Mapa interactivo:
-
-La web pública muestra todas las casetas sobre el mapa oficial del recinto mediante Leaflet.js. El visitante puede pulsar sobre cualquier caseta para ver su información detallada, menú y programación.
-
-### 10. Buscador inteligente:
-
-El buscador de casetas incorpora tolerancia a errores tipográficos mediante Fuse.js. El visitante encuentra lo que busca aunque escriba mal el nombre de la caseta.
+All information comes from official public sources such as the Jerez de la Frontera City Council, and is managed directly by the administrator from the internal panel, without depending on third parties. The platform is designed to be reused for each new edition of the fair and to scale to other events in the future.
 
 ---
 
-## Interfaz de usuario y experiencia de usuario (UI/UX).
+## Main features.
 
-### Principios de diseño:
+### 1. Authentication and roles.
 
-- **Mobile first:** El diseño está pensado principalmente para móvil, ya que la mayoría de los visitantes consultarán la aplicación desde su teléfono durante la feria.
-- **Simplicidad:** Interfaz limpia e intuitiva que permita encontrar información rápidamente.
-- **Accesibilidad:** Cumplimiento del estándar WCAG 2.1 nivel AA, con contraste de colores mínimo de 4.5:1 y navegación accesible por teclado.
-- **Rendimiento:** La web pública es una página estática, lo que garantiza tiempos de carga mínimos incluso con conexión lenta.
+The authentication system is based on JSON Web Tokens (JWT). There are two distinct roles:
 
-### Panel de administración:
+- **Administrator:** Full access to the administration panel. Can manage fairs, stalls, menus, concerts and generate the public website.
+- **Visitor:** Access to the static public website. No registration or authentication required.
 
-Interfaz SPA desarrollada con React 18, con las siguientes secciones:
+### 2. Fair management.
 
-- **Dashboard:** Resumen general de ferias, casetas y programación.
-- **Gestión de ferias:** Listado y formularios CRUD.
-- **Gestión de casetas:** Listado, formularios CRUD y editor de ubicación en mapa.
-- **Gestión de menús:** Listado y formularios CRUD por caseta.
-- **Gestión de programación:** Listado y formularios CRUD por caseta.
-- **Publicar:** Botón para generar y publicar la web pública estática.
+The administrator can create, edit and delete fairs with the following data:
 
-### Web pública:
+- Fair name.
+- Description.
+- Start and end dates.
+- General location.
 
-Página estática PWA con las siguientes secciones:
+### 3. Stall management.
 
-- **Inicio:** Información general de la feria y acceso rápido al mapa.
-- **Mapa:** Mapa interactivo con todas las casetas del recinto.
-- **Casetas:** Listado con buscador inteligente y fichas detalladas.
-- **Programación:** Agenda de conciertos y actividades ordenada por fecha y hora.
+The administrator can register, edit and delete stalls with the following data:
+
+- Stall name and number.
+- Description.
+- Location on the venue map.
+
+### 4. Menu management.
+
+Each stall can have an associated menu with:
+
+- Dish or drink name.
+- Price.
+- Optional description.
+
+### 5. Schedule management.
+
+The administrator can manage the concert and activity schedule with:
+
+- Artist or activity name.
+- Date and time.
+- Associated stall.
+
+### 6. Automatic static page generation.
+
+Whenever the administrator saves changes in the panel, the backend automatically generates the updated static files and publishes them on GitHub Pages via the GitHub API using Octokit. This ensures the public website is always up to date and does not require a server to function.
+
+### 7. Public website as an installable PWA.
+
+The website visited by users is a static page designed as a Progressive Web App (PWA):
+
+- Installable on mobile as if it were a native app.
+- Works without an internet connection once loaded, thanks to Service Workers.
+- Especially useful when mobile coverage inside the fairground is limited.
+
+### 8. Official map import.
+
+The administrator can upload the image or PDF of the official map published by the Jerez City Council. That map is displayed as a background in the panel and the administrator simply clicks on it to mark the location of each stall, minimising manual data entry.
+
+### 9. Interactive map.
+
+The public website displays all stalls on the official venue map using Leaflet.js. The visitor can tap on any stall to see its detailed information, menu and schedule.
+
+### 10. Smart search.
+
+The stall search engine incorporates typo tolerance via Fuse.js. Visitors find what they are looking for even if they misspell the stall name.
 
 ---
 
-## Usuarios objetivo y casos de uso.
+## User Interface and user experience (UI/UX).
 
-### Usuarios objetivo:
+### Design principles.
 
-| Tipo de usuario | Descripción |
+- **Mobile first:** The design is primarily intended for mobile, since most visitors will consult the application from their phone during the fair.
+- **Simplicity:** Clean and intuitive interface that allows information to be found quickly.
+- **Accessibility:** Compliance with WCAG 2.1 level AA standard, with a minimum colour contrast ratio of 4.5:1 and keyboard-accessible navigation.
+- **Performance:** The public website is a static page, ensuring minimal load times even on a slow connection.
+
+### Administration panel.
+
+SPA interface developed with React 18, with the following sections:
+
+- **Dashboard:** General summary of fairs, stalls and schedules.
+- **Fair Management:** Listing and CRUD forms.
+- **Stall Management:** Listing, CRUD forms and location editor on the map.
+- **Menu Management:** Listing and CRUD forms per stall.
+- **Schedule Management:** Listing and CRUD forms per stall.
+- **Publish:** Button to generate and publish the static public website.
+
+### Public website.
+
+Static PWA page with the following sections:
+
+- **Home:** General fair information and quick access to the map.
+- **Map:** Interactive map with all venue stalls.
+- **Stalls:** Listing with smart search and detailed profiles.
+- **Schedule:** Concert and activity agenda ordered by date and time.
+
+---
+
+## Target users and use cases.
+
+### Target users.
+
+| User Type | Description |
 |---|---|
-| Visitante de la feria | Persona que asiste a la feria y necesita consultar información rápidamente desde su móvil |
-| Administrador | El propio desarrollador, que carga y mantiene los datos usando información pública oficial |
+| Fair visitor | Person attending the fair who needs to look up information quickly from their mobile |
+| Administrator | The developer themselves, who loads and maintains data using official public information |
 
-### Casos de uso principales:
+### Main use cases.
 
-**Caso de uso 1: Consultar información de una caseta**
-1. El visitante abre la web pública desde su móvil.
-2. Accede al mapa interactivo.
-3. Pulsa sobre una caseta.
-4. Visualiza el nombre, menú y programación de la caseta.
+**Use case 1: Looking up stall information**
+1. The visitor opens the public website from their mobile.
+2. They access the interactive map.
+3. They tap on a stall.
+4. They view the stall name, menu and schedule.
 
-**Caso de uso 2: Buscar una caseta**
-1. El visitante accede a la sección de casetas.
-2. Escribe el nombre de la caseta en el buscador (aunque cometa un error tipográfico).
-3. El buscador muestra los resultados más relevantes.
-4. El visitante accede a la ficha de la caseta.
+**Use case 2: Searching for a stall**
+1. The visitor accesses the stalls section.
+2. They type the stall name in the search box (even if they make a typo).
+3. The search engine displays the most relevant results.
+4. The visitor accesses the stall profile.
 
-**Caso de uso 3: Consultar la programación**
-1. El visitante accede a la sección de programación.
-2. Visualiza los conciertos y actividades ordenados por fecha y hora.
-3. Pulsa sobre un concierto para ver la caseta donde se celebra.
+**Use case 3: Checking the schedule**
+1. The visitor accesses the schedule section.
+2. They view concerts and activities ordered by date and time.
+3. They tap on a concert to see which stall is hosting it.
 
-**Caso de uso 4: Usar la app sin internet**
-1. El visitante ha cargado la web previamente con conexión.
-2. Durante la feria, sin cobertura, abre la app instalada en su móvil.
-3. Consulta toda la información almacenada localmente sin necesidad de internet.
+**Use case 4: Using the app without internet**
+1. The visitor has previously loaded the website with a connection.
+2. During the fair, without coverage, they open the installed app on their mobile.
+3. They consult all locally stored information without needing internet.
 
-**Caso de uso 5: Actualizar información como administrador**
-1. El administrador accede al panel con sus credenciales.
-2. Edita la información de una caseta o añade un concierto nuevo.
-3. Pulsa "Publicar".
-4. El sistema genera automáticamente la web pública actualizada y la publica en GitHub Pages.
+**Use case 5: Updating information as administrator**
+1. The administrator logs into the panel with their credentials.
+2. They edit a stall's information or add a new concert.
+3. They press "Publish".
+4. The system automatically generates the updated public website and publishes it on GitHub Pages.
