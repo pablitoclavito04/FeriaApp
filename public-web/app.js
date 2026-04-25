@@ -10,6 +10,12 @@ let detailMap = null;
 let detailMarker = null;
 let currentDetailId = null;
 
+// Casetas global map state
+let casetasMap = null;
+let casetasMarkersLayer = null;
+let casetasMarkersById = new Map();
+let casetasSort = 'number';
+
 // Schedule filters
 let selectedScheduleDay = 'all';
 let scheduleCasetaFilter = null;
@@ -40,6 +46,9 @@ const loadData = () => {
       renderMenus(casetas);
       renderScheduleDays();
       renderSchedule();
+      if (getActiveSectionId() === 'casetas') {
+        setTimeout(initCasetasMap, 150);
+      }
     } catch (error) {
       console.error('Error loading data:', error);
     }
@@ -122,6 +131,10 @@ const showSection = (section, options = {}) => {
 
   if (PERSISTED_SECTIONS.includes(section)) persistAppState(section);
   if (section !== 'detail') pushHistory({ view: 'app', section });
+
+  if (section === 'casetas') {
+    setTimeout(initCasetasMap, 150);
+  }
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
@@ -231,15 +244,42 @@ const initFuse = () => {
   });
 };
 
+// Get casetas filtered by current search query (or all if empty)
+const getFilteredCasetas = () => {
+  const queryEl = document.getElementById('search-input');
+  const query = queryEl ? queryEl.value : '';
+  if (!query) return casetas.slice();
+  if (!fuse) return casetas.slice();
+  return fuse.search(query).map((r) => r.item);
+};
+
+// Sort casetas array in-place according to current sort option
+const sortCasetas = (arr) => {
+  const copy = arr.slice();
+  if (casetasSort === 'name') {
+    copy.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'es'));
+  } else if (casetasSort === 'status') {
+    copy.sort((a, b) => {
+      const diff = (isCasetaOpen(b) ? 1 : 0) - (isCasetaOpen(a) ? 1 : 0);
+      if (diff !== 0) return diff;
+      return Number(a.number || 0) - Number(b.number || 0);
+    });
+  } else {
+    copy.sort((a, b) => Number(a.number || 0) - Number(b.number || 0));
+  }
+  return copy;
+};
+
 // Search casetas
 const searchCasetas = () => {
-  const query = document.getElementById('search-input').value;
-  if (!query) {
-    renderCasetas(casetas);
-    return;
-  }
-  const results = fuse.search(query).map((r) => r.item);
-  renderCasetas(results);
+  const filtered = getFilteredCasetas();
+  renderCasetas(filtered);
+};
+
+// Change sort option and re-render
+const changeCasetasSort = (value) => {
+  casetasSort = value;
+  renderCasetas(getFilteredCasetas());
 };
 
 // Determine if a caseta is currently open
@@ -259,7 +299,7 @@ const buildCasetaCard = (caseta) => {
     ? `<img src="${caseta.image.replace('/uploads/', '/FeriaApp/uploads/')}" alt="${caseta.name}" class="caseta-card-image" />`
     : '<div class="caseta-no-image"></div>';
   return `
-    <article class="caseta-card" onclick="openCasetaDetail('${caseta._id}')">
+    <article class="caseta-card" data-caseta-id="${caseta._id}" onclick="openCasetaDetail('${caseta._id}')" onmouseenter="highlightMapMarker('${caseta._id}', true)" onmouseleave="highlightMapMarker('${caseta._id}', false)">
       ${image}
       <div class="caseta-card-head">
         <h3>${caseta.name}</h3>
@@ -277,15 +317,17 @@ const buildCasetaCard = (caseta) => {
   `;
 };
 
-// Render casetas grid
+// Render casetas grid (and update map markers to match)
 const renderCasetas = (data) => {
   const container = document.getElementById('casetas-list');
   if (!container) return;
-  if (data.length === 0) {
+  const sorted = sortCasetas(data);
+  if (sorted.length === 0) {
     container.innerHTML = '<p class="no-results">No se han encontrado casetas</p>';
-    return;
+  } else {
+    container.innerHTML = sorted.map(buildCasetaCard).join('');
   }
-  container.innerHTML = data.map(buildCasetaCard).join('');
+  renderCasetasMarkers(sorted);
 };
 
 // Render menus grouped by caseta
@@ -508,6 +550,67 @@ const clearScheduleCasetaFilter = () => {
   scheduleCasetaFilter = null;
   updateScheduleCasetaFilterUI();
   renderSchedule();
+};
+
+// ===== Casetas global map =====
+const CASETAS_MAP_BOUNDS = [[0, 0], [1052, 1514]];
+
+const buildCasetaMarker = (caseta) => {
+  const open = isCasetaOpen(caseta);
+  const cls = open ? 'caseta-pin is-open' : 'caseta-pin is-closed';
+  const icon = L.divIcon({
+    className: 'caseta-pin-wrap',
+    html: `<span class="${cls}" aria-hidden="true"><span class="caseta-pin-inner">${caseta.number ?? ''}</span></span>`,
+    iconSize: [28, 28],
+    iconAnchor: [14, 14],
+  });
+  const marker = L.marker([caseta.location.x, caseta.location.y], { icon, title: caseta.name });
+  marker.on('click', () => openCasetaDetail(caseta._id));
+  return marker;
+};
+
+const initCasetasMap = () => {
+  const mapEl = document.getElementById('casetas-map');
+  if (!mapEl) return;
+
+  if (!casetasMap) {
+    casetasMap = L.map(mapEl, {
+      crs: L.CRS.Simple,
+      minZoom: -2,
+      maxZoom: 3,
+      maxBounds: CASETAS_MAP_BOUNDS,
+      maxBoundsViscosity: 1.0,
+      zoomControl: true,
+      attributionControl: false,
+    });
+    L.imageOverlay('/FeriaApp/plano_feria.png', CASETAS_MAP_BOUNDS).addTo(casetasMap);
+    casetasMarkersLayer = L.layerGroup().addTo(casetasMap);
+    casetasMap.fitBounds(CASETAS_MAP_BOUNDS);
+  }
+
+  casetasMap.invalidateSize();
+  renderCasetasMarkers(getFilteredCasetas());
+};
+
+const renderCasetasMarkers = (data) => {
+  if (!casetasMap || !casetasMarkersLayer) return;
+  casetasMarkersLayer.clearLayers();
+  casetasMarkersById = new Map();
+
+  data.forEach((caseta) => {
+    if (caseta.location?.x == null || caseta.location?.y == null) return;
+    const marker = buildCasetaMarker(caseta);
+    marker.addTo(casetasMarkersLayer);
+    casetasMarkersById.set(caseta._id, marker);
+  });
+};
+
+const highlightMapMarker = (id, on) => {
+  const marker = casetasMarkersById.get(id);
+  if (!marker) return;
+  const el = marker.getElement();
+  if (!el) return;
+  el.classList.toggle('is-highlighted', !!on);
 };
 
 // ===== Caseta detail page =====
