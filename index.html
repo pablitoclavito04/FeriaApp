@@ -252,6 +252,23 @@
         </svg>
         <input type="text" id="search-input" placeholder="Buscar casetas o por número..." oninput="searchCasetas()" />
       </div>
+
+      <div class="casetas-map-wrap">
+        <h3 class="casetas-map-title">Mapa de la feria</h3>
+        <div id="casetas-map" class="casetas-map"></div>
+      </div>
+
+      <div class="casetas-toolbar">
+        <label class="casetas-sort">
+          <span>Ordenar por:</span>
+          <select id="casetas-sort-select" onchange="changeCasetasSort(this.value)">
+            <option value="number">Número</option>
+            <option value="name">Nombre</option>
+            <option value="status">Estado (abiertas primero)</option>
+          </select>
+        </label>
+      </div>
+
       <div id="casetas-list" class="casetas-grid"></div>
     </section>
 
