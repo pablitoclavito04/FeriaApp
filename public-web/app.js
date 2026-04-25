@@ -571,6 +571,13 @@ const initCasetasMap = () => {
   const mapEl = document.getElementById('casetas-map');
   if (!mapEl) return;
 
+  // If the container has no size yet (hidden or not laid out), retry on the
+  // next animation frame. Leaflet needs a real width/height to render tiles.
+  if (mapEl.offsetWidth === 0 || mapEl.offsetHeight === 0) {
+    requestAnimationFrame(initCasetasMap);
+    return;
+  }
+
   if (!casetasMap) {
     casetasMap = L.map(mapEl, {
       crs: L.CRS.Simple,
@@ -583,10 +590,10 @@ const initCasetasMap = () => {
     });
     L.imageOverlay('/FeriaApp/plano_feria.png', CASETAS_MAP_BOUNDS).addTo(casetasMap);
     casetasMarkersLayer = L.layerGroup().addTo(casetasMap);
-    casetasMap.fitBounds(CASETAS_MAP_BOUNDS);
   }
 
   casetasMap.invalidateSize();
+  casetasMap.fitBounds(CASETAS_MAP_BOUNDS);
   renderCasetasMarkers(getFilteredCasetas());
 };
 
