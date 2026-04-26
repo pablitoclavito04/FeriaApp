@@ -1,14 +1,14 @@
 [
   {
-    "_id": "69dd5d6bfd1547d3d8062512",
+    "_id": "69ee7cc6a787ae2ece06bebb",
     "name": "Feria de Jerez 2026",
-    "description": "La Feria del caballo de Jerez de la Frontera",
+    "description": "La Feria del Caballo de Jerez de la Frontera, uno de los eventos más importantes de la cultura andaluza. Celebrada en el Real de la Feria del Parque González Hontoria.",
     "startDate": "2026-05-09T00:00:00.000Z",
     "endDate": "2026-05-16T00:00:00.000Z",
-    "location": "Real de la Feria, Jerez de la Frontera",
+    "location": "Real de la Feria, Parque González Hontoria, Jerez de la Frontera",
     "active": true,
-    "createdAt": "2026-04-13T21:17:31.983Z",
-    "updatedAt": "2026-04-19T00:20:55.272Z",
+    "createdAt": "2026-04-26T20:59:50.343Z",
+    "updatedAt": "2026-04-26T20:59:50.343Z",
     "__v": 0
   }
 ]
