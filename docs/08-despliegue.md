@@ -114,3 +114,62 @@ Push to develop or main
            │  (build images)  │
            └──────────────────┘
 ```
+
+---
+
+## API verification with curl
+
+Once the backend is running, you can verify the endpoints with the following curl commands:
+
+### Authentication
+```bash
+# Login and get JWT token
+curl -X POST http://localhost:5000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@feriaapp.com","password":"admin1234"}'
+```
+
+### Fairs:
+```bash
+# Get all fairs (public)
+curl http://localhost:5000/api/fairs
+
+# Create a fair (requires token)
+curl -X POST http://localhost:5000/api/fairs \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{"name":"Feria de Jerez 2026","startDate":"2026-05-06","endDate":"2026-05-11","location":"Parque González Hontoria","active":true}'
+```
+
+### Casetas:
+```bash
+# Get all stalls (public)
+curl http://localhost:5000/api/casetas
+
+# Create a stall (requires token)
+curl -X POST http://localhost:5000/api/casetas \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{"name":"La Casapuerta","number":1,"fair":"FAIR_ID"}'
+```
+
+### Menus:
+```bash
+# Get all menus (public)
+curl http://localhost:5000/api/menus
+
+# Get menus by stall (public)
+curl http://localhost:5000/api/menus/caseta/CASETA_ID
+```
+
+### Concerts:
+```bash
+# Get all concerts (public)
+curl http://localhost:5000/api/concerts
+
+# Create a concert (requires token)
+curl -X POST http://localhost:5000/api/concerts \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{"artist":"Manuel de los Santos","date":"2026-05-10","time":"22:00","caseta":"CASETA_ID"}'
+```
