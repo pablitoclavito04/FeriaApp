@@ -357,3 +357,173 @@ describe('Menus API - DELETE /api/menus/:id', () => {
     expect(res.statusCode).toBe(200);
   });
 });
+
+describe('Menus API - Additional validation tests', () => {
+  let token;
+  let casetaId;
+  let fairId;
+  let menuId;
+
+  beforeAll(async () => {
+    const bcrypt = require('bcryptjs');
+    const hash = await bcrypt.hash('admin1234', 10);
+    await mongoose.connection.collection('users').updateOne(
+      { email: 'admin@feriaapp.com' },
+      {
+        $set: { name: 'Admin', email: 'admin@feriaapp.com', password: hash, role: 'admin', updatedAt: new Date() },
+        $setOnInsert: { createdAt: new Date() }
+      },
+      { upsert: true }
+    );
+
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'admin@feriaapp.com', password: 'admin1234' });
+    token = res.body.token;
+
+    const fairRes = await request(app)
+      .post('/api/fairs')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'Feria Extra Menus', description: 'Test', startDate: '2026-05-06', endDate: '2026-05-11', location: 'Jerez', active: true });
+    fairId = fairRes.body._id;
+
+    const casetaRes = await request(app)
+      .post('/api/casetas')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'Caseta Extra Menus', number: 50, fair: fairId });
+    casetaId = casetaRes.body._id;
+  });
+
+  afterAll(async () => {
+    await mongoose.connection.collection('menus').deleteMany({});
+    await mongoose.connection.collection('casetas').deleteMany({ name: 'Caseta Extra Menus' });
+    await mongoose.connection.collection('fairs').deleteMany({ name: 'Feria Extra Menus' });
+  });
+
+  test('should create menu and return correct fields', async () => {
+    const res = await request(app)
+      .post('/api/menus')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'Plato Extra', price: 8, description: 'Descripción extra', caseta: casetaId });
+    expect(res.statusCode).toBe(201);
+    expect(res.body).toHaveProperty('_id');
+    expect(res.body).toHaveProperty('name');
+    expect(res.body).toHaveProperty('price');
+    expect(res.body).toHaveProperty('caseta');
+    menuId = res.body._id;
+  });
+
+  test('should return menu with createdAt field', async () => {
+    const res = await request(app).get('/api/menus');
+    const menu = res.body.find(m => m._id === menuId);
+    expect(menu).toHaveProperty('createdAt');
+  });
+
+  test('should return menu with updatedAt field', async () => {
+    const res = await request(app).get('/api/menus');
+    const menu = res.body.find(m => m._id === menuId);
+    expect(menu).toHaveProperty('updatedAt');
+  });
+
+  test('should return menu with description', async () => {
+    const res = await request(app).get('/api/menus');
+    const menu = res.body.find(m => m._id === menuId);
+    expect(menu.description).toBe('Descripción extra');
+  });
+
+  test('should update menu price to 0', async () => {
+    const res = await request(app)
+      .put(`/api/menus/${menuId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ price: 0 });
+    expect(res.statusCode).toBe(200);
+  });
+
+  test('should update menu name to special characters', async () => {
+    const res = await request(app)
+      .put(`/api/menus/${menuId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'Plato con ñ y acentos: á é í ó ú' });
+    expect(res.statusCode).toBe(200);
+  });
+
+  test('should create bulk menus and verify count', async () => {
+    const res = await request(app)
+      .post('/api/menus/bulk')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        caseta: casetaId,
+        items: [
+          { name: 'Plato bulk 1', price: 5 },
+          { name: 'Plato bulk 2', price: 6 },
+          { name: 'Plato bulk 3', price: 7 },
+          { name: 'Plato bulk 4', price: 8 },
+          { name: 'Plato bulk 5', price: 9 },
+        ],
+      });
+    expect(res.statusCode).toBe(201);
+    expect(res.body.length).toBe(5);
+  });
+
+  test('should return correct count after bulk creation', async () => {
+    const res = await request(app).get(`/api/menus/caseta/${casetaId}`);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.length).toBeGreaterThan(1);
+  });
+
+  test('should return menus with caseta populated', async () => {
+    const res = await request(app).get('/api/menus');
+    expect(res.statusCode).toBe(200);
+    res.body.forEach(menu => {
+      expect(menu).toHaveProperty('caseta');
+    });
+  });
+
+  test('should not return password in menu response', async () => {
+    const res = await request(app).get('/api/menus');
+    expect(res.statusCode).toBe(200);
+    res.body.forEach(menu => {
+      expect(menu).not.toHaveProperty('password');
+    });
+  });
+
+  test('should fail bulk with invalid item missing price', async () => {
+    const res = await request(app)
+      .post('/api/menus/bulk')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ caseta: casetaId, items: [{ name: 'Sin precio' }] });
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should fail bulk with invalid item missing name', async () => {
+    const res = await request(app)
+      .post('/api/menus/bulk')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ caseta: casetaId, items: [{ price: 5 }] });
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should delete all menus for caseta', async () => {
+    const menus = await request(app).get(`/api/menus/caseta/${casetaId}`);
+    for (const menu of menus.body) {
+      const res = await request(app)
+        .delete(`/api/menus/${menu._id}`)
+        .set('Authorization', `Bearer ${token}`);
+      expect(res.statusCode).toBe(200);
+    }
+    const final = await request(app).get(`/api/menus/caseta/${casetaId}`);
+    expect(final.body.length).toBe(0);
+  });
+
+  test('should return 200 on GET menus when empty', async () => {
+    const res = await request(app).get('/api/menus');
+    expect(res.statusCode).toBe(200);
+  });
+
+  test('should fail DELETE on already deleted menu', async () => {
+    const res = await request(app)
+      .delete(`/api/menus/${menuId}`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+});

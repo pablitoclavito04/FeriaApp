@@ -329,3 +329,180 @@ describe('Concerts API - DELETE /api/concerts/:id', () => {
     expect(res.body.length).toBe(0);
   });
 });
+
+describe('Concerts API - Additional validation tests', () => {
+  let token;
+  let casetaId;
+  let fairId;
+  let concertId;
+
+  beforeAll(async () => {
+    const bcrypt = require('bcryptjs');
+    const hash = await bcrypt.hash('admin1234', 10);
+    await mongoose.connection.collection('users').updateOne(
+      { email: 'admin@feriaapp.com' },
+      {
+        $set: { name: 'Admin', email: 'admin@feriaapp.com', password: hash, role: 'admin', updatedAt: new Date() },
+        $setOnInsert: { createdAt: new Date() }
+      },
+      { upsert: true }
+    );
+
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'admin@feriaapp.com', password: 'admin1234' });
+    token = res.body.token;
+
+    const fairRes = await request(app)
+      .post('/api/fairs')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'Feria Extra Concerts', description: 'Test', startDate: '2026-05-06', endDate: '2026-05-11', location: 'Jerez', active: true });
+    fairId = fairRes.body._id;
+
+    const casetaRes = await request(app)
+      .post('/api/casetas')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'Caseta Extra Concerts', number: 60, fair: fairId });
+    casetaId = casetaRes.body._id;
+  });
+
+  afterAll(async () => {
+    await mongoose.connection.collection('concerts').deleteMany({});
+    await mongoose.connection.collection('casetas').deleteMany({ name: 'Caseta Extra Concerts' });
+    await mongoose.connection.collection('fairs').deleteMany({ name: 'Feria Extra Concerts' });
+  });
+
+  test('should create concert and return correct fields', async () => {
+    const res = await request(app)
+      .post('/api/concerts')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ artist: 'Artista Extra', genre: 'Flamenco', date: '2026-05-10', time: '22:00', caseta: casetaId });
+    expect(res.statusCode).toBe(201);
+    expect(res.body).toHaveProperty('_id');
+    expect(res.body).toHaveProperty('artist');
+    expect(res.body).toHaveProperty('date');
+    expect(res.body).toHaveProperty('time');
+    expect(res.body).toHaveProperty('caseta');
+    concertId = res.body._id;
+  });
+
+  test('should return concert with createdAt field', async () => {
+    const res = await request(app).get('/api/concerts');
+    const concert = res.body.find(c => c._id === concertId);
+    expect(concert).toHaveProperty('createdAt');
+  });
+
+  test('should return concert with updatedAt field', async () => {
+    const res = await request(app).get('/api/concerts');
+    const concert = res.body.find(c => c._id === concertId);
+    expect(concert).toHaveProperty('updatedAt');
+  });
+
+  test('should return concert with genre', async () => {
+    const res = await request(app).get('/api/concerts');
+    const concert = res.body.find(c => c._id === concertId);
+    expect(concert.genre).toBe('Flamenco');
+  });
+
+  test('should update concert artist to special characters', async () => {
+    const res = await request(app)
+      .put(`/api/concerts/${concertId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ artist: 'Artista con ñ y acentos: á é í ó ú' });
+    expect(res.statusCode).toBe(200);
+  });
+
+  test('should update concert date', async () => {
+    const res = await request(app)
+      .put(`/api/concerts/${concertId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ date: '2026-05-12' });
+    expect(res.statusCode).toBe(200);
+  });
+
+  test('should create multiple concerts and return them all', async () => {
+    await request(app).post('/api/concerts').set('Authorization', `Bearer ${token}`).send({ artist: 'Artista 1', date: '2026-05-09', time: '21:00', caseta: casetaId });
+    await request(app).post('/api/concerts').set('Authorization', `Bearer ${token}`).send({ artist: 'Artista 2', date: '2026-05-10', time: '22:00', caseta: casetaId });
+    await request(app).post('/api/concerts').set('Authorization', `Bearer ${token}`).send({ artist: 'Artista 3', date: '2026-05-11', time: '23:00', caseta: casetaId });
+    const res = await request(app).get('/api/concerts');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.length).toBeGreaterThan(1);
+  });
+
+  test('should return concerts with caseta populated', async () => {
+    const res = await request(app).get('/api/concerts');
+    expect(res.statusCode).toBe(200);
+    res.body.forEach(concert => {
+      expect(concert).toHaveProperty('caseta');
+    });
+  });
+
+  test('should not return password in concert response', async () => {
+    const res = await request(app).get('/api/concerts');
+    expect(res.statusCode).toBe(200);
+    res.body.forEach(concert => {
+      expect(concert).not.toHaveProperty('password');
+    });
+  });
+
+  test('should return 200 on GET concerts when empty after cleanup', async () => {
+    await mongoose.connection.collection('concerts').deleteMany({});
+    const res = await request(app).get('/api/concerts');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.length).toBe(0);
+  });
+
+  test('should fail DELETE on already deleted concert', async () => {
+    const res = await request(app)
+      .delete(`/api/concerts/${concertId}`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should fail GET single concert with invalid id', async () => {
+    const res = await request(app).get('/api/concerts/invalidid');
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should fail PUT concert with empty body and non-existent id', async () => {
+    const res = await request(app)
+      .put('/api/concerts/000000000000000000000000')
+      .set('Authorization', `Bearer ${token}`)
+      .send({});
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should create concert with midnight time', async () => {
+    const res = await request(app)
+      .post('/api/concerts')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ artist: 'Artista Medianoche', date: '2026-05-10', time: '00:00', caseta: casetaId });
+    expect(res.statusCode).toBe(201);
+  });
+
+  test('should create concert with early morning time', async () => {
+    const res = await request(app)
+      .post('/api/concerts')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ artist: 'Artista Madrugada', date: '2026-05-10', time: '03:30', caseta: casetaId });
+    expect(res.statusCode).toBe(201);
+  });
+
+  test('should return correct number of concerts after creation', async () => {
+    const res = await request(app).get('/api/concerts');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.length).toBeGreaterThan(0);
+  });
+
+  test('should delete all concerts one by one', async () => {
+    const concerts = await request(app).get('/api/concerts');
+    for (const concert of concerts.body) {
+      const res = await request(app)
+        .delete(`/api/concerts/${concert._id}`)
+        .set('Authorization', `Bearer ${token}`);
+      expect(res.statusCode).toBe(200);
+    }
+    const final = await request(app).get('/api/concerts');
+    expect(final.body.length).toBe(0);
+  });
+});
