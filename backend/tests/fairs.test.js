@@ -1,0 +1,211 @@
+jest.mock('../src/config/octokit', () => ({
+  octokit: {
+    rest: {
+      repos: {
+        getContent: jest.fn(),
+        createOrUpdateFileContents: jest.fn(),
+      }
+    }
+  }
+}));
+
+jest.setTimeout(30000);
+
+const request = require('supertest');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+const app = require('../server');
+
+let token;
+let fairId;
+
+beforeAll(async () => {
+  await mongoose.connect(process.env.MONGODB_URI);
+
+  // Login to get token
+  const res = await request(app)
+    .post('/api/auth/login')
+    .send({ email: 'admin@feriaapp.com', password: 'admin1234' });
+
+  token = res.body.token;
+
+  // Clean fairs collection
+  await mongoose.connection.collection('fairs').deleteMany({});
+});
+
+afterAll(async () => {
+  await mongoose.connection.collection('fairs').deleteMany({});
+  await mongoose.connection.close();
+});
+
+describe('Fairs API - GET /api/fairs', () => {
+  test('should return empty array when no fairs exist', async () => {
+    const res = await request(app).get('/api/fairs');
+    expect(res.statusCode).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body.length).toBe(0);
+  });
+});
+
+describe('Fairs API - POST /api/fairs', () => {
+  test('should create a fair with valid data', async () => {
+    const res = await request(app)
+      .post('/api/fairs')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        name: 'Feria de Jerez 2026',
+        description: 'La feria del caballo',
+        startDate: '2026-05-06',
+        endDate: '2026-05-11',
+        location: 'Real de la Feria, Jerez',
+        active: true,
+      });
+    expect(res.statusCode).toBe(201);
+    expect(res.body).toHaveProperty('_id');
+    expect(res.body.name).toBe('Feria de Jerez 2026');
+    fairId = res.body._id;
+  });
+
+  test('should fail without authentication token', async () => {
+    const res = await request(app)
+      .post('/api/fairs')
+      .send({ name: 'Test Fair' });
+    expect(res.statusCode).toBe(401);
+  });
+
+  test('should fail with invalid token', async () => {
+    const res = await request(app)
+      .post('/api/fairs')
+      .set('Authorization', 'Bearer invalidtoken123')
+      .send({ name: 'Test Fair' });
+    expect(res.statusCode).toBe(401);
+  });
+
+  test('should fail without name field', async () => {
+    const res = await request(app)
+      .post('/api/fairs')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ description: 'Sin nombre' });
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should fail with empty name', async () => {
+    const res = await request(app)
+      .post('/api/fairs')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: '' });
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should fail with only name field if other required fields are missing', async () => {
+    const res = await request(app)
+      .post('/api/fairs')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'Minimal Fair' });
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+});
+
+describe('Fairs API - GET /api/fairs (with data)', () => {
+  test('should return all fairs', async () => {
+    const res = await request(app).get('/api/fairs');
+    expect(res.statusCode).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body.length).toBeGreaterThan(0);
+  });
+
+  test('should return fairs with correct structure', async () => {
+    const res = await request(app).get('/api/fairs');
+    expect(res.statusCode).toBe(200);
+    const fair = res.body[0];
+    expect(fair).toHaveProperty('_id');
+    expect(fair).toHaveProperty('name');
+  });
+});
+
+describe('Fairs API - PUT /api/fairs/:id', () => {
+  test('should update a fair with valid data', async () => {
+    const res = await request(app)
+      .put(`/api/fairs/${fairId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'Feria de Jerez 2026 Updated' });
+    expect(res.statusCode).toBe(200);
+    expect(res.body.name).toBe('Feria de Jerez 2026 Updated');
+  });
+
+  test('should fail to update without token', async () => {
+    const res = await request(app)
+      .put(`/api/fairs/${fairId}`)
+      .send({ name: 'No token' });
+    expect(res.statusCode).toBe(401);
+  });
+
+  test('should fail to update with invalid token', async () => {
+    const res = await request(app)
+      .put(`/api/fairs/${fairId}`)
+      .set('Authorization', 'Bearer badtoken')
+      .send({ name: 'Bad token' });
+    expect(res.statusCode).toBe(401);
+  });
+
+  test('should fail to update with non-existent id', async () => {
+    const res = await request(app)
+      .put('/api/fairs/000000000000000000000000')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'Non existent' });
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should fail to update with invalid id format', async () => {
+    const res = await request(app)
+      .put('/api/fairs/invalidid')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'Invalid id' });
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+});
+
+describe('Fairs API - DELETE /api/fairs/:id', () => {
+  test('should fail to delete without token', async () => {
+    const res = await request(app).delete(`/api/fairs/${fairId}`);
+    expect(res.statusCode).toBe(401);
+  });
+
+  test('should fail to delete with invalid token', async () => {
+    const res = await request(app)
+      .delete(`/api/fairs/${fairId}`)
+      .set('Authorization', 'Bearer badtoken');
+    expect(res.statusCode).toBe(401);
+  });
+
+  test('should fail to delete with non-existent id', async () => {
+    const res = await request(app)
+      .delete('/api/fairs/000000000000000000000000')
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should fail to delete with invalid id format', async () => {
+    const res = await request(app)
+      .delete('/api/fairs/invalidid')
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should delete a fair successfully', async () => {
+    const res = await request(app)
+      .delete(`/api/fairs/${fairId}`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.statusCode).toBe(200);
+  });
+
+  test('should return empty array after deletion', async () => {
+    await mongoose.connection.collection('fairs').deleteMany({});
+    const res = await request(app).get('/api/fairs');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.length).toBe(0);
+  });
+});
