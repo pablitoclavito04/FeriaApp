@@ -43,47 +43,7 @@ MongoDB (port 27017)
 
 ## Entity-Relationship diagram.
 
-```
-FAIR
-├── _id
-├── name
-├── description
-├── startDate
-├── endDate
-├── location
-└── active
-
-CASETA
-├── _id
-├── name
-├── number
-├── description
-├── image
-├── location {x, y}
-└── fair → FAIR._id
-
-MENU
-├── _id
-├── name
-├── description
-├── price
-└── caseta → CASETA._id
-
-CONCERT
-├── _id
-├── artist
-├── genre
-├── date
-├── time
-└── caseta → CASETA._id
-
-USER
-├── _id
-├── name
-├── email
-├── password (bcrypt)
-└── role (admin)
-```
+![Entity-Relationship diagram](./ER-Diagram.png)
 
 ---
 
