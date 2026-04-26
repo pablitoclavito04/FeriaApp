@@ -1,0 +1,281 @@
+jest.mock('../src/config/octokit', () => ({
+  octokit: {
+    rest: {
+      repos: {
+        getContent: jest.fn(),
+        createOrUpdateFileContents: jest.fn(),
+      }
+    }
+  }
+}));
+
+jest.setTimeout(30000);
+
+const request = require('supertest');
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+const app = require('../server');
+
+let token;
+let casetaId;
+let fairId;
+
+beforeAll(async () => {
+  await mongoose.connect(process.env.MONGODB_URI);
+
+  const hash = await bcrypt.hash('admin1234', 10);
+  await mongoose.connection.collection('users').updateOne(
+    { email: 'admin@feriaapp.com' },
+    {
+      $set: { name: 'Admin', email: 'admin@feriaapp.com', password: hash, role: 'admin', updatedAt: new Date() },
+      $setOnInsert: { createdAt: new Date() }
+    },
+    { upsert: true }
+  );
+
+  const res = await request(app)
+    .post('/api/auth/login')
+    .send({ email: 'admin@feriaapp.com', password: 'admin1234' });
+
+  token = res.body.token;
+
+  await mongoose.connection.collection('casetas').deleteMany({});
+  await mongoose.connection.collection('fairs').deleteMany({});
+
+  const fairRes = await request(app)
+    .post('/api/fairs')
+    .set('Authorization', `Bearer ${token}`)
+    .send({
+      name: 'Feria de Jerez 2026',
+      description: 'La feria del caballo',
+      startDate: '2026-05-06',
+      endDate: '2026-05-11',
+      location: 'Real de la Feria, Jerez',
+      active: true,
+    });
+
+  fairId = fairRes.body._id;
+});
+
+afterAll(async () => {
+  await mongoose.connection.collection('casetas').deleteMany({});
+  await mongoose.connection.collection('fairs').deleteMany({});
+  await mongoose.connection.close();
+});
+
+describe('Casetas API - GET /api/casetas', () => {
+  test('should return empty array when no casetas exist', async () => {
+    const res = await request(app).get('/api/casetas');
+    expect(res.statusCode).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body.length).toBe(0);
+  });
+
+  test('should be accessible without authentication', async () => {
+    const res = await request(app).get('/api/casetas');
+    expect(res.statusCode).toBe(200);
+  });
+});
+
+describe('Casetas API - POST /api/casetas', () => {
+  test('should create a caseta with valid data', async () => {
+    const res = await request(app)
+      .post('/api/casetas')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        name: 'La Casapuerta',
+        number: 1,
+        description: 'Caseta número 1',
+        fair: fairId,
+        location: { x: 100, y: 200 },
+      });
+    expect(res.statusCode).toBe(201);
+    expect(res.body).toHaveProperty('_id');
+    expect(res.body.name).toBe('La Casapuerta');
+    casetaId = res.body._id;
+  });
+
+  test('should fail without authentication token', async () => {
+    const res = await request(app)
+      .post('/api/casetas')
+      .send({ name: 'Test Caseta', number: 2, fair: fairId });
+    expect(res.statusCode).toBe(401);
+  });
+
+  test('should fail with invalid token', async () => {
+    const res = await request(app)
+      .post('/api/casetas')
+      .set('Authorization', 'Bearer invalidtoken')
+      .send({ name: 'Test Caseta', number: 2, fair: fairId });
+    expect(res.statusCode).toBe(401);
+  });
+
+  test('should fail without name field', async () => {
+    const res = await request(app)
+      .post('/api/casetas')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ number: 2, fair: fairId });
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should fail without number field', async () => {
+    const res = await request(app)
+      .post('/api/casetas')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'Sin número', fair: fairId });
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should fail without fair field', async () => {
+    const res = await request(app)
+      .post('/api/casetas')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'Sin feria', number: 3 });
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should fail with invalid fair id', async () => {
+    const res = await request(app)
+      .post('/api/casetas')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'Feria inválida', number: 4, fair: 'invalidid' });
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should fail with empty name', async () => {
+    const res = await request(app)
+      .post('/api/casetas')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: '', number: 5, fair: fairId });
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+});
+
+describe('Casetas API - GET /api/casetas (with data)', () => {
+  test('should return all casetas', async () => {
+    const res = await request(app).get('/api/casetas');
+    expect(res.statusCode).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body.length).toBeGreaterThan(0);
+  });
+
+  test('should return casetas with correct structure', async () => {
+    const res = await request(app).get('/api/casetas');
+    expect(res.statusCode).toBe(200);
+    const caseta = res.body[0];
+    expect(caseta).toHaveProperty('_id');
+    expect(caseta).toHaveProperty('name');
+    expect(caseta).toHaveProperty('number');
+  });
+
+  test('should return caseta with fair populated', async () => {
+    const res = await request(app).get('/api/casetas');
+    expect(res.statusCode).toBe(200);
+    const caseta = res.body[0];
+    expect(caseta).toHaveProperty('fair');
+  });
+});
+
+describe('Casetas API - PUT /api/casetas/:id', () => {
+  test('should update a caseta with valid data', async () => {
+    const res = await request(app)
+      .put(`/api/casetas/${casetaId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'La Casapuerta Updated' });
+    expect(res.statusCode).toBe(200);
+    expect(res.body.name).toBe('La Casapuerta Updated');
+  });
+
+  test('should update caseta description', async () => {
+    const res = await request(app)
+      .put(`/api/casetas/${casetaId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ description: 'Nueva descripción' });
+    expect(res.statusCode).toBe(200);
+  });
+
+  test('should update caseta location', async () => {
+    const res = await request(app)
+      .put(`/api/casetas/${casetaId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ location: { x: 150, y: 250 } });
+    expect(res.statusCode).toBe(200);
+  });
+
+  test('should fail to update without token', async () => {
+    const res = await request(app)
+      .put(`/api/casetas/${casetaId}`)
+      .send({ name: 'No token' });
+    expect(res.statusCode).toBe(401);
+  });
+
+  test('should fail to update with invalid token', async () => {
+    const res = await request(app)
+      .put(`/api/casetas/${casetaId}`)
+      .set('Authorization', 'Bearer badtoken')
+      .send({ name: 'Bad token' });
+    expect(res.statusCode).toBe(401);
+  });
+
+  test('should fail to update with non-existent id', async () => {
+    const res = await request(app)
+      .put('/api/casetas/000000000000000000000000')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'Non existent' });
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should fail to update with invalid id format', async () => {
+    const res = await request(app)
+      .put('/api/casetas/invalidid')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'Invalid id' });
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+});
+
+describe('Casetas API - DELETE /api/casetas/:id', () => {
+  test('should fail to delete without token', async () => {
+    const res = await request(app).delete(`/api/casetas/${casetaId}`);
+    expect(res.statusCode).toBe(401);
+  });
+
+  test('should fail to delete with invalid token', async () => {
+    const res = await request(app)
+      .delete(`/api/casetas/${casetaId}`)
+      .set('Authorization', 'Bearer badtoken');
+    expect(res.statusCode).toBe(401);
+  });
+
+  test('should fail to delete with non-existent id', async () => {
+    const res = await request(app)
+      .delete('/api/casetas/000000000000000000000000')
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should fail to delete with invalid id format', async () => {
+    const res = await request(app)
+      .delete('/api/casetas/invalidid')
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should delete a caseta successfully', async () => {
+    const res = await request(app)
+      .delete(`/api/casetas/${casetaId}`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.statusCode).toBe(200);
+  });
+
+  test('should return empty array after deletion', async () => {
+    await mongoose.connection.collection('casetas').deleteMany({});
+    const res = await request(app).get('/api/casetas');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.length).toBe(0);
+  });
+});
