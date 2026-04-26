@@ -173,3 +173,59 @@ curl -X POST http://localhost:5000/api/concerts \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{"artist":"Manuel de los Santos","date":"2026-05-10","time":"22:00","caseta":"CASETA_ID"}'
 ```
+
+---
+
+## Troubleshooting
+
+### MongoDB does not connect:
+**Symptom:** `Error connecting to MongoDB` in the backend terminal.
+**Solution:** Make sure MongoDB is running.
+```bash
+# Windows
+net start MongoDB
+
+# Verify it is running
+mongosh
+```
+
+### Port 5000 already in use:
+**Symptom:** `EADDRINUSE: address already in use :::5000`
+**Solution:** Find and stop the process using that port.
+```bash
+netstat -ano | findstr :5000
+taskkill /PID  /F
+```
+
+### Port 5173 already in use:
+**Symptom:** Frontend does not start.
+**Solution:**
+```bash
+netstat -ano | findstr :5173
+taskkill /PID  /F
+```
+
+### .env file not found:
+**Symptom:** `JWT_SECRET is not defined` or similar errors.
+**Solution:** Create the `.env` file in `backend/` using `.env.example` as a template.
+
+### Error publishing to GitHub Pages:
+**Symptom:** `Error publishing` in the admin panel.
+**Solution:** Verify that `GITHUB_TOKEN` in `backend/.env` is valid and has `repo` scope. Regenerate it at GitHub → Settings → Developer settings → Personal access tokens.
+
+### Docker containers do not start:
+**Symptom:** `docker-compose up --build` fails.
+**Solution:**
+```bash
+# Check container logs
+docker logs feriaapp-backend
+docker logs feriaapp-frontend
+
+# Restart containers
+docker-compose down
+docker-compose up --build
+```
+
+### Tests delete real data:
+**Symptom:** Data disappears from MongoDB after running tests.
+**Solution:** Make sure `MONGODB_TEST_URI` is defined in `backend/.env`. Tests must use `feriaApp_test`, not `feriaApp`.
