@@ -1,144 +1,144 @@
 [
   {
     "location": {
-      "x": 66.51290422857103,
-      "y": 537.4769578297937
+      "x": 68.07667865538377,
+      "y": 538.1983313722717
     },
-    "_id": "69dd5da2fd1547d3d8062513",
+    "_id": "69ee7cfaa787ae2ece06bebc",
     "name": "La casapuerta",
     "number": 1,
     "description": "Caseta número 1 de la Feria de Jerez",
+    "image": "/uploads/1777237242060-Captura de pantalla 2026-04-26 225549.png",
     "fair": {
-      "_id": "69dd5d6bfd1547d3d8062512",
+      "_id": "69ee7cc6a787ae2ece06bebb",
       "name": "Feria de Jerez 2026"
     },
-    "createdAt": "2026-04-13T21:18:26.626Z",
-    "updatedAt": "2026-04-15T21:11:37.508Z",
-    "__v": 0,
-    "image": "/uploads/1776287497506-la-casapuerta-6479e57ff29017.20655193.jpg"
-  },
-  {
-    "location": {
-      "x": 108.56231902023822,
-      "y": 536.454071143791
-    },
-    "_id": "69dffd8d34fc18bcdc94e6d5",
-    "name": "Tio Jose de Paua",
-    "number": 2,
-    "description": "Caseta número 2 de la Feria de Jerez",
-    "image": "/uploads/1776287491386-penna_tio_jose_de_paula_jerez.webp",
-    "fair": {
-      "_id": "69dd5d6bfd1547d3d8062512",
-      "name": "Feria de Jerez 2026"
-    },
-    "createdAt": "2026-04-15T21:05:17.675Z",
-    "updatedAt": "2026-04-15T21:11:31.390Z",
+    "createdAt": "2026-04-26T21:00:42.067Z",
+    "updatedAt": "2026-04-26T21:00:42.067Z",
     "__v": 0
   },
   {
     "location": {
-      "x": 145.1182699576861,
-      "y": 537.7014886815311
+      "x": 107.57709443351695,
+      "y": 537.1999786640592
     },
-    "_id": "69e3bca1c3f5bd820912593e",
+    "_id": "69ee7d52a787ae2ece06bebd",
+    "name": "Tio Jose de Paula",
+    "number": 2,
+    "description": "Caseta número 2 de la Feria de Jerez",
+    "image": "/uploads/1777237330268-Captura de pantalla 2026-04-26 230134.png",
+    "fair": {
+      "_id": "69ee7cc6a787ae2ece06bebb",
+      "name": "Feria de Jerez 2026"
+    },
+    "createdAt": "2026-04-26T21:02:10.271Z",
+    "updatedAt": "2026-04-26T21:02:10.271Z",
+    "__v": 0
+  },
+  {
+    "location": {
+      "x": 144.9770491850419,
+      "y": 537.2123333524656
+    },
+    "_id": "69ee7d8da787ae2ece06bebe",
     "name": "Los cabales",
     "number": 3,
     "description": "Caseta número 3 de la Feria de Jerez",
-    "image": "/uploads/1776532641965-Captura de pantalla 2026-04-18 191642.png",
+    "image": "/uploads/1777237389281-Captura de pantalla 2026-04-26 230257.png",
     "fair": {
-      "_id": "69dd5d6bfd1547d3d8062512",
+      "_id": "69ee7cc6a787ae2ece06bebb",
       "name": "Feria de Jerez 2026"
     },
-    "createdAt": "2026-04-18T17:17:21.978Z",
-    "updatedAt": "2026-04-18T17:17:21.978Z",
+    "createdAt": "2026-04-26T21:03:09.285Z",
+    "updatedAt": "2026-04-26T21:03:09.285Z",
     "__v": 0
   },
   {
     "location": {
-      "x": 177.89711468774706,
-      "y": 538.7091760432062
+      "x": 178.4769532362419,
+      "y": 537.7032732476342
     },
-    "_id": "69e3bd02c3f5bd820912593f",
+    "_id": "69ee7ddea787ae2ece06bebf",
     "name": "La crujía",
     "number": 4,
     "description": "Caseta número 4 de la Feria de Jerez",
-    "image": "/uploads/1776532738732-Captura de pantalla 2026-04-18 191834.png",
+    "image": "/uploads/1777237470096-Captura de pantalla 2026-04-26 230419.png",
     "fair": {
-      "_id": "69dd5d6bfd1547d3d8062512",
+      "_id": "69ee7cc6a787ae2ece06bebb",
       "name": "Feria de Jerez 2026"
     },
-    "createdAt": "2026-04-18T17:18:58.734Z",
-    "updatedAt": "2026-04-18T17:18:58.734Z",
+    "createdAt": "2026-04-26T21:04:30.098Z",
+    "updatedAt": "2026-04-26T21:04:30.098Z",
     "__v": 0
   },
   {
     "location": {
-      "x": 208.3971706578804,
-      "y": 539.2076660257344
+      "x": 209.6182539662194,
+      "y": 538.7064305568937
     },
-    "_id": "69e3bddac3f5bd8209125940",
+    "_id": "69ee7e2ea787ae2ece06bec0",
     "name": "Amigos del patio",
     "number": 5,
     "description": "Caseta número 5 de la Feria de Jerez",
-    "image": "/uploads/1776532954685-Captura de pantalla 2026-04-18 192213.png",
+    "image": "/uploads/1777237550961-Captura de pantalla 2026-04-26 230539.png",
     "fair": {
-      "_id": "69dd5d6bfd1547d3d8062512",
+      "_id": "69ee7cc6a787ae2ece06bebb",
       "name": "Feria de Jerez 2026"
     },
-    "createdAt": "2026-04-18T17:22:34.689Z",
-    "updatedAt": "2026-04-18T17:22:34.689Z",
+    "createdAt": "2026-04-26T21:05:50.964Z",
+    "updatedAt": "2026-04-26T21:05:50.964Z",
     "__v": 0
   },
   {
     "location": {
-      "x": 240.11763029901965,
-      "y": 538.2102742377313
+      "x": 238.47783765829263,
+      "y": 537.2056069109999
     },
-    "_id": "69e3be7bc3f5bd8209125941",
+    "_id": "69ee7e6da787ae2ece06bec1",
     "name": "La catorce",
     "number": 6,
     "description": "Caseta número 6 de la Feria de Jerez",
     "fair": {
-      "_id": "69dd5d6bfd1547d3d8062512",
+      "_id": "69ee7cc6a787ae2ece06bebb",
       "name": "Feria de Jerez 2026"
     },
-    "createdAt": "2026-04-18T17:25:15.111Z",
-    "updatedAt": "2026-04-18T17:25:15.111Z",
+    "createdAt": "2026-04-26T21:06:53.944Z",
+    "updatedAt": "2026-04-26T21:06:53.944Z",
     "__v": 0
   },
   {
     "location": {
-      "x": 271.6171105763532,
-      "y": 537.2132942726751
+      "x": 272.3879044154942,
+      "y": 537.2123333524656
     },
-    "_id": "69e3c099c3f5bd8209125942",
+    "_id": "69ee7e9aa787ae2ece06bec2",
     "name": "Nazarenos",
     "number": 7,
     "description": "Caseta número 7 de la Feria de Jerez",
     "fair": {
-      "_id": "69dd5d6bfd1547d3d8062512",
+      "_id": "69ee7cc6a787ae2ece06bebb",
       "name": "Feria de Jerez 2026"
     },
-    "createdAt": "2026-04-18T17:34:17.764Z",
-    "updatedAt": "2026-04-18T17:34:17.764Z",
+    "createdAt": "2026-04-26T21:07:38.637Z",
+    "updatedAt": "2026-04-26T21:07:38.637Z",
     "__v": 0
   },
   {
     "location": {
-      "x": 304.89781031654684,
-      "y": 537.7120588038345
+      "x": 303.3977783336135,
+      "y": 538.1896830903872
     },
-    "_id": "69e3c0c6c3f5bd8209125943",
+    "_id": "69ee7ecca787ae2ece06bec3",
     "name": "Amigos en Jerez",
     "number": 8,
     "description": "Caseta número 8 de la Feria de Jerez",
-    "image": "/uploads/1776533702156-Captura de pantalla 2026-04-18 193450.png",
+    "image": "/uploads/1777237708062-Captura de pantalla 2026-04-26 230816.png",
     "fair": {
-      "_id": "69dd5d6bfd1547d3d8062512",
+      "_id": "69ee7cc6a787ae2ece06bebb",
       "name": "Feria de Jerez 2026"
     },
-    "createdAt": "2026-04-18T17:35:02.159Z",
-    "updatedAt": "2026-04-18T17:35:02.159Z",
+    "createdAt": "2026-04-26T21:08:28.070Z",
+    "updatedAt": "2026-04-26T21:08:28.070Z",
     "__v": 0
   }
 ]
