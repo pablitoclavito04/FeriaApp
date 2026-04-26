@@ -1,114 +1,100 @@
 [
   {
-    "_id": "69e3c54bce2d950b16b7089b",
+    "_id": "69ee7f11a787ae2ece06bec4",
     "name": "Jamón ibérico de bellota",
     "description": "",
     "price": 12,
     "caseta": {
-      "_id": "69dd5da2fd1547d3d8062513",
+      "_id": "69ee7cfaa787ae2ece06bebc",
       "name": "La casapuerta",
       "number": 1
     },
-    "createdAt": "2026-04-18T17:54:19.310Z",
-    "updatedAt": "2026-04-18T17:54:19.310Z",
-    "__v": 0
+    "__v": 0,
+    "createdAt": "2026-04-26T21:09:37.472Z",
+    "updatedAt": "2026-04-26T21:09:37.472Z"
   },
   {
-    "_id": "69e3c561ce2d950b16b7089c",
+    "_id": "69ee7f11a787ae2ece06bec5",
     "name": "Pescaíto frito",
     "description": "",
     "price": 9,
     "caseta": {
-      "_id": "69dd5da2fd1547d3d8062513",
+      "_id": "69ee7cfaa787ae2ece06bebc",
       "name": "La casapuerta",
       "number": 1
     },
-    "createdAt": "2026-04-18T17:54:41.072Z",
-    "updatedAt": "2026-04-18T17:54:41.072Z",
-    "__v": 0
+    "__v": 0,
+    "createdAt": "2026-04-26T21:09:37.472Z",
+    "updatedAt": "2026-04-26T21:09:37.472Z"
   },
   {
-    "_id": "69e3c56ece2d950b16b7089d",
+    "_id": "69ee7f11a787ae2ece06bec6",
     "name": "Tortilla de patatas",
     "description": "",
     "price": 6,
     "caseta": {
-      "_id": "69dd5da2fd1547d3d8062513",
+      "_id": "69ee7cfaa787ae2ece06bebc",
       "name": "La casapuerta",
       "number": 1
     },
-    "createdAt": "2026-04-18T17:54:54.836Z",
-    "updatedAt": "2026-04-18T17:54:54.836Z",
-    "__v": 0
+    "__v": 0,
+    "createdAt": "2026-04-26T21:09:37.473Z",
+    "updatedAt": "2026-04-26T21:09:37.473Z"
   },
   {
-    "_id": "69e4de1a1aef9a89a22cae01",
+    "_id": "69ee7f11a787ae2ece06bec7",
     "name": "Gambas al ajillo",
     "description": "",
     "price": 11,
     "caseta": {
-      "_id": "69dd5da2fd1547d3d8062513",
+      "_id": "69ee7cfaa787ae2ece06bebc",
       "name": "La casapuerta",
       "number": 1
     },
-    "createdAt": "2026-04-19T13:52:26.657Z",
-    "updatedAt": "2026-04-19T13:52:26.657Z",
-    "__v": 0
+    "__v": 0,
+    "createdAt": "2026-04-26T21:09:37.473Z",
+    "updatedAt": "2026-04-26T21:09:37.473Z"
   },
   {
-    "_id": "69e4de2a1aef9a89a22cae02",
+    "_id": "69ee7f11a787ae2ece06bec8",
     "name": "Croquetas caseras",
     "description": "",
     "price": 7,
     "caseta": {
-      "_id": "69dd5da2fd1547d3d8062513",
+      "_id": "69ee7cfaa787ae2ece06bebc",
       "name": "La casapuerta",
       "number": 1
     },
-    "createdAt": "2026-04-19T13:52:42.881Z",
-    "updatedAt": "2026-04-19T13:52:42.881Z",
-    "__v": 0
+    "__v": 0,
+    "createdAt": "2026-04-26T21:09:37.473Z",
+    "updatedAt": "2026-04-26T21:09:37.473Z"
   },
   {
-    "_id": "69e4de391aef9a89a22cae03",
+    "_id": "69ee7f33a787ae2ece06bec9",
     "name": "Solomillo al whisky",
     "description": "",
     "price": 14,
     "caseta": {
-      "_id": "69dffd8d34fc18bcdc94e6d5",
-      "name": "Tio Jose de Paua",
+      "_id": "69ee7d52a787ae2ece06bebd",
+      "name": "Tio Jose de Paula",
       "number": 2
     },
-    "createdAt": "2026-04-19T13:52:57.870Z",
-    "updatedAt": "2026-04-19T13:52:57.870Z",
-    "__v": 0
+    "__v": 0,
+    "createdAt": "2026-04-26T21:10:11.824Z",
+    "updatedAt": "2026-04-26T21:10:11.824Z"
   },
   {
-    "_id": "69e4de4e1aef9a89a22cae04",
+    "_id": "69ee7f33a787ae2ece06beca",
     "name": "Revuelto de setas",
     "description": "",
     "price": 9,
     "caseta": {
-      "_id": "69dffd8d34fc18bcdc94e6d5",
-      "name": "Tio Jose de Paua",
+      "_id": "69ee7d52a787ae2ece06bebd",
+      "name": "Tio Jose de Paula",
       "number": 2
     },
-    "createdAt": "2026-04-19T13:53:18.926Z",
-    "updatedAt": "2026-04-19T13:53:18.926Z",
-    "__v": 0
-  },
-  {
-    "_id": "69ea58caaa8475e60765a8a3",
-    "name": "Mejillones",
-    "description": "",
-    "price": 10,
-    "caseta": {
-      "_id": "69dd5da2fd1547d3d8062513",
-      "name": "La casapuerta",
-      "number": 1
-    },
-    "createdAt": "2026-04-23T17:37:14.540Z",
-    "updatedAt": "2026-04-23T17:37:14.540Z",
-    "__v": 0
+    "__v": 0,
+    "createdAt": "2026-04-26T21:10:11.825Z",
+    "updatedAt": "2026-04-26T21:10:11.825Z"
   }
 ]
