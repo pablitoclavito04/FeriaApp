@@ -15,27 +15,25 @@ const branch = 'gh-pages';
 const uploadFile = async (filePath, content, isBase64 = false) => {
   const contentBase64 = isBase64 ? content : Buffer.from(content).toString('base64');
 
+  let sha;
   try {
     const { data } = await octokit.repos.getContent({ owner, repo, path: filePath, ref: branch });
-    await octokit.repos.createOrUpdateFileContents({
-      owner,
-      repo,
-      path: filePath,
-      message: `Update ${filePath}`,
-      content: contentBase64,
-      sha: data.sha,
-      branch,
-    });
-  } catch {
-    await octokit.repos.createOrUpdateFileContents({
-      owner,
-      repo,
-      path: filePath,
-      message: `Create ${filePath}`,
-      content: contentBase64,
-      branch,
-    });
+    sha = data.sha;
+  } catch (err) {
+    if (err.status !== 404) {
+      throw err;
+    }
   }
+
+  await octokit.repos.createOrUpdateFileContents({
+    owner,
+    repo,
+    path: filePath,
+    message: sha ? `Update ${filePath}` : `Create ${filePath}`,
+    content: contentBase64,
+    ...(sha && { sha }),
+    branch,
+  });
 };
 
 // Helper to upload images from uploads folder
