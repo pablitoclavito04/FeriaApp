@@ -55,7 +55,6 @@ The migration of libraries like `@octokit/rest` to pure ES Modules breaks compat
 
 ### Short term.
 
-- **Expand automated tests:** Cover all API endpoints with Jest and Supertest, not just authentication.
 - **Sample data seed:** Create a script that populates the Docker database with example data to make demos easier.
 
 ### Medium term.

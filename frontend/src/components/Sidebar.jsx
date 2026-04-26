@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import useAuth from '../context/useAuth';
 import useTheme from '../context/useTheme';
@@ -30,8 +30,19 @@ const Sidebar = () => {
   const { theme, toggleTheme } = useTheme();
   const { showToast } = useToast();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileOpen]);
+
+  const closeMobile = () => setMobileOpen(false);
 
   const handleLogoutClick = () => {
+    setMobileOpen(false);
     setShowLogoutModal(true);
   };
 
@@ -43,7 +54,23 @@ const Sidebar = () => {
 
   return (
     <>
-      <aside className="sidebar">
+      <button
+        className="sidebar-toggle"
+        onClick={() => setMobileOpen(true)}
+        aria-label="Open menu"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+
+      {mobileOpen && (
+        <div className="sidebar-backdrop" onClick={closeMobile} />
+      )}
+
+      <aside className={`sidebar${mobileOpen ? ' is-open' : ''}`}>
         <div className="sidebar-logo">
           <img src={logotipo} alt="FeriaApp" className="sidebar-logo-img" />
           <div className="sidebar-logo-text">
@@ -56,7 +83,7 @@ const Sidebar = () => {
         </div>
 
         <div className="sidebar-section-label">Main</div>
-        <nav className="sidebar-nav">
+        <nav className="sidebar-nav" onClick={closeMobile}>
           <NavLink to="/dashboard">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="3" width="7" height="7" rx="1" />
