@@ -293,18 +293,16 @@ FeriaApp/
 
 Full project documentation is available in the `/docs` folder:
 
-| File | Content |
-|---|---|
-| [01-introduction](docs/01-introduction.md) | Project origin, objectives and background |
-| [02-description](docs/02-description.md) | Features, UI/UX and use cases |
-| [03-installation](docs/03-installation.md) | Step-by-step setup guide |
-| [04-style-guide](docs/04-style-guide.md) | Colours, typography and Figma prototype |
-| [05-design](docs/05-design.md) | Architecture, ER diagram and API design |
-| [06-development](docs/06-development.md) | Sprint sequence, decisions and code snippets |
-| [07-testing](docs/07-testing.md) | Testing methodology and results |
-| [08-deployment](docs/08-deployment.md) | GitHub Pages and Docker deployment |
-| [09-user-manual](docs/09-user-manual.md) | End-user guide with FAQs |
-| [10-conclusions](docs/10-conclusions.md) | Evaluation, lessons learned and future work |
+- [01-introduction](docs/01-introduccion.md) — Project origin, objectives and background
+- [02-description](docs/02-descripcion.md) — Features, UI/UX and use cases
+- [03-installation](docs/03-instalacion.md) — Step-by-step setup guide
+- [04-style-guide](docs/04-guia-estilos.md) — Colours, typography and Figma prototype
+- [05-design](docs/05-diseno.md) — Architecture, ER diagram and API design
+- [06-development](docs/06-desarrollo.md) — Sprint sequence, decisions and code snippets
+- [07-testing](docs/07-pruebas.md) — Testing methodology and results
+- [08-deployment](docs/08-despliegue.md) — GitHub Pages and Docker deployment
+- [09-user-manual](docs/09-manual-usuario.md) — End-user guide with FAQs
+- [10-conclusions](docs/10-conclusiones.md) — Evaluation, lessons learned and future work
 
 ---
 
