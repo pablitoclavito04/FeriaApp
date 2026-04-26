@@ -229,3 +229,21 @@ docker-compose up --build
 ### Tests delete real data:
 **Symptom:** Data disappears from MongoDB after running tests.
 **Solution:** Make sure `MONGODB_TEST_URI` is defined in `backend/.env`. Tests must use `feriaApp_test`, not `feriaApp`.
+
+---
+
+## Load testing
+
+A basic load test was performed on the `GET /api/fairs` endpoint using PowerShell to simulate 100 sequential requests.
+
+**Results:**
+
+| Metric | Value |
+|---|---|
+| Total requests | 100 |
+| Total time | 1.42 seconds |
+| Requests per second | 70.26 |
+
+![alt text](image-21.png)
+
+**Conclusion:** The backend handles over 70 requests per second on a local environment, demonstrating adequate performance for the expected load of a fair information platform.
