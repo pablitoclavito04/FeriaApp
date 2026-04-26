@@ -96,5 +96,19 @@
     "__v": 0,
     "createdAt": "2026-04-26T21:10:11.825Z",
     "updatedAt": "2026-04-26T21:10:11.825Z"
+  },
+  {
+    "_id": "69eea639626e84b580e0cc3e",
+    "name": "Ensaladilla",
+    "description": "",
+    "price": 8,
+    "caseta": {
+      "_id": "69ee7d52a787ae2ece06bebd",
+      "name": "Tio Jose de Paula",
+      "number": 2
+    },
+    "__v": 0,
+    "createdAt": "2026-04-26T23:56:41.367Z",
+    "updatedAt": "2026-04-26T23:56:41.367Z"
   }
 ]
