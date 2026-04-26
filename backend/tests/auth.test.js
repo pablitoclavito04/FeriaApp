@@ -20,7 +20,7 @@ dotenv.config();
 const app = require('../server');
 
 beforeAll(async () => {
-  await mongoose.connect(process.env.MONGODB_URI);
+  await mongoose.connect(process.env.MONGODB_TEST_URI || process.env.MONGODB_URI);
 
   const bcrypt = require('bcryptjs');
   const hash = await bcrypt.hash('admin1234', 10);
