@@ -1,0 +1,161 @@
+# 06. Development.
+
+## Development sequence:
+
+Development was organised into 5 sprints following an agile methodology with GitHub Projects as the Kanban board.
+
+### Sprint 1 – Initial setup.
+- Repository creation on GitHub with the `main`, `develop` and `gh-pages` branches.
+- GitHub Projects board configuration.
+- Figma prototyping of the main screens.
+- Technical architecture design.
+
+### Sprint 2 – Backend.
+- Implementation of data models: Fair, Caseta, Menu, Concert, User.
+- REST API development with Express and JWT authentication.
+- Swagger configuration for automatic API documentation.
+- Manual testing of all endpoints with Insomnia.
+- `seedAdmin.js` script to create the initial administrator user.
+
+### Sprint 3 – Administration panel.
+- Administration panel development with React and Vite.
+- Login system implementation with JWT and protected routes.
+- CRUD forms for fairs, stalls, menus and concerts.
+- Leaflet.js integration for the stall location editor on the official plan.
+- Image uploads with Multer.
+- "Publish" button implementation with Octokit to generate and publish the public website.
+
+### Sprint 4 – Public website.
+- Static public website development as a PWA.
+- Leaflet.js integration for the interactive stall map.
+- Smart search implementation with Fuse.js and typo tolerance.
+- Service Worker and manifest.json configuration for offline support and installation.
+- Menu PDF generation with jsPDF.
+- Deployment on GitHub Pages from the `gh-pages` branch.
+
+### Sprint 5 – Deployment and testing.
+- Dockerfile creation for backend, frontend and public website.
+- Nginx configuration as a reverse proxy.
+- Orchestration with docker-compose.
+- CI/CD pipeline with GitHub Actions.
+- Unit tests with Jest and Supertest.
+- Complete documentation in `/docs`.
+
+---
+
+## Key technical decisions.
+
+### Hybrid architecture (MERN + GitHub Pages):
+
+A hybrid architecture was chosen instead of a traditional server to serve the public website. The main reason is that fair visitors need a website that loads quickly and works offline, something that can only be achieved with a static page. GitHub Pages allows hosting that website for free with very good availability.
+
+### Octokit for automatic publishing:
+
+Instead of a manual deployment process, Octokit was implemented so the administrator can publish the public website with a single click from the panel. This removes the need for the administrator to have technical knowledge of Git or deployment.
+
+### Fuse.js for typo-tolerant search:
+
+Fuse.js was chosen because it provides fuzzy search without the need for an external search server. This allows visitors to find stalls even if they misspell the name, which is especially useful in a festive environment where attention to detail decreases.
+
+### jsPDF for client-side PDF generation:
+
+PDF generation happens in the visitor's browser, without requiring a server. This reduces backend load and allows the PDF to be generated even without a connection if the app is installed as a PWA.
+
+### JWT stored in sessionStorage:
+
+SessionStorage was chosen over localStorage to store the JWT token. This means the session closes automatically when the browser is closed, which is more secure for an administration panel.
+
+---
+
+## Difficulties encountered and how they were overcome.
+
+### Problem: The .env file was accidentally committed to the gh-pages branch.
+
+When copying public website files to the `gh-pages` branch, the backend `.env` file was included in the commit. GitHub detected it and blocked the push with its Push Protection system.
+
+**Solution:** `Remove-Item C:\FeriaApp\backend\.env` was added before each commit on `gh-pages`, and `git filter-branch` was used to clean the history when the token had already been included. Long-term, this will be automated with GitHub Actions.
+
+### Problem: @octokit/rest v22 uses ES Modules and Jest uses CommonJS.
+
+When running tests with Jest, they failed because `@octokit/rest` v22 only supports ES Modules and cannot be loaded with `require()`.
+
+**Solution:** An Octokit mock was added to the tests using `jest.mock()` so that Jest does not attempt to load the real module.
+
+### Problem: The frontend in Docker made requests to localhost:5000 instead of /api/.
+
+In local development, the frontend pointed directly to the backend at `http://localhost:5000/api`. This did not work in Docker because containers do not share `localhost`.
+
+**Solution:** The axios client configuration was modified to use `import.meta.env.VITE_API_URL || '/api'`, so that in development it uses the environment variable and in Docker it uses the relative path that Nginx redirects to the backend.
+
+### Problem: React routes returned 404 in Nginx.
+
+When accessing a route like `/login` directly, Nginx returned 404 because it looked for a physical file instead of serving `index.html`.
+
+**Solution:** A custom `nginx.conf` was added to the frontend container with `try_files $uri $uri/ /index.html` so that all routes return `index.html` and React Router handles them on the client side.
+
+---
+
+## Version control tools.
+
+- **Git** with the `main`, `develop` and `gh-pages` branches.
+- **GitHub Projects** as the Kanban board for task management.
+- **GitHub Actions** for the automated CI/CD pipeline.
+- Workflow: development on `develop` → merge to `main` at the end of each sprint.
+
+---
+
+## Relevant code snippets.
+
+### Publishing with Octokit:
+
+```javascript
+const uploadFile = async (path, content, message) => {
+  const contentBase64 = Buffer.from(content).toString('base64');
+  try {
+    const { data } = await octokit.rest.repos.getContent({
+      owner: process.env.GITHUB_OWNER,
+      repo: process.env.GITHUB_REPO,
+      path,
+      ref: 'gh-pages',
+    });
+    await octokit.rest.repos.createOrUpdateFileContents({
+      owner: process.env.GITHUB_OWNER,
+      repo: process.env.GITHUB_REPO,
+      path,
+      message,
+      content: contentBase64,
+      sha: data.sha,
+      branch: 'gh-pages',
+    });
+  } catch {
+    await octokit.rest.repos.createOrUpdateFileContents({
+      owner: process.env.GITHUB_OWNER,
+      repo: process.env.GITHUB_REPO,
+      path,
+      message,
+      content: contentBase64,
+      branch: 'gh-pages',
+    });
+  }
+};
+```
+
+### PDF Generation with jsPDF.
+
+```javascript
+const downloadMenuPDF = (id) => {
+  const caseta = casetas.find((c) => c._id === id);
+  const casetaMenus = menus.filter((m) => m.caseta?._id === id || m.caseta === id);
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.setFontSize(20);
+  doc.text(`Menu - ${caseta.name}`, 20, 20);
+  let y = 45;
+  casetaMenus.forEach((m) => {
+    doc.text(m.name, 20, y);
+    doc.text(`${m.price}€`, 170, y, { align: 'right' });
+    y += 10;
+  });
+  doc.save(`menu-${caseta.name.toLowerCase().replace(/\s+/g, '-')}.pdf`);
+};
+```
