@@ -71,4 +71,129 @@ describe('Auth API', () => {
     expect(res.statusCode).toBe(401);
     expect(res.body).toHaveProperty('error');
   });
+
+  test('POST /api/auth/login - should succeed with correct credentials', async () => {
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'admin@feriaapp.com', password: 'admin1234' });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('token');
+    expect(res.body).toHaveProperty('email');
+    expect(res.body.email).toBe('admin@feriaapp.com');
+  });
+
+  test('POST /api/auth/login - should fail with empty email', async () => {
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send({ email: '', password: 'admin1234' });
+
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+
+  test('POST /api/auth/login - should fail with empty password', async () => {
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'admin@feriaapp.com', password: '' });
+
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+
+  test('POST /api/auth/login - should fail with empty body', async () => {
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send({});
+
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+
+  test('POST /api/auth/login - should fail with wrong password', async () => {
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'admin@feriaapp.com', password: 'wrongpassword' });
+
+    expect(res.statusCode).toBe(401);
+  });
+
+  test('POST /api/auth/login - should fail with non-existent email', async () => {
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'noexiste@feriaapp.com', password: 'admin1234' });
+
+    expect(res.statusCode).toBe(401);
+  });
+
+  test('POST /api/auth/login - should fail with invalid email format', async () => {
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'notanemail', password: 'admin1234' });
+
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+
+  test('POST /api/auth/login - should return token as string', async () => {
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'admin@feriaapp.com', password: 'admin1234' });
+
+    expect(res.statusCode).toBe(200);
+    expect(typeof res.body.token).toBe('string');
+  });
+
+  test('POST /api/auth/login - should return user role', async () => {
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'admin@feriaapp.com', password: 'admin1234' });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('role');
+    expect(res.body.role).toBe('admin');
+  });
+
+  test('GET /api/auth/profile - should fail with invalid token', async () => {
+    const res = await request(app)
+      .get('/api/auth/profile')
+      .set('Authorization', 'Bearer invalidtoken123');
+
+    expect(res.statusCode).toBe(401);
+  });
+
+  test('GET /api/auth/profile - should fail with malformed authorization header', async () => {
+    const res = await request(app)
+      .get('/api/auth/profile')
+      .set('Authorization', 'invalidheader');
+
+    expect(res.statusCode).toBe(401);
+  });
+
+  test('GET /api/auth/profile - should succeed with valid token', async () => {
+    const loginRes = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'admin@feriaapp.com', password: 'admin1234' });
+
+    const token = loginRes.body.token;
+
+    const res = await request(app)
+      .get('/api/auth/profile')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty('email');
+    expect(res.body.email).toBe('admin@feriaapp.com');
+  });
+
+  test('GET /api/auth/profile - should not return password', async () => {
+    const loginRes = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'admin@feriaapp.com', password: 'admin1234' });
+
+    const token = loginRes.body.token;
+
+    const res = await request(app)
+      .get('/api/auth/profile')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body).not.toHaveProperty('password');
+  });
 });

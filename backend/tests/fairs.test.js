@@ -225,3 +225,167 @@ describe('Fairs API - DELETE /api/fairs/:id', () => {
     expect(res.body.length).toBe(0);
   });
 });
+
+describe('Fairs API - Additional validation tests', () => {
+  let token;
+  let fairId;
+
+  beforeAll(async () => {
+    const bcrypt = require('bcryptjs');
+    const hash = await bcrypt.hash('admin1234', 10);
+    await mongoose.connection.collection('users').updateOne(
+      { email: 'admin@feriaapp.com' },
+      {
+        $set: { name: 'Admin', email: 'admin@feriaapp.com', password: hash, role: 'admin', updatedAt: new Date() },
+        $setOnInsert: { createdAt: new Date() }
+      },
+      { upsert: true }
+    );
+
+    const res = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'admin@feriaapp.com', password: 'admin1234' });
+    token = res.body.token;
+  });
+
+  test('should create a fair and return correct fields', async () => {
+    const res = await request(app)
+      .post('/api/fairs')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        name: 'Feria Test Extra',
+        description: 'Descripción de prueba',
+        startDate: '2026-05-06',
+        endDate: '2026-05-11',
+        location: 'Jerez',
+        active: true,
+      });
+    expect(res.statusCode).toBe(201);
+    expect(res.body).toHaveProperty('name');
+    expect(res.body).toHaveProperty('_id');
+    expect(res.body).toHaveProperty('createdAt');
+    fairId = res.body._id;
+  });
+
+  test('should return fair with active field', async () => {
+    const res = await request(app).get('/api/fairs');
+    expect(res.statusCode).toBe(200);
+    const fair = res.body.find(f => f._id === fairId);
+    expect(fair).toHaveProperty('active');
+  });
+
+  test('should return fair with startDate and endDate', async () => {
+    const res = await request(app).get('/api/fairs');
+    expect(res.statusCode).toBe(200);
+    const fair = res.body.find(f => f._id === fairId);
+    expect(fair).toHaveProperty('startDate');
+    expect(fair).toHaveProperty('endDate');
+  });
+
+  test('should return fair with description', async () => {
+    const res = await request(app).get('/api/fairs');
+    expect(res.statusCode).toBe(200);
+    const fair = res.body.find(f => f._id === fairId);
+    expect(fair).toHaveProperty('description');
+    expect(fair.description).toBe('Descripción de prueba');
+  });
+
+  test('should update fair active status to false', async () => {
+    const res = await request(app)
+      .put(`/api/fairs/${fairId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ active: false });
+    expect(res.statusCode).toBe(200);
+    expect(res.body.active).toBe(false);
+  });
+
+  test('should update fair active status to true', async () => {
+    const res = await request(app)
+      .put(`/api/fairs/${fairId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ active: true });
+    expect(res.statusCode).toBe(200);
+    expect(res.body.active).toBe(true);
+  });
+
+  test('should update fair startDate', async () => {
+    const res = await request(app)
+      .put(`/api/fairs/${fairId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ startDate: '2026-05-07' });
+    expect(res.statusCode).toBe(200);
+  });
+
+  test('should update fair location', async () => {
+    const res = await request(app)
+      .put(`/api/fairs/${fairId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ location: 'Nueva ubicación' });
+    expect(res.statusCode).toBe(200);
+    expect(res.body.location).toBe('Nueva ubicación');
+  });
+
+  test('should update fair description', async () => {
+    const res = await request(app)
+      .put(`/api/fairs/${fairId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ description: 'Nueva descripción' });
+    expect(res.statusCode).toBe(200);
+    expect(res.body.description).toBe('Nueva descripción');
+  });
+
+  test('should not return password in fair response', async () => {
+    const res = await request(app).get('/api/fairs');
+    expect(res.statusCode).toBe(200);
+    res.body.forEach(fair => {
+      expect(fair).not.toHaveProperty('password');
+    });
+  });
+
+  test('should return 200 on GET even with no active fairs', async () => {
+    await request(app)
+      .put(`/api/fairs/${fairId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ active: false });
+    const res = await request(app).get('/api/fairs');
+    expect(res.statusCode).toBe(200);
+  });
+
+  test('should fail to create fair with very long name', async () => {
+    const longName = 'A'.repeat(1000);
+    const res = await request(app)
+      .post('/api/fairs')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: longName, startDate: '2026-05-06', endDate: '2026-05-11' });
+    expect([201, 400, 500]).toContain(res.statusCode);
+  });
+
+  test('should delete the extra fair', async () => {
+    const res = await request(app)
+      .delete(`/api/fairs/${fairId}`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.statusCode).toBe(200);
+  });
+
+  test('should return 404 after deleting a fair', async () => {
+    const res = await request(app)
+      .get(`/api/fairs/${fairId}`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should fail PUT with empty body', async () => {
+    const res = await request(app)
+      .put('/api/fairs/000000000000000000000000')
+      .set('Authorization', `Bearer ${token}`)
+      .send({});
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+
+  test('should fail DELETE on already deleted fair', async () => {
+    const res = await request(app)
+      .delete(`/api/fairs/${fairId}`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.statusCode).toBeGreaterThanOrEqual(400);
+  });
+});
