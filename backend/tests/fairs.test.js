@@ -25,14 +25,30 @@ let fairId;
 beforeAll(async () => {
   await mongoose.connect(process.env.MONGODB_URI);
 
-  // Login to get token
+  const bcrypt = require('bcryptjs');
+  const hash = await bcrypt.hash('admin1234', 10);
+
+  await mongoose.connection.collection('users').updateOne(
+    { email: 'admin@feriaapp.com' },
+    {
+      $set: {
+        name: 'Admin',
+        email: 'admin@feriaapp.com',
+        password: hash,
+        role: 'admin',
+        updatedAt: new Date(),
+      },
+      $setOnInsert: { createdAt: new Date() }
+    },
+    { upsert: true }
+  );
+
   const res = await request(app)
     .post('/api/auth/login')
     .send({ email: 'admin@feriaapp.com', password: 'admin1234' });
 
   token = res.body.token;
 
-  // Clean fairs collection
   await mongoose.connection.collection('fairs').deleteMany({});
 });
 

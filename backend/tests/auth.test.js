@@ -21,6 +21,24 @@ const app = require('../server');
 
 beforeAll(async () => {
   await mongoose.connect(process.env.MONGODB_URI);
+
+  const bcrypt = require('bcryptjs');
+  const hash = await bcrypt.hash('admin1234', 10);
+
+  await mongoose.connection.collection('users').updateOne(
+    { email: 'admin@feriaapp.com' },
+    {
+      $set: {
+        name: 'Admin',
+        email: 'admin@feriaapp.com',
+        password: hash,
+        role: 'admin',
+        updatedAt: new Date(),
+      },
+      $setOnInsert: { createdAt: new Date() }
+    },
+    { upsert: true }
+  );
 });
 
 afterAll(async () => {
