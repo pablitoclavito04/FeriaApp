@@ -23,9 +23,11 @@ A full stack web platform for consulting information about the **Feria de Jerez 
 
 | Metric | Value |
 |---|---|
-| Unit tests | 3 |
+| Unit tests | 208 |
+| Test files | 5 |
 | Test framework | Jest + Supertest |
 | CI/CD | GitHub Actions |
+| Test execution | Serial (--runInBand) |
 
 ---
 

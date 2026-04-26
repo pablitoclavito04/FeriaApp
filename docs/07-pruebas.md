@@ -23,17 +23,26 @@ Screenshots of the tests are available in `docs/insomnia/`.
 
 ### 2. Unit tests with Jest and Supertest.
 
-In Sprint 4, automated unit tests were implemented for the backend. The tests cover the authentication endpoints.
+In Sprint 5, automated unit tests were implemented for the backend. The tests cover all main API endpoints across 5 test files.
 
-**Test file:** `backend/tests/auth.test.js`
+**Test files:**
 
-**Implemented tests:**
-
-| Test | Description | Expected result |
+| File | Module | Tests |
 |---|---|---|
-| Login with wrong credentials | POST /api/auth/login with incorrect email and password | 401 |
-| Login with missing fields | POST /api/auth/login without password | 400 or above |
-| Access to protected route without token | GET /api/auth/profile without Authorization header | 401 |
+| `backend/tests/auth.test.js` | Authentication | 33 |
+| `backend/tests/fairs.test.js` | Fairs CRUD | 40 |
+| `backend/tests/casetas.test.js` | Stalls CRUD | 43 |
+| `backend/tests/menus.test.js` | Menus CRUD | 47 |
+| `backend/tests/concerts.test.js` | Concerts CRUD | 45 |
+| **Total** | | **208** |
+
+**Test scenarios covered per module:**
+- Successful creation with valid data
+- Authentication failures (no token, invalid token)
+- Validation failures (missing required fields, empty fields, invalid formats)
+- Non-existent resource errors (invalid IDs, deleted resources)
+- Edge cases (special characters, long strings, null values)
+- Bulk operations (menus bulk creation)
 
 ---
 
@@ -47,15 +56,15 @@ npm test
 **Result:**
 
 ```
+PASS  tests/concerts.test.js
 PASS  tests/auth.test.js
-  Auth API
-    ✓ POST /api/auth/login - should fail with wrong credentials (82 ms)
-    ✓ POST /api/auth/login - should fail with missing fields (14 ms)
-    ✓ GET /api/auth/profile - should fail without token (10 ms)
+PASS  tests/menus.test.js
+PASS  tests/casetas.test.js
+PASS  tests/fairs.test.js
 
-Test Suites: 1 passed, 1 total
-Tests:       3 passed, 3 total
-Time:        1.321 s
+Test Suites: 5 passed, 5 total
+Tests:       208 passed, 208 total
+Time:        6.94 s
 ```
 
 ---

@@ -26,7 +26,7 @@ FeriaApp meets that objective with an architecture that clearly differentiates t
 | Docker containerisation | ✅ Completed | 5 services in docker-compose |
 | Nginx as reverse proxy | ✅ Completed | Routing between frontend, API and public website |
 | CI/CD pipeline | ✅ Completed | GitHub Actions with tests, build and Docker |
-| Unit tests | ✅ Completed | Jest + Supertest for the authentication API |
+| Unit tests | ✅ Completed | 208 tests with Jest + Supertest covering all API endpoints |
 | Documentation | ✅ Completed | 10 sections in /docs |
 
 ---
