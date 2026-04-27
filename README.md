@@ -238,16 +238,45 @@ The REST API is documented with Swagger. Once the backend is running, visit:
 http://localhost:5000/api-docs
 ```
 
-### Main endpoints.
+### Main endpoints
 
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
 | POST | /api/auth/login | Public | Administrator login |
-| GET | /api/fairs | Public | Get all fairs |
-| GET | /api/casetas | Public | Get all stalls |
-| GET | /api/menus | Public | Get all menu items |
-| GET | /api/concerts | Public | Get all concerts |
+| GET | /api/fairs | Public | Get all fairs. Supports `?page=1&limit=10&active=true` |
+| GET | /api/casetas | Public | Get all stalls. Supports `?page=1&limit=10&fair=ID&number=1` |
+| GET | /api/menus | Public | Get all menus. Supports `?page=1&limit=10&caseta=ID` |
+| GET | /api/menus/caseta/:id | Public | Get menus by stall |
+| GET | /api/concerts | Public | Get all concerts. Supports `?page=1&limit=10&caseta=ID` |
+| POST | /api/fairs | Private | Create a fair |
+| POST | /api/casetas | Private | Create a stall |
+| POST | /api/menus | Private | Create a menu item |
+| POST | /api/menus/bulk | Private | Create multiple menu items at once |
+| POST | /api/concerts | Private | Create a concert |
+| PUT | /api/fairs/:id | Private | Update a fair |
+| PUT | /api/casetas/:id | Private | Update a stall |
+| PUT | /api/menus/:id | Private | Update a menu item |
+| PUT | /api/concerts/:id | Private | Update a concert |
+| DELETE | /api/fairs/:id | Private | Delete a fair |
+| DELETE | /api/casetas/:id | Private | Delete a stall |
+| DELETE | /api/menus/:id | Private | Delete a menu item |
+| DELETE | /api/concerts/:id | Private | Delete a concert |
 | POST | /api/publish | Private | Publish public website to GitHub Pages |
+
+
+### Paginated response format
+
+All `GET` collection endpoints return a paginated response:
+
+```json
+{
+  "total": 8,
+  "page": 1,
+  "pages": 1,
+  "data": [...]
+}
+```
+
 
 ---
 

@@ -26,7 +26,7 @@ The public website deployment is automatic every time the administrator presses 
 1. The backend queries MongoDB and retrieves all updated data.
 2. It generates the JSON files (`fairs.json`, `casetas.json`, `menus.json`, `concerts.json`).
 3. It uses Octokit to upload the JSON files to the `gh-pages` branch in the `data/` folder.
-4. It uploads stall images to the `uploads/` folder.
+4. It uploads Caseta images to the `uploads/` folder.
 5. GitHub Pages deploys automatically within 2 minutes.
 
 ---
@@ -84,11 +84,11 @@ The pipeline is located at `.github/workflows/ci.yml` and runs automatically on 
 
 **1. test-backend:**
 - Starts a MongoDB instance in the CI environment.
-- Installs backend dependencies.
+- InCasetas backend dependencies.
 - Runs tests with Jest.
 
 **2. build-frontend:**
-- Installs frontend dependencies.
+- InCasetas frontend dependencies.
 - Runs `npm run build` to verify it compiles correctly.
 
 **3. docker-build:**
@@ -129,10 +129,16 @@ curl -X POST http://localhost:5000/api/auth/login \
   -d '{"email":"admin@feriaapp.com","password":"admin1234"}'
 ```
 
-### Fairs:
+### Fairs
 ```bash
 # Get all fairs (public)
 curl http://localhost:5000/api/fairs
+
+# Get fairs with pagination
+curl http://localhost:5000/api/fairs?page=1&limit=10
+
+# Get only active fairs
+curl http://localhost:5000/api/fairs?active=true
 
 # Create a fair (requires token)
 curl -X POST http://localhost:5000/api/fairs \
@@ -141,31 +147,52 @@ curl -X POST http://localhost:5000/api/fairs \
   -d '{"name":"Feria de Jerez 2026","startDate":"2026-05-06","endDate":"2026-05-11","location":"Parque González Hontoria","active":true}'
 ```
 
-### Casetas:
+### Casetas
 ```bash
-# Get all stalls (public)
+# Get all Casetas (public)
 curl http://localhost:5000/api/casetas
 
-# Create a stall (requires token)
+# Get Casetas with pagination
+curl http://localhost:5000/api/casetas?page=1&limit=10
+
+# Filter Casetas by fair
+curl http://localhost:5000/api/casetas?fair=FAIR_ID
+
+# Filter Casetas by number
+curl http://localhost:5000/api/casetas?number=1
+
+# Create a Caseta (requires token)
 curl -X POST http://localhost:5000/api/casetas \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -d '{"name":"La Casapuerta","number":1,"fair":"FAIR_ID"}'
 ```
 
-### Menus:
+### Menus
 ```bash
 # Get all menus (public)
 curl http://localhost:5000/api/menus
 
-# Get menus by stall (public)
+# Get menus with pagination
+curl http://localhost:5000/api/menus?page=1&limit=10
+
+# Filter menus by Caseta
+curl http://localhost:5000/api/menus?caseta=CASETA_ID
+
+# Get menus by Caseta (dedicated endpoint)
 curl http://localhost:5000/api/menus/caseta/CASETA_ID
 ```
 
-### Concerts:
+### Concerts
 ```bash
 # Get all concerts (public)
 curl http://localhost:5000/api/concerts
+
+# Get concerts with pagination
+curl http://localhost:5000/api/concerts?page=1&limit=10
+
+# Filter concerts by Caseta
+curl http://localhost:5000/api/concerts?caseta=CASETA_ID
 
 # Create a concert (requires token)
 curl -X POST http://localhost:5000/api/concerts \

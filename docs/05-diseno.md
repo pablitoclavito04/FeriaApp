@@ -102,6 +102,60 @@ MongoDB (port 27017)
 
 ---
 
+## API Response format.
+
+### Standard paginated response:
+
+All `GET` collection endpoints return a paginated object instead of a plain array:
+
+```json
+{
+  "total": 8,
+  "page": 1,
+  "pages": 1,
+  "data": [
+    { "_id": "...", "name": "...", ... }
+  ]
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| total | Number | Total number of documents matching the filter |
+| page | Current page number |
+| pages | Number | Total number of pages |
+| data | Array | Array of documents for the current page |
+
+### Query parameters
+
+All collection endpoints support the following query parameters:
+
+| Parameter | Type | Description | Example |
+|---|---|---|---|
+| page | Number | Page number (default: 1) | `?page=2` |
+| limit | Number | Results per page (default: 100) | `?limit=10` |
+
+Additionally, each endpoint supports specific filters:
+
+| Endpoint | Filter | Description |
+|---|---|---|
+| GET /api/fairs | `active` | Filter by active status (`true` or `false`) |
+| GET /api/casetas | `fair` | Filter by fair ID |
+| GET /api/casetas | `number` | Filter by stall number |
+| GET /api/menus | `caseta` | Filter by stall ID |
+| GET /api/concerts | `caseta` | Filter by stall ID |
+
+### Sorting
+
+| Endpoint | Sorted by |
+|---|---|
+| GET /api/fairs | `startDate` ascending |
+| GET /api/casetas | `number` ascending |
+| GET /api/menus | `name` ascending |
+| GET /api/concerts | `date` and `time` ascending |
+
+---
+
 ## Use case diagram.
 
 **Administrator:**

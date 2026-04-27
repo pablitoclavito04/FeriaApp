@@ -14,7 +14,7 @@ During Sprint 1, all API endpoints were tested manually with Insomnia. The follo
 
 - Authentication: correct and incorrect login, valid and invalid JWT token.
 - Fair CRUD: creation, reading, updating and deletion.
-- Stall CRUD: including image uploads with Multer.
+- Caseta CRUD: including image uploads with Multer.
 - Menu CRUD: individual creation and bulk creation.
 - Concert CRUD.
 - Publish endpoint: JSON generation and upload to GitHub Pages.
@@ -31,7 +31,7 @@ In Sprint 5, automated unit tests were implemented for the backend. The tests co
 |---|---|---|
 | `backend/tests/auth.test.js` | Authentication | 33 |
 | `backend/tests/fairs.test.js` | Fairs CRUD | 40 |
-| `backend/tests/casetas.test.js` | Stalls CRUD | 43 |
+| `backend/tests/casetas.test.js` | Casetas CRUD | 43 |
 | `backend/tests/menus.test.js` | Menus CRUD | 47 |
 | `backend/tests/concerts.test.js` | Concerts CRUD | 45 |
 | **Total** | | **208** |
@@ -83,13 +83,47 @@ The pipeline ensures that no code with failing tests reaches the `main` branch.
 
 ## Code coverage.
 
-Automated tests cover the authentication endpoints. The CRUD endpoints for fairs, stalls, menus and concerts were covered with manual tests during development.
+Automated tests cover the authentication endpoints. The CRUD endpoints for fairs, Casetas, menus and concerts were covered with manual tests during development.
 
 | Module | Test type | Coverage |
 |---|---|---|
 | Auth API | Unit (Jest) | Login and profile endpoints |
 | Fairs API | Manual (Insomnia) | Full CRUD |
-| Stalls API | Manual (Insomnia) | Full CRUD + image upload |
+| Casetas API | Manual (Insomnia) | Full CRUD + image upload |
 | Menus API | Manual (Insomnia) | Full CRUD + bulk |
 | Concerts API | Manual (Insomnia) | Full CRUD |
 | Publish API | Manual (Insomnia) | Publishing to GitHub Pages |
+
+---
+
+## Test updates after pagination implementation.
+
+When pagination, filtering and sorting were added to all GET endpoints in Sprint 4, the response format changed from a plain array to a paginated object:
+
+```json
+{
+  "total": 8,
+  "page": 1,
+  "pages": 1,
+  "data": [...]
+}
+```
+
+All 208 unit tests were updated to reflect this change. The main patterns updated were:
+
+| Before | After |
+|---|---|
+| `Array.isArray(res.body)` | `Array.isArray(res.body.data)` |
+| `res.body.length` | `res.body.data.length` |
+| `res.body[0]` | `res.body.data[0]` |
+| `res.body.find(...)` | `res.body.data.find(...)` |
+| `res.body.forEach(...)` | `res.body.data.forEach(...)` |
+| `for (const x of res.body)` | `for (const x of res.body.data)` |
+
+After the updates all 208 tests pass successfully:
+
+```
+Test Suites: 5 passed, 5 total
+Tests:       208 passed, 208 total
+Time:        7.347 s
+```

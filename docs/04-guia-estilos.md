@@ -37,15 +37,6 @@ https://www.figma.com/files/team/1552254852217140725/all-projects?fuid=155225484
 | Body text | Inter | 1rem | 400 |
 | Small text | Inter | 0.875rem | 400 |
 
-### Administration panel.
-
-| Usage | Family | Size | Weight |
-|---|---|---|---|
-| Headings | Inter | 1.5rem – 2rem | 700 |
-| Subheadings | Inter | 1.125rem | 600 |
-| Body text | Inter | 0.875rem | 400 |
-| Form labels | Inter | 0.8rem | 500 |
-
 ---
 
 ## Spacing.

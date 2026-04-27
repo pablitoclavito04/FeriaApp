@@ -159,3 +159,44 @@ const downloadMenuPDF = (id) => {
   doc.save(`menu-${caseta.name.toLowerCase().replace(/\s+/g, '-')}.pdf`);
 };
 ```
+
+---
+
+## Pagination, filtering and sorting:
+
+In Sprint 5, pagination, filtering and sorting support was added to all main GET endpoints. This improvement allows clients to request specific subsets of data rather than retrieving all documents at once.
+
+### Implementation:
+
+Each controller was updated to support the following pattern:
+
+```javascript
+const filter = {};
+if (req.query.fair) filter.fair = req.query.fair;
+
+const page = parseInt(req.query.page) || 1;
+const limit = parseInt(req.query.limit) || 100;
+const skip = (page - 1) * limit;
+
+const total = await Model.countDocuments(filter);
+const data = await Model.find(filter)
+  .skip(skip)
+  .limit(limit)
+  .sort({ field: 1 });
+
+res.json({ total, page, pages: Math.ceil(total / limit), data });
+```
+
+### Decisions made:
+
+- Default `limit` is set to 100 to maintain backwards compatibility with the frontend while still supporting explicit pagination.
+- Each endpoint has its own sorting criteria based on the most logical field for that entity.
+- Filters are optional — if no query parameters are provided, all documents are returned.
+
+### Frontend adaptation:
+
+All frontend services and pages were updated to handle the new paginated response format, accessing `response.data` instead of the raw array.
+
+### Test adaptation:
+
+All 208 unit tests were updated to use `res.body.data` instead of `res.body` when asserting on collection responses.
