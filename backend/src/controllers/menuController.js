@@ -50,8 +50,11 @@ const createMenu = async (req, res) => {
     const menu = await Menu.create(req.body);
     res.status(201).json(menu);
   } catch (error) {
-   console.error('Error creating menu:', error.message);
-   res.status(500).json({ error: error.message, code: 'SERVER_ERROR' });
+    if (error.name === 'ValidationError') {
+      return res.status(422).json({ error: error.message, code: 'VALIDATION_ERROR' });
+    }
+    console.error('Error creating menu:', error.message);
+    res.status(500).json({ error: error.message, code: 'SERVER_ERROR' });
   }
 };
 
@@ -79,6 +82,9 @@ const createMenusBulk = async (req, res) => {
     const created = await Menu.insertMany(docs, { ordered: true });
     res.status(201).json(created);
   } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res.status(422).json({ error: error.message, code: 'VALIDATION_ERROR' });
+    }
     console.error('Error creating menus in bulk:', error.message);
     res.status(500).json({ error: error.message, code: 'SERVER_ERROR' });
   }
@@ -98,6 +104,9 @@ const updateMenu = async (req, res) => {
     }
     res.json(menu);
   } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res.status(422).json({ error: error.message, code: 'VALIDATION_ERROR' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };

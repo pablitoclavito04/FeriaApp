@@ -52,6 +52,9 @@ const createFair = async (req, res) => {
     const fair = await Fair.create(req.body);
     res.status(201).json(fair);
   } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res.status(422).json({ error: error.message, code: 'VALIDATION_ERROR' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -70,6 +73,9 @@ const updateFair = async (req, res) => {
     }
     res.json(fair);
   } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res.status(422).json({ error: error.message, code: 'VALIDATION_ERROR' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };

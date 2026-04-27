@@ -50,6 +50,9 @@ const createConcert = async (req, res) => {
     const concert = await Concert.create(req.body);
     res.status(201).json(concert);
   } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res.status(422).json({ error: error.message, code: 'VALIDATION_ERROR' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -68,6 +71,9 @@ const updateConcert = async (req, res) => {
     }
     res.json(concert);
   } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res.status(422).json({ error: error.message, code: 'VALIDATION_ERROR' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };

@@ -59,6 +59,9 @@ const createCaseta = async (req, res) => {
     const caseta = await Caseta.create(casetaData);
     res.status(201).json(caseta);
   } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res.status(422).json({ error: error.message, code: 'VALIDATION_ERROR' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -81,6 +84,9 @@ const updateCaseta = async (req, res) => {
     }
     res.json(caseta);
   } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res.status(422).json({ error: error.message, code: 'VALIDATION_ERROR' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
