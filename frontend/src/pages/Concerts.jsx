@@ -30,8 +30,8 @@ const Concerts = () => {
         concertService.getConcerts(),
         casetaService.getCasetas(),
       ]);
-      setConcerts(concertsData);
-      setCasetas(casetasData);
+      setConcerts(concertsData.data);
+      setCasetas(casetasData.data);
     } catch {
       setError('Error loading data');
     } finally {

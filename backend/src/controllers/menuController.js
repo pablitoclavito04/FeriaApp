@@ -5,8 +5,26 @@ const Menu = require('../models/Menu');
 // @access  Public
 const getMenus = async (req, res) => {
   try {
-    const menus = await Menu.find().populate('caseta', 'name number');
-    res.json(menus);
+    const filter = {};
+    if (req.query.caseta) filter.caseta = req.query.caseta;
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 100;
+    const skip = (page - 1) * limit;
+
+    const total = await Menu.countDocuments(filter);
+    const menus = await Menu.find(filter)
+      .populate('caseta', 'name number')
+      .skip(skip)
+      .limit(limit)
+      .sort({ name: 1 });
+
+    res.json({
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+      data: menus,
+    });
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }

@@ -1,7 +1,7 @@
 import api from './api';
 
-const getFairs = async () => {
-  const response = await api.get('/fairs');
+const getFairs = async (params = {}) => {
+  const response = await api.get('/fairs', { params });
   return response.data;
 };
 

@@ -87,8 +87,8 @@ describe('Concerts API - GET /api/concerts', () => {
   test('should return empty array when no concerts exist', async () => {
     const res = await request(app).get('/api/concerts');
     expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body.length).toBe(0);
+    expect(Array.isArray(res.body.data)).toBe(true);
+    expect(res.body.data.length).toBe(0);
   });
 
   test('should be accessible without authentication', async () => {
@@ -205,14 +205,14 @@ describe('Concerts API - GET /api/concerts (with data)', () => {
   test('should return all concerts', async () => {
     const res = await request(app).get('/api/concerts');
     expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body.length).toBeGreaterThan(0);
+    expect(Array.isArray(res.body.data)).toBe(true);
+    expect(res.body.data.length).toBeGreaterThan(0);
   });
 
   test('should return concerts with correct structure', async () => {
     const res = await request(app).get('/api/concerts');
     expect(res.statusCode).toBe(200);
-    const concert = res.body[0];
+    const concert = res.body.data[0];
     expect(concert).toHaveProperty('_id');
     expect(concert).toHaveProperty('artist');
     expect(concert).toHaveProperty('date');
@@ -223,7 +223,7 @@ describe('Concerts API - GET /api/concerts (with data)', () => {
   test('should return concerts with caseta populated', async () => {
     const res = await request(app).get('/api/concerts');
     expect(res.statusCode).toBe(200);
-    const concert = res.body[0];
+    const concert = res.body.data[0];
     expect(concert.caseta).toHaveProperty('name');
   });
 });
@@ -326,7 +326,7 @@ describe('Concerts API - DELETE /api/concerts/:id', () => {
     await mongoose.connection.collection('concerts').deleteMany({});
     const res = await request(app).get('/api/concerts');
     expect(res.statusCode).toBe(200);
-    expect(res.body.length).toBe(0);
+    expect(res.body.data.length).toBe(0);
   });
 });
 
@@ -388,19 +388,19 @@ describe('Concerts API - Additional validation tests', () => {
 
   test('should return concert with createdAt field', async () => {
     const res = await request(app).get('/api/concerts');
-    const concert = res.body.find(c => c._id === concertId);
+    const concert = res.body.data.find(c => c._id === concertId);
     expect(concert).toHaveProperty('createdAt');
   });
 
   test('should return concert with updatedAt field', async () => {
     const res = await request(app).get('/api/concerts');
-    const concert = res.body.find(c => c._id === concertId);
+    const concert = res.body.data.find(c => c._id === concertId);
     expect(concert).toHaveProperty('updatedAt');
   });
 
   test('should return concert with genre', async () => {
     const res = await request(app).get('/api/concerts');
-    const concert = res.body.find(c => c._id === concertId);
+    const concert = res.body.data.find(c => c._id === concertId);
     expect(concert.genre).toBe('Flamenco');
   });
 
@@ -426,13 +426,13 @@ describe('Concerts API - Additional validation tests', () => {
     await request(app).post('/api/concerts').set('Authorization', `Bearer ${token}`).send({ artist: 'Artista 3', date: '2026-05-11', time: '23:00', caseta: casetaId });
     const res = await request(app).get('/api/concerts');
     expect(res.statusCode).toBe(200);
-    expect(res.body.length).toBeGreaterThan(1);
+    expect(res.body.data.length).toBeGreaterThan(1);
   });
 
   test('should return concerts with caseta populated', async () => {
     const res = await request(app).get('/api/concerts');
     expect(res.statusCode).toBe(200);
-    res.body.forEach(concert => {
+    res.body.data.forEach(concert => {
       expect(concert).toHaveProperty('caseta');
     });
   });
@@ -440,7 +440,7 @@ describe('Concerts API - Additional validation tests', () => {
   test('should not return password in concert response', async () => {
     const res = await request(app).get('/api/concerts');
     expect(res.statusCode).toBe(200);
-    res.body.forEach(concert => {
+    res.body.data.forEach(concert => {
       expect(concert).not.toHaveProperty('password');
     });
   });
@@ -449,7 +449,7 @@ describe('Concerts API - Additional validation tests', () => {
     await mongoose.connection.collection('concerts').deleteMany({});
     const res = await request(app).get('/api/concerts');
     expect(res.statusCode).toBe(200);
-    expect(res.body.length).toBe(0);
+    expect(res.body.data.length).toBe(0);
   });
 
   test('should fail DELETE on already deleted concert', async () => {
@@ -491,18 +491,18 @@ describe('Concerts API - Additional validation tests', () => {
   test('should return correct number of concerts after creation', async () => {
     const res = await request(app).get('/api/concerts');
     expect(res.statusCode).toBe(200);
-    expect(res.body.length).toBeGreaterThan(0);
+    expect(res.body.data.length).toBeGreaterThan(0);
   });
 
   test('should delete all concerts one by one', async () => {
     const concerts = await request(app).get('/api/concerts');
-    for (const concert of concerts.body) {
+    for (const concert of concerts.body.data) {
       const res = await request(app)
         .delete(`/api/concerts/${concert._id}`)
         .set('Authorization', `Bearer ${token}`);
       expect(res.statusCode).toBe(200);
     }
     const final = await request(app).get('/api/concerts');
-    expect(final.body.length).toBe(0);
+    expect(final.body.data.length).toBe(0);
   });
 });

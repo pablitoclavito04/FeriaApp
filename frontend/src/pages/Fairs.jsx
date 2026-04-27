@@ -26,7 +26,7 @@ const Fairs = () => {
   const loadFairs = async () => {
     try {
       const data = await fairService.getFairs();
-      setFairs(data);
+      setFairs(data.data);
     } catch {
       setError('Error loading fairs');
     } finally {

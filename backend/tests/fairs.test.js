@@ -61,8 +61,8 @@ describe('Fairs API - GET /api/fairs', () => {
   test('should return empty array when no fairs exist', async () => {
     const res = await request(app).get('/api/fairs');
     expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body.length).toBe(0);
+    expect(Array.isArray(res.body.data)).toBe(true);
+    expect(res.body.data.length).toBe(0);
   });
 });
 
@@ -129,14 +129,14 @@ describe('Fairs API - GET /api/fairs (with data)', () => {
   test('should return all fairs', async () => {
     const res = await request(app).get('/api/fairs');
     expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body.length).toBeGreaterThan(0);
+    expect(Array.isArray(res.body.data)).toBe(true);
+    expect(res.body.data.length).toBeGreaterThan(0);
   });
 
   test('should return fairs with correct structure', async () => {
     const res = await request(app).get('/api/fairs');
     expect(res.statusCode).toBe(200);
-    const fair = res.body[0];
+    const fair = res.body.data[0];
     expect(fair).toHaveProperty('_id');
     expect(fair).toHaveProperty('name');
   });
@@ -222,7 +222,7 @@ describe('Fairs API - DELETE /api/fairs/:id', () => {
     await mongoose.connection.collection('fairs').deleteMany({});
     const res = await request(app).get('/api/fairs');
     expect(res.statusCode).toBe(200);
-    expect(res.body.length).toBe(0);
+    expect(res.body.data.length).toBe(0);
   });
 });
 
@@ -270,14 +270,14 @@ describe('Fairs API - Additional validation tests', () => {
   test('should return fair with active field', async () => {
     const res = await request(app).get('/api/fairs');
     expect(res.statusCode).toBe(200);
-    const fair = res.body.find(f => f._id === fairId);
+    const fair = res.body.data.find(f => f._id === fairId);
     expect(fair).toHaveProperty('active');
   });
 
   test('should return fair with startDate and endDate', async () => {
     const res = await request(app).get('/api/fairs');
     expect(res.statusCode).toBe(200);
-    const fair = res.body.find(f => f._id === fairId);
+    const fair = res.body.data.find(f => f._id === fairId);
     expect(fair).toHaveProperty('startDate');
     expect(fair).toHaveProperty('endDate');
   });
@@ -285,7 +285,7 @@ describe('Fairs API - Additional validation tests', () => {
   test('should return fair with description', async () => {
     const res = await request(app).get('/api/fairs');
     expect(res.statusCode).toBe(200);
-    const fair = res.body.find(f => f._id === fairId);
+    const fair = res.body.data.find(f => f._id === fairId);
     expect(fair).toHaveProperty('description');
     expect(fair.description).toBe('Descripción de prueba');
   });
@@ -337,7 +337,7 @@ describe('Fairs API - Additional validation tests', () => {
   test('should not return password in fair response', async () => {
     const res = await request(app).get('/api/fairs');
     expect(res.statusCode).toBe(200);
-    res.body.forEach(fair => {
+    res.body.data.forEach(fair => {
       expect(fair).not.toHaveProperty('password');
     });
   });

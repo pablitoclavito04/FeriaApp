@@ -87,8 +87,8 @@ describe('Menus API - GET /api/menus', () => {
   test('should return empty array when no menus exist', async () => {
     const res = await request(app).get('/api/menus');
     expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body.length).toBe(0);
+    expect(Array.isArray(res.body.data)).toBe(true);
+    expect(res.body.data.length).toBe(0);
   });
 
   test('should be accessible without authentication', async () => {
@@ -249,14 +249,14 @@ describe('Menus API - GET /api/menus (with data)', () => {
   test('should return all menus', async () => {
     const res = await request(app).get('/api/menus');
     expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body.length).toBeGreaterThan(0);
+    expect(Array.isArray(res.body.data)).toBe(true);
+    expect(res.body.data.length).toBeGreaterThan(0);
   });
 
   test('should return menus with correct structure', async () => {
     const res = await request(app).get('/api/menus');
     expect(res.statusCode).toBe(200);
-    const menu = res.body[0];
+    const menu = res.body.data[0];
     expect(menu).toHaveProperty('_id');
     expect(menu).toHaveProperty('name');
     expect(menu).toHaveProperty('price');
@@ -415,19 +415,19 @@ describe('Menus API - Additional validation tests', () => {
 
   test('should return menu with createdAt field', async () => {
     const res = await request(app).get('/api/menus');
-    const menu = res.body.find(m => m._id === menuId);
+    const menu = res.body.data.find(m => m._id === menuId);
     expect(menu).toHaveProperty('createdAt');
   });
 
   test('should return menu with updatedAt field', async () => {
     const res = await request(app).get('/api/menus');
-    const menu = res.body.find(m => m._id === menuId);
+    const menu = res.body.data.find(m => m._id === menuId);
     expect(menu).toHaveProperty('updatedAt');
   });
 
   test('should return menu with description', async () => {
     const res = await request(app).get('/api/menus');
-    const menu = res.body.find(m => m._id === menuId);
+    const menu = res.body.data.find(m => m._id === menuId);
     expect(menu.description).toBe('Descripción extra');
   });
 
@@ -474,7 +474,7 @@ describe('Menus API - Additional validation tests', () => {
   test('should return menus with caseta populated', async () => {
     const res = await request(app).get('/api/menus');
     expect(res.statusCode).toBe(200);
-    res.body.forEach(menu => {
+    res.body.data.forEach(menu => {
       expect(menu).toHaveProperty('caseta');
     });
   });
@@ -482,7 +482,7 @@ describe('Menus API - Additional validation tests', () => {
   test('should not return password in menu response', async () => {
     const res = await request(app).get('/api/menus');
     expect(res.statusCode).toBe(200);
-    res.body.forEach(menu => {
+    res.body.data.forEach(menu => {
       expect(menu).not.toHaveProperty('password');
     });
   });

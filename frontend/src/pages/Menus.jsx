@@ -40,8 +40,8 @@ const Menus = () => {
         menuService.getMenus(),
         casetaService.getCasetas(),
       ]);
-      setMenus(menusData);
-      setCasetas(casetasData);
+      setMenus(menusData.data);
+      setCasetas(casetasData.data);
     } catch {
       setError('Error loading data');
     } finally {

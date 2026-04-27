@@ -1,7 +1,7 @@
 import api from './api';
 
-const getConcerts = async () => {
-  const response = await api.get('/concerts');
+const getConcerts = async (params = {}) => {
+  const response = await api.get('/concerts', { params });
   return response.data;
 };
 

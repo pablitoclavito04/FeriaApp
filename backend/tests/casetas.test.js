@@ -71,8 +71,8 @@ describe('Casetas API - GET /api/casetas', () => {
   test('should return empty array when no casetas exist', async () => {
     const res = await request(app).get('/api/casetas');
     expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body.length).toBe(0);
+    expect(Array.isArray(res.body.data)).toBe(true);
+    expect(res.body.data.length).toBe(0);
   });
 
   test('should be accessible without authentication', async () => {
@@ -159,14 +159,14 @@ describe('Casetas API - GET /api/casetas (with data)', () => {
   test('should return all casetas', async () => {
     const res = await request(app).get('/api/casetas');
     expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body.length).toBeGreaterThan(0);
+    expect(Array.isArray(res.body.data)).toBe(true);
+    expect(res.body.data.length).toBeGreaterThan(0);
   });
 
   test('should return casetas with correct structure', async () => {
     const res = await request(app).get('/api/casetas');
     expect(res.statusCode).toBe(200);
-    const caseta = res.body[0];
+    const caseta = res.body.data[0];
     expect(caseta).toHaveProperty('_id');
     expect(caseta).toHaveProperty('name');
     expect(caseta).toHaveProperty('number');
@@ -175,7 +175,7 @@ describe('Casetas API - GET /api/casetas (with data)', () => {
   test('should return caseta with fair populated', async () => {
     const res = await request(app).get('/api/casetas');
     expect(res.statusCode).toBe(200);
-    const caseta = res.body[0];
+    const caseta = res.body.data[0];
     expect(caseta).toHaveProperty('fair');
   });
 });
@@ -276,7 +276,7 @@ describe('Casetas API - DELETE /api/casetas/:id', () => {
     await mongoose.connection.collection('casetas').deleteMany({});
     const res = await request(app).get('/api/casetas');
     expect(res.statusCode).toBe(200);
-    expect(res.body.length).toBe(0);
+    expect(res.body.data.length).toBe(0);
   });
 });
 
@@ -336,13 +336,13 @@ describe('Casetas API - Additional validation tests', () => {
 
   test('should return caseta with location', async () => {
     const res = await request(app).get('/api/casetas');
-    const caseta = res.body.find(c => c._id === casetaId);
+    const caseta = res.body.data.find(c => c._id === casetaId);
     expect(caseta).toHaveProperty('location');
   });
 
   test('should return caseta with description', async () => {
     const res = await request(app).get('/api/casetas');
-    const caseta = res.body.find(c => c._id === casetaId);
+    const caseta = res.body.data.find(c => c._id === casetaId);
     expect(caseta.description).toBe('Descripción');
   });
 
@@ -367,18 +367,18 @@ describe('Casetas API - Additional validation tests', () => {
   test('should not return password in caseta response', async () => {
     const res = await request(app).get('/api/casetas');
     expect(res.statusCode).toBe(200);
-    res.body.forEach(c => expect(c).not.toHaveProperty('password'));
+    res.body.data.forEach(c => expect(c).not.toHaveProperty('password'));
   });
 
   test('should return caseta with createdAt field', async () => {
     const res = await request(app).get('/api/casetas');
-    const caseta = res.body.find(c => c._id === casetaId);
+    const caseta = res.body.data.find(c => c._id === casetaId);
     expect(caseta).toHaveProperty('createdAt');
   });
 
   test('should return caseta with updatedAt field', async () => {
     const res = await request(app).get('/api/casetas');
-    const caseta = res.body.find(c => c._id === casetaId);
+    const caseta = res.body.data.find(c => c._id === casetaId);
     expect(caseta).toHaveProperty('updatedAt');
   });
 
@@ -402,7 +402,7 @@ describe('Casetas API - Additional validation tests', () => {
     await mongoose.connection.collection('casetas').deleteMany({});
     const res = await request(app).get('/api/casetas');
     expect(res.statusCode).toBe(200);
-    expect(res.body.length).toBe(0);
+    expect(res.body.data.length).toBe(0);
   });
 
   test('should fail DELETE on non-existent caseta after deletion', async () => {
@@ -431,24 +431,24 @@ describe('Casetas API - Additional validation tests', () => {
     await request(app).post('/api/casetas').set('Authorization', `Bearer ${token}`).send({ name: 'Caseta C', number: 3, fair: fairId });
     const res = await request(app).get('/api/casetas');
     expect(res.statusCode).toBe(200);
-    expect(res.body.length).toBe(3);
+    expect(res.body.data.length).toBe(3);
   });
 
   test('should return casetas array sorted correctly', async () => {
     const res = await request(app).get('/api/casetas');
     expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
+    expect(Array.isArray(res.body.data)).toBe(true);
   });
 
   test('should delete all casetas one by one', async () => {
     const casetas = await request(app).get('/api/casetas');
-    for (const caseta of casetas.body) {
+    for (const caseta of casetas.body.data) {
       const res = await request(app)
         .delete(`/api/casetas/${caseta._id}`)
         .set('Authorization', `Bearer ${token}`);
       expect(res.statusCode).toBe(200);
     }
     const final = await request(app).get('/api/casetas');
-    expect(final.body.length).toBe(0);
+    expect(final.body.data.length).toBe(0);
   });
 });

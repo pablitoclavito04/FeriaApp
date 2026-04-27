@@ -5,8 +5,26 @@ const Concert = require('../models/Concert');
 // @access  Public
 const getConcerts = async (req, res) => {
   try {
-    const concerts = await Concert.find().populate('caseta', 'name number');
-    res.json(concerts);
+    const filter = {};
+    if (req.query.caseta) filter.caseta = req.query.caseta;
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 100;
+    const skip = (page - 1) * limit;
+
+    const total = await Concert.countDocuments(filter);
+    const concerts = await Concert.find(filter)
+      .populate('caseta', 'name number')
+      .skip(skip)
+      .limit(limit)
+      .sort({ date: 1, time: 1 });
+
+    res.json({
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+      data: concerts,
+    });
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }

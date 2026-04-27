@@ -24,10 +24,10 @@ const Dashboard = () => {
           concertService.getConcerts(),
         ]);
         setStats({
-          fairs: fairs.length,
-          casetas: casetas.length,
-          menus: menus.length,
-          concerts: concerts.length,
+          fairs: fairs.data.length,
+          casetas: casetas.data.length,
+          menus: menus.data.length,
+          concerts: concerts.data.length,
         });
       } catch {
         // Stats are non-critical

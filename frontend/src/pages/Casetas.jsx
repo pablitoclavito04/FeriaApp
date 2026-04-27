@@ -33,8 +33,8 @@ const Casetas = () => {
         casetaService.getCasetas(),
         fairService.getFairs(),
       ]);
-      setCasetas(casetasData);
-      setFairs(fairsData);
+      setCasetas(casetasData.data);
+      setFairs(fairsData.data);
     } catch {
       setError('Error loading data');
     } finally {

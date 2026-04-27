@@ -1,7 +1,7 @@
 import api from './api';
 
-const getCasetas = async () => {
-  const response = await api.get('/casetas');
+const getCasetas = async (params = {}) => {
+  const response = await api.get('/casetas', { params });
   return response.data;
 };
 

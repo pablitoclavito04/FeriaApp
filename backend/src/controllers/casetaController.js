@@ -6,8 +6,27 @@ const path = require('path');
 // @access  Public
 const getCasetas = async (req, res) => {
   try {
-    const casetas = await Caseta.find().populate('fair', 'name');
-    res.json(casetas);
+    const filter = {};
+    if (req.query.fair) filter.fair = req.query.fair;
+    if (req.query.number) filter.number = req.query.number;
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 100;
+    const skip = (page - 1) * limit;
+
+    const total = await Caseta.countDocuments(filter);
+    const casetas = await Caseta.find(filter)
+      .populate('fair', 'name')
+      .skip(skip)
+      .limit(limit)
+      .sort({ number: 1 });
+
+    res.json({
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+      data: casetas,
+    });
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }

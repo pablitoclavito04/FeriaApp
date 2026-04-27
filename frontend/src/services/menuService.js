@@ -1,7 +1,7 @@
 import api from './api';
 
-const getMenus = async () => {
-  const response = await api.get('/menus');
+const getMenus = async (params = {}) => {
+  const response = await api.get('/menus', { params });
   return response.data;
 };
 

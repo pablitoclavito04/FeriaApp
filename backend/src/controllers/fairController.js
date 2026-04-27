@@ -5,8 +5,25 @@ const Fair = require('../models/Fair');
 // @access  Public
 const getFairs = async (req, res) => {
   try {
-    const fairs = await Fair.find();
-    res.json(fairs);
+    const filter = {};
+    if (req.query.active) filter.active = req.query.active === 'true';
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 100;
+    const skip = (page - 1) * limit;
+
+    const total = await Fair.countDocuments(filter);
+    const fairs = await Fair.find(filter)
+      .skip(skip)
+      .limit(limit)
+      .sort({ startDate: 1 });
+
+    res.json({
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+      data: fairs,
+    });
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }
