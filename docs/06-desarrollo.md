@@ -263,3 +263,30 @@ A dedicated `GET /api/stats` endpoint was created using MongoDB aggregation pipe
 | concertController | 11 |
 | statsController | 13 |
 | **Total** | **55** |
+
+---
+
+## Nested routes for menus and concerts
+
+In addition to the nested routes under `/api/fairs/:id` and `/api/casetas/:id`, nested routes were also added for menus and concerts to allow navigation between related resources.
+
+**Menus nested routes:**
+- `GET /api/menus/:id/caseta` — get the stall of a specific menu item
+- `GET /api/menus/:id/similar` — get menu items with a similar price (±2€)
+- `GET /api/menus/:id/caseta/concerts` — get the concerts of the stall that serves this menu item
+
+**Concerts nested routes:**
+- `GET /api/concerts/:id/caseta` — get the stall of a specific concert
+- `GET /api/concerts/:id/sameday` — get other concerts happening on the same day
+- `GET /api/concerts/:id/samegenre` — get other concerts of the same genre
+- `GET /api/concerts/:id/caseta/menus` — get the menu items of the stall where a concert takes place
+
+### Total nested routes summary
+
+| Route file | Nested routes |
+|---|---|
+| fairRoutes.js | 8 |
+| casetaRoutes.js | 12 |
+| menuRoutes.js | 3 |
+| concertRoutes.js | 4 |
+| **Total** | **27** |

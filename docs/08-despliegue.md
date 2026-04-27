@@ -232,6 +232,31 @@ curl http://localhost:5000/api/concerts/filter/genre/flamenco
 curl http://localhost:5000/api/stats
 ```
 
+### Nested routes for menus and concerts
+
+```bash
+# Get the caseta of a menu
+curl http://localhost:5000/api/menus/MENU_ID/caseta
+
+# Get similar menus by price
+curl http://localhost:5000/api/menus/MENU_ID/similar
+
+# Get concerts of the caseta of a menu
+curl http://localhost:5000/api/menus/MENU_ID/caseta/concerts
+
+# Get the caseta of a concert
+curl http://localhost:5000/api/concerts/CONCERT_ID/caseta
+
+# Get other concerts on the same day
+curl http://localhost:5000/api/concerts/CONCERT_ID/sameday
+
+# Get other concerts of the same genre
+curl http://localhost:5000/api/concerts/CONCERT_ID/samegenre
+
+# Get menus of the caseta of a concert
+curl http://localhost:5000/api/concerts/CONCERT_ID/caseta/menus
+```
+
 ---
 
 ## Troubleshooting

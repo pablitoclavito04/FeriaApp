@@ -273,6 +273,9 @@ http://localhost:5000/api-docs
 | GET | /api/menus/count/bycaseta | Public | Count menus per stall |
 | GET | /api/menus/search/:name | Public | Search menus by name |
 | GET | /api/menus/caseta/:id | Public | Get menus by stall |
+| GET | /api/menus/:id/caseta | Public | Get the caseta of a menu |
+| GET | /api/menus/:id/similar | Public | Get menus with similar price |
+| GET | /api/menus/:id/caseta/concerts | Public | Get concerts of the caseta of a menu |
 | GET | /api/concerts | Public | Get all concerts. Supports `?page=1&limit=10&caseta=ID` |
 | GET | /api/concerts/sorted/desc | Public | Get concerts sorted by date descending |
 | GET | /api/concerts/filter/daterange | Public | Get concerts by date range `?startDate=&endDate=` |
@@ -283,6 +286,10 @@ http://localhost:5000/api-docs
 | GET | /api/concerts/filter/genre/:genre | Public | Get concerts by genre |
 | GET | /api/concerts/search/:artist | Public | Search concerts by artist |
 | GET | /api/concerts/caseta/:id | Public | Get concerts by stall |
+| GET | /api/concerts/:id/caseta | Public | Get the caseta of a concert |
+| GET | /api/concerts/:id/sameday | Public | Get concerts on the same day |
+| GET | /api/concerts/:id/samegenre | Public | Get concerts of the same genre |
+| GET | /api/concerts/:id/caseta/menus | Public | Get menus of the caseta of a concert |
 | GET | /api/stats | Public | Get general statistics and aggregations |
 | POST | /api/fairs | Private | Create a fair |
 | POST | /api/casetas | Private | Create a stall |
@@ -298,6 +305,17 @@ http://localhost:5000/api-docs
 | DELETE | /api/menus/:id | Private | Delete a menu item |
 | DELETE | /api/concerts/:id | Private | Delete a concert |
 | POST | /api/publish | Private | Publish public website to GitHub Pages |
+
+
+### Nested routes summary
+
+| Route file | Nested routes |
+|---|---|
+| fairRoutes.js | 8 |
+| casetaRoutes.js | 12 |
+| menuRoutes.js | 3 |
+| concertRoutes.js | 4 |
+| **Total** | **27** |
 
 
 ### Paginated response format

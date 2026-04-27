@@ -178,6 +178,9 @@ All `GET` collection endpoints return a paginated object instead of a plain arra
 | GET | /api/menus/count/bycaseta | Public | Count menus per stall |
 | GET | /api/menus/search/:name | Public | Search menus by name |
 | GET | /api/menus/caseta/:id | Public | Get menus by stall |
+| GET | /api/menus/:id/caseta | Public | Get the caseta of a menu |
+| GET | /api/menus/:id/similar | Public | Get menus with similar price |
+| GET | /api/menus/:id/caseta/concerts | Public | Get concerts of the caseta of a menu |
 | POST | /api/menus | Private | Create a menu item |
 | POST | /api/menus/bulk | Private | Create multiple menu items at once |
 | PUT | /api/menus/:id | Private | Update a menu item |
@@ -197,6 +200,10 @@ All `GET` collection endpoints return a paginated object instead of a plain arra
 | GET | /api/concerts/filter/genre/:genre | Public | Get concerts by genre |
 | GET | /api/concerts/search/:artist | Public | Search concerts by artist |
 | GET | /api/concerts/caseta/:id | Public | Get concerts by stall |
+| GET | /api/concerts/:id/caseta | Public | Get the caseta of a concert |
+| GET | /api/concerts/:id/sameday | Public | Get concerts on the same day |
+| GET | /api/concerts/:id/samegenre | Public | Get concerts of the same genre |
+| GET | /api/concerts/:id/caseta/menus | Public | Get menus of the caseta of a concert |
 | POST | /api/concerts | Private | Create a concert |
 | PUT | /api/concerts/:id | Private | Update a concert |
 | DELETE | /api/concerts/:id | Private | Delete a concert |

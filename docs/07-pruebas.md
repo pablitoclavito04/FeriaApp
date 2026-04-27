@@ -166,3 +166,32 @@ curl http://localhost:5000/api/stats
 ```
 
 All endpoints returned `200 OK` with the expected data.
+
+---
+
+## Manual testing of nested routes for menus and concerts
+
+```bash
+# Get the caseta of a menu
+curl http://localhost:5000/api/menus/MENU_ID/caseta
+
+# Get similar menus by price
+curl http://localhost:5000/api/menus/MENU_ID/similar
+
+# Get concerts of the caseta of a menu
+curl http://localhost:5000/api/menus/MENU_ID/caseta/concerts
+
+# Get the caseta of a concert
+curl http://localhost:5000/api/concerts/CONCERT_ID/caseta
+
+# Get concerts on the same day
+curl http://localhost:5000/api/concerts/CONCERT_ID/sameday
+
+# Get concerts of the same genre
+curl http://localhost:5000/api/concerts/CONCERT_ID/samegenre
+
+# Get menus of the caseta of a concert
+curl http://localhost:5000/api/concerts/CONCERT_ID/caseta/menus
+```
+
+All endpoints returned `200 OK` with the expected data.
