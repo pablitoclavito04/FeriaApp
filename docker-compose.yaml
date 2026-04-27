@@ -23,7 +23,7 @@ services:
     environment:
       - PORT=5000
       - MONGODB_URI=mongodb://mongo:27017/feriaApp
-      - JWT_SECRET=feriaApp_secret_key_2026
+      - JWT_SECRET=${JWT_SECRET}
       - GITHUB_TOKEN=${GITHUB_TOKEN}
       - GITHUB_OWNER=${GITHUB_OWNER}
       - GITHUB_REPO=${GITHUB_REPO}
