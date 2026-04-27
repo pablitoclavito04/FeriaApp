@@ -126,33 +126,103 @@ All `GET` collection endpoints return a paginated object instead of a plain arra
 | pages | Number | Total number of pages |
 | data | Array | Array of documents for the current page |
 
-### Query parameters
+## API endpoints
 
-All collection endpoints support the following query parameters:
+### Fairs
 
-| Parameter | Type | Description | Example |
+| Method | Endpoint | Access | Description |
 |---|---|---|---|
-| page | Number | Page number (default: 1) | `?page=2` |
-| limit | Number | Results per page (default: 100) | `?limit=10` |
+| GET | /api/fairs | Public | Get all fairs with pagination and filters |
+| GET | /api/fairs/active | Public | Get only active fairs |
+| GET | /api/fairs/latest | Public | Get most recent fair |
+| GET | /api/fairs/range | Public | Get fairs by date range |
+| GET | /api/fairs/count/status | Public | Count active vs inactive fairs |
+| GET | /api/fairs/sorted/enddate | Public | Get fairs sorted by end date descending |
+| GET | /api/fairs/search/:name | Public | Search fairs by name |
+| GET | /api/fairs/:id | Public | Get a fair by ID |
+| GET | /api/fairs/:id/casetas | Public | Get a fair with its stalls |
+| GET | /api/fairs/:id/full | Public | Get a fair with stalls, menus and concerts |
+| POST | /api/fairs | Private | Create a fair |
+| PUT | /api/fairs/:id | Private | Update a fair |
+| DELETE | /api/fairs/:id | Private | Delete a fair |
 
-Additionally, each endpoint supports specific filters:
+### Stalls
 
-| Endpoint | Filter | Description |
-|---|---|---|
-| GET /api/fairs | `active` | Filter by active status (`true` or `false`) |
-| GET /api/casetas | `fair` | Filter by fair ID |
-| GET /api/casetas | `number` | Filter by stall number |
-| GET /api/menus | `caseta` | Filter by stall ID |
-| GET /api/concerts | `caseta` | Filter by stall ID |
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| GET | /api/casetas | Public | Get all stalls with pagination and filters |
+| GET | /api/casetas/sorted/desc | Public | Get stalls sorted by number descending |
+| GET | /api/casetas/filter/withimage | Public | Get stalls with image |
+| GET | /api/casetas/filter/noimage | Public | Get stalls without image |
+| GET | /api/casetas/filter/highest | Public | Get stall with highest number |
+| GET | /api/casetas/filter/withlocation | Public | Get stalls with location defined |
+| GET | /api/casetas/count/byfair | Public | Count stalls per fair |
+| GET | /api/casetas/search/:name | Public | Search stalls by name |
+| GET | /api/casetas/:id | Public | Get a stall by ID |
+| GET | /api/casetas/:id/full | Public | Get a stall with its menus and concerts |
+| POST | /api/casetas | Private | Create a stall |
+| PUT | /api/casetas/:id | Private | Update a stall |
+| DELETE | /api/casetas/:id | Private | Delete a stall |
 
-### Sorting
+### Menus
 
-| Endpoint | Sorted by |
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| GET | /api/menus | Public | Get all menus with pagination and filters |
+| GET | /api/menus/sorted/price | Public | Get menus sorted by price ascending |
+| GET | /api/menus/filter/price | Public | Get menus by price range `?min=5&max=15` |
+| GET | /api/menus/filter/mostexpensive | Public | Get most expensive menu item |
+| GET | /api/menus/filter/cheapest | Public | Get cheapest menu item |
+| GET | /api/menus/filter/nodescription | Public | Get menus without description |
+| GET | /api/menus/filter/full | Public | Get menus with full caseta and fair info |
+| GET | /api/menus/count/bycaseta | Public | Count menus per stall |
+| GET | /api/menus/search/:name | Public | Search menus by name |
+| GET | /api/menus/caseta/:id | Public | Get menus by stall |
+| POST | /api/menus | Private | Create a menu item |
+| POST | /api/menus/bulk | Private | Create multiple menu items at once |
+| PUT | /api/menus/:id | Private | Update a menu item |
+| DELETE | /api/menus/:id | Private | Delete a menu item |
+
+### Concerts
+
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| GET | /api/concerts | Public | Get all concerts with pagination and filters |
+| GET | /api/concerts/sorted/desc | Public | Get concerts sorted by date descending |
+| GET | /api/concerts/filter/daterange | Public | Get concerts by date range |
+| GET | /api/concerts/filter/upcoming | Public | Get upcoming concerts |
+| GET | /api/concerts/filter/nogenre | Public | Get concerts without genre |
+| GET | /api/concerts/filter/full | Public | Get concerts with full caseta and fair info |
+| GET | /api/concerts/count/bycaseta | Public | Count concerts per stall |
+| GET | /api/concerts/filter/genre/:genre | Public | Get concerts by genre |
+| GET | /api/concerts/search/:artist | Public | Search concerts by artist |
+| GET | /api/concerts/caseta/:id | Public | Get concerts by stall |
+| POST | /api/concerts | Private | Create a concert |
+| PUT | /api/concerts/:id | Private | Update a concert |
+| DELETE | /api/concerts/:id | Private | Delete a concert |
+
+### Statistics
+
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| GET | /api/stats | Public | Get general statistics and complex aggregations |
+
+### Complex queries implemented in /api/stats
+
+| Query | Description |
 |---|---|
-| GET /api/fairs | `startDate` ascending |
-| GET /api/casetas | `number` ascending |
-| GET /api/menus | `name` ascending |
-| GET /api/concerts | `date` and `time` ascending |
+| menusByCaseta | Total menus, average, min and max price per stall |
+| concertsByCaseta | Total concerts per stall |
+| concertsByDate | Total concerts per date |
+| casetasByFair | Total stalls per fair |
+| topArtists | Most repeated artists |
+| casetasWithoutConcerts | Stalls with no concerts |
+| activeFairs | Currently active fairs |
+| casetasByFairAndNumber | Stalls filtered by fair and number range |
+| menusByPriceRange | Menus filtered by price range with lookup |
+| concertsByDateRange | Concerts filtered by date range with lookup |
+| casetasComplete | Stalls with their menus and concerts in one query |
+| fairsComplete | Fairs with their stalls in one query |
 
 ---
 

@@ -117,4 +117,172 @@ const deleteMenu = async (req, res) => {
   }
 };
 
-module.exports = { getMenus, getMenusByCaseta, createMenu, createMenusBulk, updateMenu, deleteMenu };
+// @desc    Search menus by name
+// @route   GET /api/menus/search/:name
+// @access  Public
+const searchMenus = async (req, res) => {
+  try {
+    const menus = await Menu.find({
+      name: { $regex: req.params.name, $options: 'i' },
+    }).populate('caseta', 'name number').sort({ name: 1 });
+    res.json(menus);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// @desc    Get menus sorted by price ascending
+// @route   GET /api/menus/sorted/price
+// @access  Public
+const getMenusSortedByPrice = async (req, res) => {
+  try {
+    const menus = await Menu.find()
+      .populate('caseta', 'name number')
+      .sort({ price: 1 });
+    res.json(menus);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// @desc    Get menus by price range
+// @route   GET /api/menus/filter/price
+// @access  Public
+const getMenusByPriceRange = async (req, res) => {
+  try {
+    const min = parseFloat(req.query.min) || 0;
+    const max = parseFloat(req.query.max) || 9999;
+    const menus = await Menu.find({
+      price: { $gte: min, $lte: max },
+    }).populate('caseta', 'name number').sort({ price: 1 });
+    res.json(menus);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// @desc    Get most expensive menu item
+// @route   GET /api/menus/filter/mostexpensive
+// @access  Public
+const getMostExpensiveMenu = async (req, res) => {
+  try {
+    const menu = await Menu.findOne()
+      .populate('caseta', 'name number')
+      .sort({ price: -1 });
+    if (!menu) return res.status(404).json({ error: 'No menus found' });
+    res.json(menu);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// @desc    Get cheapest menu item
+// @route   GET /api/menus/filter/cheapest
+// @access  Public
+const getCheapestMenu = async (req, res) => {
+  try {
+    const menu = await Menu.findOne()
+      .populate('caseta', 'name number')
+      .sort({ price: 1 });
+    if (!menu) return res.status(404).json({ error: 'No menus found' });
+    res.json(menu);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// @desc    Get menus without description
+// @route   GET /api/menus/filter/nodescription
+// @access  Public
+const getMenusWithoutDescription = async (req, res) => {
+  try {
+    const menus = await Menu.find({
+      $or: [{ description: { $exists: false } }, { description: null }, { description: '' }],
+    }).populate('caseta', 'name number').sort({ name: 1 });
+    res.json(menus);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// @desc    Count menus per caseta
+// @route   GET /api/menus/count/bycaseta
+// @access  Public
+const countMenusByCaseta = async (req, res) => {
+  try {
+    const result = await Menu.aggregate([
+      {
+        $group: {
+          _id: '$caseta',
+          total: { $sum: 1 },
+          avgPrice: { $avg: '$price' },
+        },
+      },
+      {
+        $lookup: {
+          from: 'casetas',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'casetaInfo',
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          caseta: { $arrayElemAt: ['$casetaInfo.name', 0] },
+          total: 1,
+          avgPrice: { $round: ['$avgPrice', 2] },
+        },
+      },
+      { $sort: { total: -1 } },
+    ]);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// @desc    Get menus with full caseta and fair info
+// @route   GET /api/menus/filter/full
+// @access  Public
+const getMenusFull = async (req, res) => {
+  try {
+    const menus = await Menu.aggregate([
+      {
+        $lookup: {
+          from: 'casetas',
+          localField: 'caseta',
+          foreignField: '_id',
+          as: 'casetaInfo',
+        },
+      },
+      {
+        $lookup: {
+          from: 'fairs',
+          localField: 'casetaInfo.fair',
+          foreignField: '_id',
+          as: 'fairInfo',
+        },
+      },
+      {
+        $project: {
+          name: 1,
+          description: 1,
+          price: 1,
+          caseta: { $arrayElemAt: ['$casetaInfo.name', 0] },
+          fair: { $arrayElemAt: ['$fairInfo.name', 0] },
+        },
+      },
+      { $sort: { name: 1 } },
+    ]);
+    res.json(menus);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+module.exports = {
+  getMenus, getMenusByCaseta, createMenu, createMenusBulk, updateMenu, deleteMenu,
+  searchMenus, getMenusSortedByPrice, getMenusByPriceRange, getMostExpensiveMenu,
+  getCheapestMenu, getMenusWithoutDescription, countMenusByCaseta, getMenusFull
+};

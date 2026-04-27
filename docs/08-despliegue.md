@@ -201,6 +201,37 @@ curl -X POST http://localhost:5000/api/concerts \
   -d '{"artist":"Manuel de los Santos","date":"2026-05-10","time":"22:00","caseta":"CASETA_ID"}'
 ```
 
+### Advanced endpoints
+
+```bash
+# Search fairs by name
+curl http://localhost:5000/api/fairs/search/jerez
+
+# Get fair with all its data
+curl http://localhost:5000/api/fairs/FAIR_ID/full
+
+# Get stalls with image
+curl http://localhost:5000/api/casetas/filter/withimage
+
+# Get stall with its menus and concerts
+curl http://localhost:5000/api/casetas/CASETA_ID/full
+
+# Get most expensive menu
+curl http://localhost:5000/api/menus/filter/mostexpensive
+
+# Get menus by price range
+curl "http://localhost:5000/api/menus/filter/price?min=5&max=10"
+
+# Get upcoming concerts
+curl http://localhost:5000/api/concerts/filter/upcoming
+
+# Get concerts by genre
+curl http://localhost:5000/api/concerts/filter/genre/flamenco
+
+# Get full statistics with aggregations
+curl http://localhost:5000/api/stats
+```
+
 ---
 
 ## Troubleshooting

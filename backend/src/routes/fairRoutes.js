@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { getFairs, getFair, createFair, updateFair, deleteFair } = require('../controllers/fairController');
+const {
+  getFairs, getFair, createFair, updateFair, deleteFair,
+  getActiveFairs, searchFairs, getFairsByDateRange, getLatestFair,
+  getFairWithCasetas, countFairsByStatus, getFairsSortedByEndDate, getFairFull
+} = require('../controllers/fairController');
 const { protect } = require('../middlewares/auth');
 
 /**
@@ -14,6 +18,95 @@ const { protect } = require('../middlewares/auth');
  *         description: List of fairs
  */
 router.get('/', getFairs);
+
+/**
+ * @swagger
+ * /api/fairs/active:
+ *   get:
+ *     summary: Get active fairs
+ *     tags: [Fairs]
+ *     responses:
+ *       200:
+ *         description: List of active fairs
+ */
+router.get('/active', getActiveFairs);
+
+/**
+ * @swagger
+ * /api/fairs/latest:
+ *   get:
+ *     summary: Get most recent fair
+ *     tags: [Fairs]
+ *     responses:
+ *       200:
+ *         description: Most recent fair
+ *       404:
+ *         description: No fairs found
+ */
+router.get('/latest', getLatestFair);
+
+/**
+ * @swagger
+ * /api/fairs/range:
+ *   get:
+ *     summary: Get fairs by date range
+ *     tags: [Fairs]
+ *     parameters:
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of fairs within the date range
+ */
+router.get('/range', getFairsByDateRange);
+
+/**
+ * @swagger
+ * /api/fairs/count/status:
+ *   get:
+ *     summary: Count active vs inactive fairs
+ *     tags: [Fairs]
+ *     responses:
+ *       200:
+ *         description: Counts of active, inactive and total fairs
+ */
+router.get('/count/status', countFairsByStatus);
+
+/**
+ * @swagger
+ * /api/fairs/sorted/enddate:
+ *   get:
+ *     summary: Get fairs sorted by end date descending
+ *     tags: [Fairs]
+ *     responses:
+ *       200:
+ *         description: List of fairs sorted by end date
+ */
+router.get('/sorted/enddate', getFairsSortedByEndDate);
+
+/**
+ * @swagger
+ * /api/fairs/search/{name}:
+ *   get:
+ *     summary: Search fairs by name
+ *     tags: [Fairs]
+ *     parameters:
+ *       - in: path
+ *         name: name
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of fairs matching the name
+ */
+router.get('/search/:name', searchFairs);
 
 /**
  * @swagger
@@ -34,6 +127,46 @@ router.get('/', getFairs);
  *         description: Fair not found
  */
 router.get('/:id', getFair);
+
+/**
+ * @swagger
+ * /api/fairs/{id}/casetas:
+ *   get:
+ *     summary: Get fair with its casetas
+ *     tags: [Fairs]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Fair with its casetas
+ *       404:
+ *         description: Fair not found
+ */
+router.get('/:id/casetas', getFairWithCasetas);
+
+/**
+ * @swagger
+ * /api/fairs/{id}/full:
+ *   get:
+ *     summary: Get fair with full details (casetas, menus, concerts)
+ *     tags: [Fairs]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Fair with all related data
+ *       404:
+ *         description: Fair not found
+ */
+router.get('/:id/full', getFairFull);
 
 /**
  * @swagger

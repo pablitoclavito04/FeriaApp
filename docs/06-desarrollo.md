@@ -200,3 +200,66 @@ All frontend services and pages were updated to handle the new paginated respons
 ### Test adaptation:
 
 All 208 unit tests were updated to use `res.body.data` instead of `res.body` when asserting on collection responses.
+
+---
+
+## New endpoints and complex queries
+
+In Sprint 4, 32 new endpoints were added to the API covering advanced queries, filters, sorting and aggregations across all modules.
+
+### New endpoints per module
+
+**Fairs (8 new endpoints):**
+- `GET /api/fairs/active` — active fairs only
+- `GET /api/fairs/latest` — most recent fair
+- `GET /api/fairs/range` — fairs by date range
+- `GET /api/fairs/count/status` — count active vs inactive
+- `GET /api/fairs/sorted/enddate` — sorted by end date descending
+- `GET /api/fairs/search/:name` — search by name using regex
+- `GET /api/fairs/:id/casetas` — fair with its stalls
+- `GET /api/fairs/:id/full` — fair with stalls, menus and concerts
+
+**Stalls (8 new endpoints):**
+- `GET /api/casetas/sorted/desc` — sorted by number descending
+- `GET /api/casetas/filter/withimage` — stalls with image
+- `GET /api/casetas/filter/noimage` — stalls without image
+- `GET /api/casetas/filter/highest` — stall with highest number
+- `GET /api/casetas/filter/withlocation` — stalls with location
+- `GET /api/casetas/count/byfair` — count per fair using aggregate
+- `GET /api/casetas/search/:name` — search by name using regex
+- `GET /api/casetas/:id/full` — stall with its menus and concerts
+
+**Menus (8 new endpoints):**
+- `GET /api/menus/sorted/price` — sorted by price ascending
+- `GET /api/menus/filter/price` — by price range
+- `GET /api/menus/filter/mostexpensive` — most expensive item
+- `GET /api/menus/filter/cheapest` — cheapest item
+- `GET /api/menus/filter/nodescription` — without description
+- `GET /api/menus/filter/full` — with caseta and fair info via lookup
+- `GET /api/menus/count/bycaseta` — count per stall using aggregate
+- `GET /api/menus/search/:name` — search by name using regex
+
+**Concerts (8 new endpoints):**
+- `GET /api/concerts/sorted/desc` — sorted by date descending
+- `GET /api/concerts/filter/daterange` — by date range
+- `GET /api/concerts/filter/upcoming` — upcoming concerts
+- `GET /api/concerts/filter/nogenre` — without genre
+- `GET /api/concerts/filter/full` — with caseta and fair info via lookup
+- `GET /api/concerts/count/bycaseta` — count per stall using aggregate
+- `GET /api/concerts/filter/genre/:genre` — by genre using regex
+- `GET /api/concerts/search/:artist` — search by artist using regex
+
+### Statistics endpoint
+
+A dedicated `GET /api/stats` endpoint was created using MongoDB aggregation pipelines with `$group`, `$lookup`, `$project`, `$match` and `$sort` stages to generate complex statistics across all collections.
+
+### Total complex queries
+
+| Module | Queries |
+|---|---|
+| fairController | 10 |
+| casetaController | 10 |
+| menuController | 11 |
+| concertController | 11 |
+| statsController | 13 |
+| **Total** | **55** |

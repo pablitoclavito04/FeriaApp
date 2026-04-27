@@ -127,3 +127,42 @@ Test Suites: 5 passed, 5 total
 Tests:       208 passed, 208 total
 Time:        7.347 s
 ```
+
+---
+
+## Manual endpoint testing
+
+All new endpoints were manually tested using PowerShell curl commands after implementation. Examples:
+
+```bash
+# Fairs
+curl http://localhost:5000/api/fairs/active
+curl http://localhost:5000/api/fairs/latest
+curl http://localhost:5000/api/fairs/range?startDate=2026-01-01&endDate=2026-12-31
+curl http://localhost:5000/api/fairs/count/status
+curl http://localhost:5000/api/fairs/search/jerez
+
+# Stalls
+curl http://localhost:5000/api/casetas/filter/withimage
+curl http://localhost:5000/api/casetas/filter/highest
+curl http://localhost:5000/api/casetas/count/byfair
+curl http://localhost:5000/api/casetas/search/casapuerta
+
+# Menus
+curl http://localhost:5000/api/menus/filter/mostexpensive
+curl http://localhost:5000/api/menus/filter/cheapest
+curl http://localhost:5000/api/menus/filter/price?min=5&max=10
+curl http://localhost:5000/api/menus/count/bycaseta
+curl http://localhost:5000/api/menus/filter/full
+
+# Concerts
+curl http://localhost:5000/api/concerts/filter/upcoming
+curl http://localhost:5000/api/concerts/filter/genre/flamenco
+curl http://localhost:5000/api/concerts/count/bycaseta
+curl http://localhost:5000/api/concerts/filter/full
+
+# Statistics
+curl http://localhost:5000/api/stats
+```
+
+All endpoints returned `200 OK` with the expected data.

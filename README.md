@@ -244,10 +244,46 @@ http://localhost:5000/api-docs
 |---|---|---|---|
 | POST | /api/auth/login | Public | Administrator login |
 | GET | /api/fairs | Public | Get all fairs. Supports `?page=1&limit=10&active=true` |
+| GET | /api/fairs/active | Public | Get only active fairs |
+| GET | /api/fairs/latest | Public | Get most recent fair |
+| GET | /api/fairs/range | Public | Get fairs by date range `?startDate=&endDate=` |
+| GET | /api/fairs/count/status | Public | Count active vs inactive fairs |
+| GET | /api/fairs/sorted/enddate | Public | Get fairs sorted by end date descending |
+| GET | /api/fairs/search/:name | Public | Search fairs by name |
+| GET | /api/fairs/:id | Public | Get a fair by ID |
+| GET | /api/fairs/:id/casetas | Public | Get a fair with its stalls |
+| GET | /api/fairs/:id/full | Public | Get a fair with stalls, menus and concerts |
 | GET | /api/casetas | Public | Get all stalls. Supports `?page=1&limit=10&fair=ID&number=1` |
+| GET | /api/casetas/sorted/desc | Public | Get stalls sorted by number descending |
+| GET | /api/casetas/filter/withimage | Public | Get stalls with image |
+| GET | /api/casetas/filter/noimage | Public | Get stalls without image |
+| GET | /api/casetas/filter/highest | Public | Get stall with highest number |
+| GET | /api/casetas/filter/withlocation | Public | Get stalls with location defined |
+| GET | /api/casetas/count/byfair | Public | Count stalls per fair |
+| GET | /api/casetas/search/:name | Public | Search stalls by name |
+| GET | /api/casetas/:id | Public | Get a stall by ID |
+| GET | /api/casetas/:id/full | Public | Get a stall with its menus and concerts |
 | GET | /api/menus | Public | Get all menus. Supports `?page=1&limit=10&caseta=ID` |
+| GET | /api/menus/sorted/price | Public | Get menus sorted by price ascending |
+| GET | /api/menus/filter/price | Public | Get menus by price range `?min=5&max=15` |
+| GET | /api/menus/filter/mostexpensive | Public | Get most expensive menu item |
+| GET | /api/menus/filter/cheapest | Public | Get cheapest menu item |
+| GET | /api/menus/filter/nodescription | Public | Get menus without description |
+| GET | /api/menus/filter/full | Public | Get menus with full caseta and fair info |
+| GET | /api/menus/count/bycaseta | Public | Count menus per stall |
+| GET | /api/menus/search/:name | Public | Search menus by name |
 | GET | /api/menus/caseta/:id | Public | Get menus by stall |
 | GET | /api/concerts | Public | Get all concerts. Supports `?page=1&limit=10&caseta=ID` |
+| GET | /api/concerts/sorted/desc | Public | Get concerts sorted by date descending |
+| GET | /api/concerts/filter/daterange | Public | Get concerts by date range `?startDate=&endDate=` |
+| GET | /api/concerts/filter/upcoming | Public | Get upcoming concerts |
+| GET | /api/concerts/filter/nogenre | Public | Get concerts without genre |
+| GET | /api/concerts/filter/full | Public | Get concerts with full caseta and fair info |
+| GET | /api/concerts/count/bycaseta | Public | Count concerts per stall |
+| GET | /api/concerts/filter/genre/:genre | Public | Get concerts by genre |
+| GET | /api/concerts/search/:artist | Public | Search concerts by artist |
+| GET | /api/concerts/caseta/:id | Public | Get concerts by stall |
+| GET | /api/stats | Public | Get general statistics and aggregations |
 | POST | /api/fairs | Private | Create a fair |
 | POST | /api/casetas | Private | Create a stall |
 | POST | /api/menus | Private | Create a menu item |

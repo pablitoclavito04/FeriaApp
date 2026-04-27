@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { getMenus, getMenusByCaseta, createMenu, createMenusBulk, updateMenu, deleteMenu } = require('../controllers/menuController');
+const {
+  getMenus, getMenusByCaseta, createMenu, createMenusBulk, updateMenu, deleteMenu,
+  searchMenus, getMenusSortedByPrice, getMenusByPriceRange, getMostExpensiveMenu,
+  getCheapestMenu, getMenusWithoutDescription, countMenusByCaseta, getMenusFull
+} = require('../controllers/menuController');
 const { protect } = require('../middlewares/auth');
 
 /**
@@ -14,6 +18,121 @@ const { protect } = require('../middlewares/auth');
  *         description: List of menu items
  */
 router.get('/', getMenus);
+
+/**
+ * @swagger
+ * /api/menus/sorted/price:
+ *   get:
+ *     summary: Get menus sorted by price ascending
+ *     tags: [Menus]
+ *     responses:
+ *       200:
+ *         description: List of menus sorted by price
+ */
+router.get('/sorted/price', getMenusSortedByPrice);
+
+/**
+ * @swagger
+ * /api/menus/filter/price:
+ *   get:
+ *     summary: Get menus by price range
+ *     tags: [Menus]
+ *     parameters:
+ *       - in: query
+ *         name: min
+ *         schema:
+ *           type: number
+ *       - in: query
+ *         name: max
+ *         schema:
+ *           type: number
+ *     responses:
+ *       200:
+ *         description: List of menus within the price range
+ */
+router.get('/filter/price', getMenusByPriceRange);
+
+/**
+ * @swagger
+ * /api/menus/filter/mostexpensive:
+ *   get:
+ *     summary: Get most expensive menu item
+ *     tags: [Menus]
+ *     responses:
+ *       200:
+ *         description: Most expensive menu item
+ *       404:
+ *         description: No menus found
+ */
+router.get('/filter/mostexpensive', getMostExpensiveMenu);
+
+/**
+ * @swagger
+ * /api/menus/filter/cheapest:
+ *   get:
+ *     summary: Get cheapest menu item
+ *     tags: [Menus]
+ *     responses:
+ *       200:
+ *         description: Cheapest menu item
+ *       404:
+ *         description: No menus found
+ */
+router.get('/filter/cheapest', getCheapestMenu);
+
+/**
+ * @swagger
+ * /api/menus/filter/nodescription:
+ *   get:
+ *     summary: Get menus without description
+ *     tags: [Menus]
+ *     responses:
+ *       200:
+ *         description: List of menus without description
+ */
+router.get('/filter/nodescription', getMenusWithoutDescription);
+
+/**
+ * @swagger
+ * /api/menus/filter/full:
+ *   get:
+ *     summary: Get menus with full caseta and fair info
+ *     tags: [Menus]
+ *     responses:
+ *       200:
+ *         description: List of menus with caseta and fair info
+ */
+router.get('/filter/full', getMenusFull);
+
+/**
+ * @swagger
+ * /api/menus/count/bycaseta:
+ *   get:
+ *     summary: Count menus per caseta
+ *     tags: [Menus]
+ *     responses:
+ *       200:
+ *         description: Count of menus grouped by caseta
+ */
+router.get('/count/bycaseta', countMenusByCaseta);
+
+/**
+ * @swagger
+ * /api/menus/search/{name}:
+ *   get:
+ *     summary: Search menus by name
+ *     tags: [Menus]
+ *     parameters:
+ *       - in: path
+ *         name: name
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of menus matching the name
+ */
+router.get('/search/:name', searchMenus);
 
 /**
  * @swagger
