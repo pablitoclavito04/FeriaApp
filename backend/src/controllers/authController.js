@@ -15,18 +15,20 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Find user by email
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required', code: 'VALIDATION_ERROR' });
+    }
+
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Invalid credentials', code: 'INVALID_CREDENTIALS' });
     }
 
-    // Check password
     const isMatch = await user.comparePassword(password);
 
     if (!isMatch) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Invalid credentials', code: 'INVALID_CREDENTIALS' });
     }
 
     res.json({
@@ -37,7 +39,7 @@ const login = async (req, res) => {
       token: generateToken(user._id),
     });
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -49,7 +51,7 @@ const getProfile = async (req, res) => {
     const user = await User.findById(req.user._id).select('-password');
     res.json(user);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 

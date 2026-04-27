@@ -36,10 +36,10 @@ jobs:
       - name: Run backend tests
         env:
           MONGODB_URI: mongodb://localhost:27017/feriaApp_test
-          JWT_SECRET: test_secret_key
-          GITHUB_TOKEN: test_token
-          GITHUB_OWNER: test_owner
-          GITHUB_REPO: test_repo
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_OWNER: ${{ secrets.GH_OWNER }}
+          GITHUB_REPO: ${{ secrets.GH_REPO }}
         run: |
           cd backend
           npm test
