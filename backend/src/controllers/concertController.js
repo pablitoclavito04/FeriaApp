@@ -26,7 +26,7 @@ const getConcerts = async (req, res) => {
       data: concerts,
     });
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -38,7 +38,7 @@ const getConcertsByCaseta = async (req, res) => {
     const concerts = await Concert.find({ caseta: req.params.casetaId }).populate('caseta', 'name number');
     res.json(concerts);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -50,7 +50,7 @@ const createConcert = async (req, res) => {
     const concert = await Concert.create(req.body);
     res.status(201).json(concert);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -64,11 +64,11 @@ const updateConcert = async (req, res) => {
       runValidators: true,
     });
     if (!concert) {
-      return res.status(404).json({ error: 'Concert not found' });
+      return res.status(404).json({ error: 'Concert not found', code: 'CONCERT_NOT_FOUND' });
     }
     res.json(concert);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -79,11 +79,11 @@ const deleteConcert = async (req, res) => {
   try {
     const concert = await Concert.findByIdAndDelete(req.params.id);
     if (!concert) {
-      return res.status(404).json({ error: 'Concert not found' });
+      return res.status(404).json({ error: 'Concert not found', code: 'CONCERT_NOT_FOUND' });
     }
     res.json({ message: 'Concert deleted successfully' });
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -97,7 +97,7 @@ const searchConcerts = async (req, res) => {
     }).populate('caseta', 'name number').sort({ date: 1, time: 1 });
     res.json(concerts);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -111,7 +111,7 @@ const getConcertsSortedDesc = async (req, res) => {
       .sort({ date: -1, time: -1 });
     res.json(concerts);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -129,7 +129,7 @@ const getConcertsByDateRange = async (req, res) => {
       .sort({ date: 1, time: 1 });
     res.json(concerts);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -143,7 +143,7 @@ const getConcertsByGenre = async (req, res) => {
     }).populate('caseta', 'name number').sort({ date: 1, time: 1 });
     res.json(concerts);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -157,7 +157,7 @@ const getUpcomingConcerts = async (req, res) => {
     }).populate('caseta', 'name number').sort({ date: 1, time: 1 });
     res.json(concerts);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -192,7 +192,7 @@ const countConcertsByCaseta = async (req, res) => {
     ]);
     res.json(result);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -206,7 +206,7 @@ const getConcertsWithoutGenre = async (req, res) => {
     }).populate('caseta', 'name number').sort({ date: 1, time: 1 });
     res.json(concerts);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -246,7 +246,7 @@ const getConcertsFull = async (req, res) => {
     ]);
     res.json(concerts);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 

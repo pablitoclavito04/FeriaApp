@@ -294,7 +294,7 @@ const getStats = async (req, res) => {
     });
   } catch (error) {
     console.error('Error getting stats:', error.message);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 

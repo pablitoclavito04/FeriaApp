@@ -26,7 +26,7 @@ const getMenus = async (req, res) => {
       data: menus,
     });
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -38,7 +38,7 @@ const getMenusByCaseta = async (req, res) => {
     const menus = await Menu.find({ caseta: req.params.casetaId }).populate('caseta', 'name number');
     res.json(menus);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -51,7 +51,7 @@ const createMenu = async (req, res) => {
     res.status(201).json(menu);
   } catch (error) {
    console.error('Error creating menu:', error.message);
-   res.status(500).json({ error: error.message });
+   res.status(500).json({ error: error.message, code: 'SERVER_ERROR' });
   }
 };
 
@@ -63,10 +63,10 @@ const createMenusBulk = async (req, res) => {
     const { caseta, items } = req.body;
 
     if (!caseta) {
-      return res.status(400).json({ error: 'Caseta is required' });
+      return res.status(400).json({ error: 'Caseta is required', code: 'VALIDATION_ERROR' });
     }
     if (!Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({ error: 'At least one menu item is required' });
+      return res.status(400).json({ error: 'At least one menu item is required', code: 'VALIDATION_ERROR' });
     }
 
     const docs = items.map((item) => ({
@@ -80,7 +80,7 @@ const createMenusBulk = async (req, res) => {
     res.status(201).json(created);
   } catch (error) {
     console.error('Error creating menus in bulk:', error.message);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message, code: 'SERVER_ERROR' });
   }
 };
 
@@ -94,11 +94,11 @@ const updateMenu = async (req, res) => {
       runValidators: true,
     });
     if (!menu) {
-      return res.status(404).json({ error: 'Menu item not found' });
+      return res.status(404).json({ error: 'Menu item not found', code: 'MENU_NOT_FOUND' });
     }
     res.json(menu);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -109,11 +109,11 @@ const deleteMenu = async (req, res) => {
   try {
     const menu = await Menu.findByIdAndDelete(req.params.id);
     if (!menu) {
-      return res.status(404).json({ error: 'Menu item not found' });
+      return res.status(404).json({ error: 'Menu item not found', code: 'MENU_NOT_FOUND' });
     }
     res.json({ message: 'Menu item deleted successfully' });
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -127,7 +127,7 @@ const searchMenus = async (req, res) => {
     }).populate('caseta', 'name number').sort({ name: 1 });
     res.json(menus);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -141,7 +141,7 @@ const getMenusSortedByPrice = async (req, res) => {
       .sort({ price: 1 });
     res.json(menus);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -157,7 +157,7 @@ const getMenusByPriceRange = async (req, res) => {
     }).populate('caseta', 'name number').sort({ price: 1 });
     res.json(menus);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -169,10 +169,10 @@ const getMostExpensiveMenu = async (req, res) => {
     const menu = await Menu.findOne()
       .populate('caseta', 'name number')
       .sort({ price: -1 });
-    if (!menu) return res.status(404).json({ error: 'No menus found' });
+    if (!menu) return res.status(404).json({ error: 'No menus found', code: 'MENU_NOT_FOUND' });
     res.json(menu);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -184,10 +184,10 @@ const getCheapestMenu = async (req, res) => {
     const menu = await Menu.findOne()
       .populate('caseta', 'name number')
       .sort({ price: 1 });
-    if (!menu) return res.status(404).json({ error: 'No menus found' });
+    if (!menu) return res.status(404).json({ error: 'No menus found', code: 'MENU_NOT_FOUND' });
     res.json(menu);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -201,7 +201,7 @@ const getMenusWithoutDescription = async (req, res) => {
     }).populate('caseta', 'name number').sort({ name: 1 });
     res.json(menus);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -238,7 +238,7 @@ const countMenusByCaseta = async (req, res) => {
     ]);
     res.json(result);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -277,7 +277,7 @@ const getMenusFull = async (req, res) => {
     ]);
     res.json(menus);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 

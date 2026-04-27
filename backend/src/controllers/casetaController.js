@@ -28,7 +28,7 @@ const getCasetas = async (req, res) => {
       data: casetas,
     });
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -39,11 +39,11 @@ const getCaseta = async (req, res) => {
   try {
     const caseta = await Caseta.findById(req.params.id).populate('fair', 'name');
     if (!caseta) {
-      return res.status(404).json({ error: 'Caseta not found' });
+      return res.status(404).json({ error: 'Caseta not found', code: 'CASETA_NOT_FOUND' });
     }
     res.json(caseta);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -59,7 +59,7 @@ const createCaseta = async (req, res) => {
     const caseta = await Caseta.create(casetaData);
     res.status(201).json(caseta);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -77,11 +77,11 @@ const updateCaseta = async (req, res) => {
       runValidators: true,
     });
     if (!caseta) {
-      return res.status(404).json({ error: 'Caseta not found' });
+      return res.status(404).json({ error: 'Caseta not found', code: 'CASETA_NOT_FOUND' });
     }
     res.json(caseta);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -92,11 +92,11 @@ const deleteCaseta = async (req, res) => {
   try {
     const caseta = await Caseta.findByIdAndDelete(req.params.id);
     if (!caseta) {
-      return res.status(404).json({ error: 'Caseta not found' });
+      return res.status(404).json({ error: 'Caseta not found', code: 'CASETA_NOT_FOUND' });
     }
     res.json({ message: 'Caseta deleted successfully' });
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -110,7 +110,7 @@ const searchCasetas = async (req, res) => {
     }).populate('fair', 'name').sort({ number: 1 });
     res.json(casetas);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -124,7 +124,7 @@ const getCasetasSortedDesc = async (req, res) => {
       .sort({ number: -1 });
     res.json(casetas);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -138,7 +138,7 @@ const getCasetasWithImage = async (req, res) => {
     }).populate('fair', 'name').sort({ number: 1 });
     res.json(casetas);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -152,7 +152,7 @@ const getCasetasWithoutImage = async (req, res) => {
     }).populate('fair', 'name').sort({ number: 1 });
     res.json(casetas);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -164,10 +164,10 @@ const getHighestCaseta = async (req, res) => {
     const caseta = await Caseta.findOne()
       .populate('fair', 'name')
       .sort({ number: -1 });
-    if (!caseta) return res.status(404).json({ error: 'No casetas found' });
+    if (!caseta) return res.status(404).json({ error: 'No casetas found', code: 'CASETA_NOT_FOUND' });
     res.json(caseta);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -182,7 +182,7 @@ const getCasetasWithLocation = async (req, res) => {
     }).populate('fair', 'name').sort({ number: 1 });
     res.json(casetas);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -194,12 +194,12 @@ const getCasetaFull = async (req, res) => {
     const Menu = require('../models/Menu');
     const Concert = require('../models/Concert');
     const caseta = await Caseta.findById(req.params.id).populate('fair', 'name');
-    if (!caseta) return res.status(404).json({ error: 'Caseta not found' });
+    if (!caseta) return res.status(404).json({ error: 'Caseta not found', code: 'CASETA_NOT_FOUND' });
     const menus = await Menu.find({ caseta: req.params.id }).sort({ name: 1 });
     const concerts = await Concert.find({ caseta: req.params.id }).sort({ date: 1, time: 1 });
     res.json({ caseta, menus, concerts });
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -234,7 +234,7 @@ const countCasetasByFair = async (req, res) => {
     ]);
     res.json(result);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 

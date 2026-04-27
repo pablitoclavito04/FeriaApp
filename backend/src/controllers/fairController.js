@@ -25,7 +25,7 @@ const getFairs = async (req, res) => {
       data: fairs,
     });
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -36,11 +36,11 @@ const getFair = async (req, res) => {
   try {
     const fair = await Fair.findById(req.params.id);
     if (!fair) {
-      return res.status(404).json({ error: 'Fair not found' });
+      return res.status(404).json({ error: 'Fair not found', code: 'FAIR_NOT_FOUND' });
     }
     res.json(fair);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -52,7 +52,7 @@ const createFair = async (req, res) => {
     const fair = await Fair.create(req.body);
     res.status(201).json(fair);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -66,11 +66,11 @@ const updateFair = async (req, res) => {
       runValidators: true,
     });
     if (!fair) {
-      return res.status(404).json({ error: 'Fair not found' });
+      return res.status(404).json({ error: 'Fair not found', code: 'FAIR_NOT_FOUND' });
     }
     res.json(fair);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -81,11 +81,11 @@ const deleteFair = async (req, res) => {
   try {
     const fair = await Fair.findByIdAndDelete(req.params.id);
     if (!fair) {
-      return res.status(404).json({ error: 'Fair not found' });
+      return res.status(404).json({ error: 'Fair not found', code: 'FAIR_NOT_FOUND' });
     }
     res.json({ message: 'Fair deleted successfully' });
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -97,7 +97,7 @@ const getActiveFairs = async (req, res) => {
     const fairs = await Fair.find({ active: true }).sort({ startDate: 1 });
     res.json(fairs);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -111,7 +111,7 @@ const searchFairs = async (req, res) => {
     }).sort({ startDate: 1 });
     res.json(fairs);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -127,7 +127,7 @@ const getFairsByDateRange = async (req, res) => {
     const fairs = await Fair.find(filter).sort({ startDate: 1 });
     res.json(fairs);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -137,10 +137,10 @@ const getFairsByDateRange = async (req, res) => {
 const getLatestFair = async (req, res) => {
   try {
     const fair = await Fair.findOne().sort({ startDate: -1 });
-    if (!fair) return res.status(404).json({ error: 'No fairs found' });
+    if (!fair) return res.status(404).json({ error: 'No fairs found', code: 'FAIR_NOT_FOUND' });
     res.json(fair);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -151,11 +151,11 @@ const getFairWithCasetas = async (req, res) => {
   try {
     const Caseta = require('../models/Caseta');
     const fair = await Fair.findById(req.params.id);
-    if (!fair) return res.status(404).json({ error: 'Fair not found' });
+    if (!fair) return res.status(404).json({ error: 'Fair not found', code: 'FAIR_NOT_FOUND' });
     const casetas = await Caseta.find({ fair: req.params.id }).sort({ number: 1 });
     res.json({ fair, casetas });
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -168,7 +168,7 @@ const countFairsByStatus = async (req, res) => {
     const inactive = await Fair.countDocuments({ active: false });
     res.json({ active, inactive, total: active + inactive });
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -180,7 +180,7 @@ const getFairsSortedByEndDate = async (req, res) => {
     const fairs = await Fair.find().sort({ endDate: -1 });
     res.json(fairs);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
@@ -194,7 +194,7 @@ const getFairFull = async (req, res) => {
     const Concert = require('../models/Concert');
 
     const fair = await Fair.findById(req.params.id);
-    if (!fair) return res.status(404).json({ error: 'Fair not found' });
+    if (!fair) return res.status(404).json({ error: 'Fair not found', code: 'FAIR_NOT_FOUND' });
 
     const casetas = await Caseta.find({ fair: req.params.id }).sort({ number: 1 });
     const casetaIds = casetas.map(c => c._id);
@@ -203,7 +203,7 @@ const getFairFull = async (req, res) => {
 
     res.json({ fair, casetas, menus, concerts });
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
 
