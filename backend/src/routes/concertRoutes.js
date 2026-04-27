@@ -3,7 +3,8 @@ const router = express.Router();
 const {
   getConcerts, getConcertsByCaseta, createConcert, updateConcert, deleteConcert,
   searchConcerts, getConcertsSortedDesc, getConcertsByDateRange, getConcertsByGenre,
-  getUpcomingConcerts, countConcertsByCaseta, getConcertsWithoutGenre, getConcertsFull
+  getUpcomingConcerts, countConcertsByCaseta, getConcertsWithoutGenre, getConcertsFull,
+  getConcertCaseta, getConcertsSameDay, getConcertsSameGenre, getConcertCasetaMenus
 } = require('../controllers/concertController');
 const { protect } = require('../middlewares/auth');
 
@@ -229,6 +230,86 @@ router.put('/:id', protect, updateConcert);
  *       404:
  *         description: Concert not found
  */
+/**
+ * @swagger
+ * /api/concerts/{id}/caseta:
+ *   get:
+ *     summary: Get caseta of a concert
+ *     tags: [Concerts]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Caseta of the concert
+ *       404:
+ *         description: Concert not found
+ */
+router.get('/:id/caseta', getConcertCaseta);
+
+/**
+ * @swagger
+ * /api/concerts/{id}/sameday:
+ *   get:
+ *     summary: Get concerts on the same day
+ *     tags: [Concerts]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of concerts on the same day
+ *       404:
+ *         description: Concert not found
+ */
+router.get('/:id/sameday', getConcertsSameDay);
+
+/**
+ * @swagger
+ * /api/concerts/{id}/samegenre:
+ *   get:
+ *     summary: Get concerts of the same genre
+ *     tags: [Concerts]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of concerts of the same genre
+ *       404:
+ *         description: Concert not found
+ */
+router.get('/:id/samegenre', getConcertsSameGenre);
+
+/**
+ * @swagger
+ * /api/concerts/{id}/caseta/menus:
+ *   get:
+ *     summary: Get menus of the caseta of a concert
+ *     tags: [Concerts]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of menus of the caseta
+ *       404:
+ *         description: Concert not found
+ */
+router.get('/:id/caseta/menus', getConcertCasetaMenus);
+
 router.delete('/:id', protect, deleteConcert);
 
 module.exports = router;

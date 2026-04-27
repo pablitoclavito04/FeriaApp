@@ -250,8 +250,78 @@ const getConcertsFull = async (req, res) => {
   }
 };
 
+// @desc    Get caseta of a concert
+// @route   GET /api/concerts/:id/caseta
+// @access  Public
+const getConcertCaseta = async (req, res) => {
+  try {
+    const concert = await Concert.findById(req.params.id).populate('caseta');
+    if (!concert) return res.status(404).json({ error: 'Concert not found', code: 'CONCERT_NOT_FOUND' });
+    res.json(concert.caseta);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
+// @desc    Get concerts on the same day
+// @route   GET /api/concerts/:id/sameday
+// @access  Public
+const getConcertsSameDay = async (req, res) => {
+  try {
+    const concert = await Concert.findById(req.params.id);
+    if (!concert) return res.status(404).json({ error: 'Concert not found', code: 'CONCERT_NOT_FOUND' });
+    const startOfDay = new Date(concert.date);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(concert.date);
+    endOfDay.setHours(23, 59, 59, 999);
+    const concerts = await Concert.find({
+      _id: { $ne: concert._id },
+      date: { $gte: startOfDay, $lte: endOfDay },
+    }).populate('caseta', 'name number').sort({ time: 1 });
+    res.json(concerts);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
+// @desc    Get concerts of the same genre
+// @route   GET /api/concerts/:id/samegenre
+// @access  Public
+const getConcertsSameGenre = async (req, res) => {
+  try {
+    const concert = await Concert.findById(req.params.id);
+    if (!concert) return res.status(404).json({ error: 'Concert not found', code: 'CONCERT_NOT_FOUND' });
+    if (!concert.genre) return res.json([]);
+    const concerts = await Concert.find({
+      _id: { $ne: concert._id },
+      genre: { $regex: concert.genre, $options: 'i' },
+    }).populate('caseta', 'name number').sort({ date: 1, time: 1 });
+    res.json(concerts);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
+// @desc    Get menus of the caseta of a concert
+// @route   GET /api/concerts/:id/caseta/menus
+// @access  Public
+const getConcertCasetaMenus = async (req, res) => {
+  try {
+    const Menu = require('../models/Menu');
+    const concert = await Concert.findById(req.params.id);
+    if (!concert) return res.status(404).json({ error: 'Concert not found', code: 'CONCERT_NOT_FOUND' });
+    const menus = await Menu.find({ caseta: concert.caseta })
+      .populate('caseta', 'name number')
+      .sort({ name: 1 });
+    res.json(menus);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
 module.exports = {
   getConcerts, getConcertsByCaseta, createConcert, updateConcert, deleteConcert,
   searchConcerts, getConcertsSortedDesc, getConcertsByDateRange, getConcertsByGenre,
-  getUpcomingConcerts, countConcertsByCaseta, getConcertsWithoutGenre, getConcertsFull
+  getUpcomingConcerts, countConcertsByCaseta, getConcertsWithoutGenre, getConcertsFull,
+  getConcertCaseta, getConcertsSameDay, getConcertsSameGenre, getConcertCasetaMenus
 };

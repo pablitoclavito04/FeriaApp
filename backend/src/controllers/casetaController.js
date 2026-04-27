@@ -238,8 +238,191 @@ const countCasetasByFair = async (req, res) => {
   }
 };
 
+// @desc    Get menus by caseta (nested route)
+// @route   GET /api/casetas/:id/menus
+// @access  Public
+const getCasetaMenus = async (req, res) => {
+  try {
+    const Menu = require('../models/Menu');
+    const menus = await Menu.find({ caseta: req.params.id })
+      .populate('caseta', 'name number')
+      .sort({ name: 1 });
+    res.json(menus);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
+// @desc    Get concerts by caseta (nested route)
+// @route   GET /api/casetas/:id/concerts
+// @access  Public
+const getCasetaConcerts = async (req, res) => {
+  try {
+    const Concert = require('../models/Concert');
+    const concerts = await Concert.find({ caseta: req.params.id })
+      .populate('caseta', 'name number')
+      .sort({ date: 1, time: 1 });
+    res.json(concerts);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
+// @desc    Get cheapest menu of a caseta
+// @route   GET /api/casetas/:id/menus/cheapest
+// @access  Public
+const getCasetaCheapestMenu = async (req, res) => {
+  try {
+    const Menu = require('../models/Menu');
+    const menu = await Menu.findOne({ caseta: req.params.id })
+      .populate('caseta', 'name number')
+      .sort({ price: 1 });
+    if (!menu) return res.status(404).json({ error: 'No menus found', code: 'MENU_NOT_FOUND' });
+    res.json(menu);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
+// @desc    Get most expensive menu of a caseta
+// @route   GET /api/casetas/:id/menus/mostexpensive
+// @access  Public
+const getCasetaMostExpensiveMenu = async (req, res) => {
+  try {
+    const Menu = require('../models/Menu');
+    const menu = await Menu.findOne({ caseta: req.params.id })
+      .populate('caseta', 'name number')
+      .sort({ price: -1 });
+    if (!menu) return res.status(404).json({ error: 'No menus found', code: 'MENU_NOT_FOUND' });
+    res.json(menu);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
+// @desc    Get menus of a caseta sorted by price
+// @route   GET /api/casetas/:id/menus/sorted/price
+// @access  Public
+const getCasetaMenusSortedByPrice = async (req, res) => {
+  try {
+    const Menu = require('../models/Menu');
+    const menus = await Menu.find({ caseta: req.params.id })
+      .populate('caseta', 'name number')
+      .sort({ price: 1 });
+    res.json(menus);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
+// @desc    Count menus of a caseta
+// @route   GET /api/casetas/:id/menus/count
+// @access  Public
+const getCasetaMenusCount = async (req, res) => {
+  try {
+    const Menu = require('../models/Menu');
+    const total = await Menu.countDocuments({ caseta: req.params.id });
+    res.json({ total });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
+// @desc    Get upcoming concerts of a caseta
+// @route   GET /api/casetas/:id/concerts/upcoming
+// @access  Public
+const getCasetaUpcomingConcerts = async (req, res) => {
+  try {
+    const Concert = require('../models/Concert');
+    const concerts = await Concert.find({
+      caseta: req.params.id,
+      date: { $gte: new Date() },
+    }).populate('caseta', 'name number').sort({ date: 1, time: 1 });
+    res.json(concerts);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
+// @desc    Get concerts of a caseta by genre
+// @route   GET /api/casetas/:id/concerts/genre/:genre
+// @access  Public
+const getCasetaConcertsByGenre = async (req, res) => {
+  try {
+    const Concert = require('../models/Concert');
+    const concerts = await Concert.find({
+      caseta: req.params.id,
+      genre: { $regex: req.params.genre, $options: 'i' },
+    }).populate('caseta', 'name number').sort({ date: 1, time: 1 });
+    res.json(concerts);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
+// @desc    Get concerts of a caseta sorted by date descending
+// @route   GET /api/casetas/:id/concerts/sorted/desc
+// @access  Public
+const getCasetaConcertsSortedDesc = async (req, res) => {
+  try {
+    const Concert = require('../models/Concert');
+    const concerts = await Concert.find({ caseta: req.params.id })
+      .populate('caseta', 'name number')
+      .sort({ date: -1, time: -1 });
+    res.json(concerts);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
+// @desc    Count concerts of a caseta
+// @route   GET /api/casetas/:id/concerts/count
+// @access  Public
+const getCasetaConcertsCount = async (req, res) => {
+  try {
+    const Concert = require('../models/Concert');
+    const total = await Concert.countDocuments({ caseta: req.params.id });
+    res.json({ total });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
+// @desc    Get stats of a caseta
+// @route   GET /api/casetas/:id/stats
+// @access  Public
+const getCasetaStats = async (req, res) => {
+  try {
+    const Menu = require('../models/Menu');
+    const Concert = require('../models/Concert');
+    const caseta = await Caseta.findById(req.params.id).populate('fair', 'name');
+    if (!caseta) return res.status(404).json({ error: 'Caseta not found', code: 'CASETA_NOT_FOUND' });
+    const totalMenus = await Menu.countDocuments({ caseta: req.params.id });
+    const totalConcerts = await Concert.countDocuments({ caseta: req.params.id });
+    const avgMenuPrice = await Menu.aggregate([
+      { $match: { caseta: caseta._id } },
+      { $group: { _id: null, avg: { $avg: '$price' }, min: { $min: '$price' }, max: { $max: '$price' } } },
+    ]);
+    res.json({
+      caseta: caseta.name,
+      fair: caseta.fair?.name,
+      totalMenus,
+      totalConcerts,
+      avgMenuPrice: avgMenuPrice[0] ? Math.round(avgMenuPrice[0].avg * 100) / 100 : 0,
+      minMenuPrice: avgMenuPrice[0]?.min || 0,
+      maxMenuPrice: avgMenuPrice[0]?.max || 0,
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
 module.exports = {
   getCasetas, getCaseta, createCaseta, updateCaseta, deleteCaseta,
   searchCasetas, getCasetasSortedDesc, getCasetasWithImage, getCasetasWithoutImage,
-  getHighestCaseta, getCasetasWithLocation, getCasetaFull, countCasetasByFair
+  getHighestCaseta, getCasetasWithLocation, getCasetaFull, countCasetasByFair,
+  getCasetaMenus, getCasetaConcerts,
+  getCasetaCheapestMenu, getCasetaMostExpensiveMenu, getCasetaMenusSortedByPrice,
+  getCasetaMenusCount, getCasetaUpcomingConcerts, getCasetaConcertsByGenre,
+  getCasetaConcertsSortedDesc, getCasetaConcertsCount, getCasetaStats
 };

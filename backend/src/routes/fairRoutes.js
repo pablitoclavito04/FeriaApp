@@ -3,7 +3,9 @@ const router = express.Router();
 const {
   getFairs, getFair, createFair, updateFair, deleteFair,
   getActiveFairs, searchFairs, getFairsByDateRange, getLatestFair,
-  getFairWithCasetas, countFairsByStatus, getFairsSortedByEndDate, getFairFull
+  getFairWithCasetas, countFairsByStatus, getFairsSortedByEndDate, getFairFull,
+  getFairMenus, getFairConcerts, getFairStats, getFairCasetasCount,
+  getFairCasetasWithImage, getFairCasetasSearch
 } = require('../controllers/fairController');
 const { protect } = require('../middlewares/auth');
 
@@ -147,6 +149,121 @@ router.get('/:id', getFair);
  *         description: Fair not found
  */
 router.get('/:id/casetas', getFairWithCasetas);
+
+/**
+ * @swagger
+ * /api/fairs/{id}/casetas/count:
+ *   get:
+ *     summary: Count casetas of a fair
+ *     tags: [Fairs]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Total casetas of the fair
+ */
+router.get('/:id/casetas/count', getFairCasetasCount);
+
+/**
+ * @swagger
+ * /api/fairs/{id}/casetas/withimage:
+ *   get:
+ *     summary: Get casetas with image of a fair
+ *     tags: [Fairs]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of casetas with image for the fair
+ */
+router.get('/:id/casetas/withimage', getFairCasetasWithImage);
+
+/**
+ * @swagger
+ * /api/fairs/{id}/casetas/search/{name}:
+ *   get:
+ *     summary: Search casetas of a fair by name
+ *     tags: [Fairs]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: name
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of casetas matching the name within the fair
+ */
+router.get('/:id/casetas/search/:name', getFairCasetasSearch);
+
+/**
+ * @swagger
+ * /api/fairs/{id}/menus:
+ *   get:
+ *     summary: Get all menus of a fair
+ *     tags: [Fairs]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of menus for the fair
+ */
+router.get('/:id/menus', getFairMenus);
+
+/**
+ * @swagger
+ * /api/fairs/{id}/concerts:
+ *   get:
+ *     summary: Get all concerts of a fair
+ *     tags: [Fairs]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of concerts for the fair
+ */
+router.get('/:id/concerts', getFairConcerts);
+
+/**
+ * @swagger
+ * /api/fairs/{id}/stats:
+ *   get:
+ *     summary: Get stats of a fair
+ *     tags: [Fairs]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Stats of the fair
+ *       404:
+ *         description: Fair not found
+ */
+router.get('/:id/stats', getFairStats);
 
 /**
  * @swagger

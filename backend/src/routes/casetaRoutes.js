@@ -3,7 +3,11 @@ const router = express.Router();
 const {
   getCasetas, getCaseta, createCaseta, updateCaseta, deleteCaseta,
   searchCasetas, getCasetasSortedDesc, getCasetasWithImage, getCasetasWithoutImage,
-  getHighestCaseta, getCasetasWithLocation, getCasetaFull, countCasetasByFair
+  getHighestCaseta, getCasetasWithLocation, getCasetaFull, countCasetasByFair,
+  getCasetaMenus, getCasetaConcerts,
+  getCasetaCheapestMenu, getCasetaMostExpensiveMenu, getCasetaMenusSortedByPrice,
+  getCasetaMenusCount, getCasetaUpcomingConcerts, getCasetaConcertsByGenre,
+  getCasetaConcertsSortedDesc, getCasetaConcertsCount, getCasetaStats
 } = require('../controllers/casetaController');
 const { protect } = require('../middlewares/auth');
 const upload = require('../middlewares/upload');
@@ -151,6 +155,215 @@ router.get('/:id', getCaseta);
  *         description: Caseta not found
  */
 router.get('/:id/full', getCasetaFull);
+
+/**
+ * @swagger
+ * /api/casetas/{id}/menus:
+ *   get:
+ *     summary: Get menus by caseta
+ *     tags: [Casetas]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of menus for the caseta
+ */
+router.get('/:id/menus', getCasetaMenus);
+
+/**
+ * @swagger
+ * /api/casetas/{id}/menus/cheapest:
+ *   get:
+ *     summary: Get cheapest menu of a caseta
+ *     tags: [Casetas]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Cheapest menu of the caseta
+ *       404:
+ *         description: No menus found
+ */
+router.get('/:id/menus/cheapest', getCasetaCheapestMenu);
+
+/**
+ * @swagger
+ * /api/casetas/{id}/menus/mostexpensive:
+ *   get:
+ *     summary: Get most expensive menu of a caseta
+ *     tags: [Casetas]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Most expensive menu of the caseta
+ *       404:
+ *         description: No menus found
+ */
+router.get('/:id/menus/mostexpensive', getCasetaMostExpensiveMenu);
+
+/**
+ * @swagger
+ * /api/casetas/{id}/menus/sorted/price:
+ *   get:
+ *     summary: Get menus of a caseta sorted by price
+ *     tags: [Casetas]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of menus sorted by price
+ */
+router.get('/:id/menus/sorted/price', getCasetaMenusSortedByPrice);
+
+/**
+ * @swagger
+ * /api/casetas/{id}/menus/count:
+ *   get:
+ *     summary: Count menus of a caseta
+ *     tags: [Casetas]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Total menus of the caseta
+ */
+router.get('/:id/menus/count', getCasetaMenusCount);
+
+/**
+ * @swagger
+ * /api/casetas/{id}/concerts:
+ *   get:
+ *     summary: Get concerts by caseta
+ *     tags: [Casetas]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of concerts for the caseta
+ */
+router.get('/:id/concerts', getCasetaConcerts);
+
+/**
+ * @swagger
+ * /api/casetas/{id}/concerts/upcoming:
+ *   get:
+ *     summary: Get upcoming concerts of a caseta
+ *     tags: [Casetas]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of upcoming concerts
+ */
+router.get('/:id/concerts/upcoming', getCasetaUpcomingConcerts);
+
+/**
+ * @swagger
+ * /api/casetas/{id}/concerts/genre/{genre}:
+ *   get:
+ *     summary: Get concerts of a caseta by genre
+ *     tags: [Casetas]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: genre
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of concerts matching the genre
+ */
+router.get('/:id/concerts/genre/:genre', getCasetaConcertsByGenre);
+
+/**
+ * @swagger
+ * /api/casetas/{id}/concerts/sorted/desc:
+ *   get:
+ *     summary: Get concerts of a caseta sorted by date descending
+ *     tags: [Casetas]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of concerts sorted by date descending
+ */
+router.get('/:id/concerts/sorted/desc', getCasetaConcertsSortedDesc);
+
+/**
+ * @swagger
+ * /api/casetas/{id}/concerts/count:
+ *   get:
+ *     summary: Count concerts of a caseta
+ *     tags: [Casetas]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Total concerts of the caseta
+ */
+router.get('/:id/concerts/count', getCasetaConcertsCount);
+
+/**
+ * @swagger
+ * /api/casetas/{id}/stats:
+ *   get:
+ *     summary: Get stats of a caseta
+ *     tags: [Casetas]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Stats of the caseta
+ *       404:
+ *         description: Caseta not found
+ */
+router.get('/:id/stats', getCasetaStats);
 
 /**
  * @swagger

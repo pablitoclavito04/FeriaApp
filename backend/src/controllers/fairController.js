@@ -207,8 +207,121 @@ const getFairFull = async (req, res) => {
   }
 };
 
+// @desc    Get all menus of a fair
+// @route   GET /api/fairs/:id/menus
+// @access  Public
+const getFairMenus = async (req, res) => {
+  try {
+    const Caseta = require('../models/Caseta');
+    const Menu = require('../models/Menu');
+    const casetas = await Caseta.find({ fair: req.params.id }).select('_id');
+    const casetaIds = casetas.map(c => c._id);
+    const menus = await Menu.find({ caseta: { $in: casetaIds } })
+      .populate('caseta', 'name number')
+      .sort({ name: 1 });
+    res.json(menus);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
+// @desc    Get all concerts of a fair
+// @route   GET /api/fairs/:id/concerts
+// @access  Public
+const getFairConcerts = async (req, res) => {
+  try {
+    const Caseta = require('../models/Caseta');
+    const Concert = require('../models/Concert');
+    const casetas = await Caseta.find({ fair: req.params.id }).select('_id');
+    const casetaIds = casetas.map(c => c._id);
+    const concerts = await Concert.find({ caseta: { $in: casetaIds } })
+      .populate('caseta', 'name number')
+      .sort({ date: 1, time: 1 });
+    res.json(concerts);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
+// @desc    Get stats of a fair
+// @route   GET /api/fairs/:id/stats
+// @access  Public
+const getFairStats = async (req, res) => {
+  try {
+    const Caseta = require('../models/Caseta');
+    const Menu = require('../models/Menu');
+    const Concert = require('../models/Concert');
+    const fair = await Fair.findById(req.params.id);
+    if (!fair) return res.status(404).json({ error: 'Fair not found', code: 'FAIR_NOT_FOUND' });
+    const casetas = await Caseta.find({ fair: req.params.id }).select('_id');
+    const casetaIds = casetas.map(c => c._id);
+    const totalMenus = await Menu.countDocuments({ caseta: { $in: casetaIds } });
+    const totalConcerts = await Concert.countDocuments({ caseta: { $in: casetaIds } });
+    const avgMenuPrice = await Menu.aggregate([
+      { $match: { caseta: { $in: casetaIds } } },
+      { $group: { _id: null, avg: { $avg: '$price' } } },
+    ]);
+    res.json({
+      fair: fair.name,
+      totalCasetas: casetas.length,
+      totalMenus,
+      totalConcerts,
+      avgMenuPrice: avgMenuPrice[0] ? Math.round(avgMenuPrice[0].avg * 100) / 100 : 0,
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
+// @desc    Count casetas of a fair
+// @route   GET /api/fairs/:id/casetas/count
+// @access  Public
+const getFairCasetasCount = async (req, res) => {
+  try {
+    const Caseta = require('../models/Caseta');
+    const total = await Caseta.countDocuments({ fair: req.params.id });
+    res.json({ total });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
+// @desc    Get casetas with image of a fair
+// @route   GET /api/fairs/:id/casetas/withimage
+// @access  Public
+const getFairCasetasWithImage = async (req, res) => {
+  try {
+    const Caseta = require('../models/Caseta');
+    const casetas = await Caseta.find({
+      fair: req.params.id,
+      image: { $exists: true, $ne: null, $ne: '' },
+    }).sort({ number: 1 });
+    res.json(casetas);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
+// @desc    Search casetas of a fair by name
+// @route   GET /api/fairs/:id/casetas/search/:name
+// @access  Public
+const getFairCasetasSearch = async (req, res) => {
+  try {
+    const Caseta = require('../models/Caseta');
+    const casetas = await Caseta.find({
+      fair: req.params.id,
+      name: { $regex: req.params.name, $options: 'i' },
+    }).sort({ number: 1 });
+    res.json(casetas);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
 module.exports = {
   getFairs, getFair, createFair, updateFair, deleteFair,
   getActiveFairs, searchFairs, getFairsByDateRange, getLatestFair,
-  getFairWithCasetas, countFairsByStatus, getFairsSortedByEndDate, getFairFull
+  getFairWithCasetas, countFairsByStatus, getFairsSortedByEndDate, getFairFull,
+  getFairMenus, getFairConcerts, getFairStats, getFairCasetasCount,
+  getFairCasetasWithImage, getFairCasetasSearch
 };

@@ -281,8 +281,56 @@ const getMenusFull = async (req, res) => {
   }
 };
 
+// @desc    Get caseta of a menu
+// @route   GET /api/menus/:id/caseta
+// @access  Public
+const getMenuCaseta = async (req, res) => {
+  try {
+    const menu = await Menu.findById(req.params.id).populate('caseta');
+    if (!menu) return res.status(404).json({ error: 'Menu not found', code: 'MENU_NOT_FOUND' });
+    res.json(menu.caseta);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
+// @desc    Get similar menus by price
+// @route   GET /api/menus/:id/similar
+// @access  Public
+const getSimilarMenus = async (req, res) => {
+  try {
+    const menu = await Menu.findById(req.params.id);
+    if (!menu) return res.status(404).json({ error: 'Menu not found', code: 'MENU_NOT_FOUND' });
+    const similar = await Menu.find({
+      _id: { $ne: menu._id },
+      price: { $gte: menu.price - 2, $lte: menu.price + 2 },
+    }).populate('caseta', 'name number').sort({ price: 1 });
+    res.json(similar);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
+// @desc    Get concerts of the caseta of a menu
+// @route   GET /api/menus/:id/caseta/concerts
+// @access  Public
+const getMenuCasetaConcerts = async (req, res) => {
+  try {
+    const Concert = require('../models/Concert');
+    const menu = await Menu.findById(req.params.id);
+    if (!menu) return res.status(404).json({ error: 'Menu not found', code: 'MENU_NOT_FOUND' });
+    const concerts = await Concert.find({ caseta: menu.caseta })
+      .populate('caseta', 'name number')
+      .sort({ date: 1, time: 1 });
+    res.json(concerts);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
 module.exports = {
   getMenus, getMenusByCaseta, createMenu, createMenusBulk, updateMenu, deleteMenu,
   searchMenus, getMenusSortedByPrice, getMenusByPriceRange, getMostExpensiveMenu,
-  getCheapestMenu, getMenusWithoutDescription, countMenusByCaseta, getMenusFull
+  getCheapestMenu, getMenusWithoutDescription, countMenusByCaseta, getMenusFull,
+  getMenuCaseta, getSimilarMenus, getMenuCasetaConcerts
 };

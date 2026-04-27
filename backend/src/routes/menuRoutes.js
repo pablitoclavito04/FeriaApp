@@ -3,7 +3,8 @@ const router = express.Router();
 const {
   getMenus, getMenusByCaseta, createMenu, createMenusBulk, updateMenu, deleteMenu,
   searchMenus, getMenusSortedByPrice, getMenusByPriceRange, getMostExpensiveMenu,
-  getCheapestMenu, getMenusWithoutDescription, countMenusByCaseta, getMenusFull
+  getCheapestMenu, getMenusWithoutDescription, countMenusByCaseta, getMenusFull,
+  getMenuCaseta, getSimilarMenus, getMenuCasetaConcerts
 } = require('../controllers/menuController');
 const { protect } = require('../middlewares/auth');
 
@@ -263,6 +264,66 @@ router.put('/:id', protect, updateMenu);
  *       404:
  *         description: Menu item not found
  */
+/**
+ * @swagger
+ * /api/menus/{id}/caseta:
+ *   get:
+ *     summary: Get caseta of a menu
+ *     tags: [Menus]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Caseta of the menu
+ *       404:
+ *         description: Menu not found
+ */
+router.get('/:id/caseta', getMenuCaseta);
+
+/**
+ * @swagger
+ * /api/menus/{id}/similar:
+ *   get:
+ *     summary: Get similar menus by price
+ *     tags: [Menus]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of similar menus
+ *       404:
+ *         description: Menu not found
+ */
+router.get('/:id/similar', getSimilarMenus);
+
+/**
+ * @swagger
+ * /api/menus/{id}/caseta/concerts:
+ *   get:
+ *     summary: Get concerts of the caseta of a menu
+ *     tags: [Menus]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of concerts of the caseta
+ *       404:
+ *         description: Menu not found
+ */
+router.get('/:id/caseta/concerts', getMenuCasetaConcerts);
+
 router.delete('/:id', protect, deleteMenu);
 
 module.exports = router;
