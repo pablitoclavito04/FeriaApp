@@ -22,10 +22,35 @@ const Casetas = () => {
   });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     loadData();
   }, []);
+
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+    if (formData.number === '' || formData.number === null) {
+      newErrors.number = 'Number is required';
+    } else if (Number(formData.number) <= 0) {
+      newErrors.number = 'Number must be positive';
+    }
+    if (!formData.fair) {
+      newErrors.fair = 'Please select a fair';
+    }
+    if (formData.location?.x == null || formData.location?.y == null) {
+      newErrors.location = 'Please select a location on the map';
+    }
+    return newErrors;
+  };
+
+  const updateField = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: '' }));
+  };
 
   const loadData = async () => {
     try {
@@ -47,6 +72,7 @@ const Casetas = () => {
       ...prev,
       location: { x: latlng.lat, y: latlng.lng },
     }));
+    if (errors.location) setErrors((prev) => ({ ...prev, location: '' }));
   };
 
   const handleImageChange = (e) => {
@@ -59,6 +85,11 @@ const Casetas = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
     try {
       const data = new FormData();
       data.append('name', formData.name);
@@ -125,6 +156,7 @@ const Casetas = () => {
     });
     setImageFile(null);
     setImagePreview(null);
+    setErrors({});
   };
 
   if (loading) return <p>Loading...</p>;
@@ -141,39 +173,41 @@ const Casetas = () => {
       {error && <p className="error">{error}</p>}
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="form-container">
+        <form onSubmit={handleSubmit} className="form-container" noValidate>
           <h2>{editingCaseta ? 'Edit Caseta' : 'New Caseta'}</h2>
           <div className="form-group">
             <label>Name</label>
             <input
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              required
+              onChange={(e) => updateField('name', e.target.value)}
+              className={errors.name ? 'input-error' : ''}
             />
+            {errors.name && <span className="field-error">{errors.name}</span>}
           </div>
           <div className="form-group">
             <label>Number</label>
             <input
               type="number"
               value={formData.number}
-              onChange={(e) => setFormData({ ...formData, number: e.target.value })}
-              required
+              onChange={(e) => updateField('number', e.target.value)}
+              className={errors.number ? 'input-error' : ''}
             />
+            {errors.number && <span className="field-error">{errors.number}</span>}
           </div>
           <div className="form-group">
             <label>Description</label>
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) => updateField('description', e.target.value)}
             />
           </div>
           <div className="form-group">
             <label>Fair</label>
             <select
               value={formData.fair}
-              onChange={(e) => setFormData({ ...formData, fair: e.target.value })}
-              required
+              onChange={(e) => updateField('fair', e.target.value)}
+              className={errors.fair ? 'input-error' : ''}
             >
               <option value="">Select a fair</option>
               {fairs.map((fair) => (
@@ -182,6 +216,7 @@ const Casetas = () => {
                 </option>
               ))}
             </select>
+            {errors.fair && <span className="field-error">{errors.fair}</span>}
           </div>
           <div className="form-group">
             <label>Image</label>
@@ -213,6 +248,7 @@ const Casetas = () => {
                 Selected: {formData.location.x.toFixed(4)}, {formData.location.y.toFixed(4)}
               </p>
             )}
+            {errors.location && <span className="field-error">{errors.location}</span>}
           </div>
           <div className="form-actions">
             <button type="submit">{editingCaseta ? 'Update' : 'Create'}</button>

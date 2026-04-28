@@ -23,16 +23,75 @@ const Menus = () => {
     price: '',
     caseta: '',
   });
+  const [editErrors, setEditErrors] = useState({});
 
   // Create form state (bulk)
   const [createCaseta, setCreateCaseta] = useState('');
   const [createRows, setCreateRows] = useState(() =>
     Array.from({ length: INITIAL_ROWS }, emptyRow)
   );
+  const [createErrors, setCreateErrors] = useState({});
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  const validateEdit = () => {
+    const newErrors = {};
+    if (!editFormData.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+    if (editFormData.price === '' || editFormData.price === null) {
+      newErrors.price = 'Price is required';
+    } else if (Number(editFormData.price) <= 0) {
+      newErrors.price = 'Price must be positive';
+    }
+    if (!editFormData.caseta) {
+      newErrors.caseta = 'Please select a caseta';
+    }
+    return newErrors;
+  };
+
+  const updateEditField = (field, value) => {
+    setEditFormData((prev) => ({ ...prev, [field]: value }));
+    if (editErrors[field]) setEditErrors((prev) => ({ ...prev, [field]: '' }));
+  };
+
+  const validateCreate = (rows) => {
+    const newErrors = {};
+    if (!createCaseta) {
+      newErrors.caseta = 'Please select a caseta';
+    }
+
+    const filled = rows
+      .map((row, index) => ({ row, index }))
+      .filter(({ row }) => !isRowEmpty(row));
+
+    if (filled.length === 0) {
+      newErrors.rows = 'Add at least one menu item';
+      return newErrors;
+    }
+
+    const rowErrors = {};
+    let summary = '';
+    for (const { row, index } of filled) {
+      const cells = {};
+      if (!row.name.trim()) {
+        cells.name = true;
+        if (!summary) summary = 'Every row needs a name';
+      }
+      if (row.price === '' || Number(row.price) <= 0) {
+        cells.price = true;
+        if (!summary) summary = 'Every row needs a positive price';
+      }
+      if (Object.keys(cells).length > 0) {
+        rowErrors[index] = cells;
+      }
+    }
+
+    if (Object.keys(rowErrors).length > 0) {
+      newErrors.rowCells = rowErrors;
+      newErrors.rows = summary;
+    }
+
+    return newErrors;
+  };
 
   const loadData = async () => {
     try {
@@ -49,15 +108,38 @@ const Menus = () => {
     }
   };
 
+  useEffect(() => {
+    loadData();
+  }, []);
+
   const resetCreateForm = () => {
     setCreateCaseta('');
     setCreateRows(Array.from({ length: INITIAL_ROWS }, emptyRow));
+    setCreateErrors({});
   };
 
   const updateRow = (index, field, value) => {
     setCreateRows((rows) =>
       rows.map((row, i) => (i === index ? { ...row, [field]: value } : row))
     );
+    setCreateErrors((prev) => {
+      if (!prev.rowCells?.[index]?.[field] && !prev.rows) return prev;
+      const nextRowCells = { ...(prev.rowCells || {}) };
+      if (nextRowCells[index]) {
+        const { [field]: _omit, ...rest } = nextRowCells[index];
+        if (Object.keys(rest).length === 0) {
+          delete nextRowCells[index];
+        } else {
+          nextRowCells[index] = rest;
+        }
+      }
+      const next = { ...prev, rowCells: nextRowCells };
+      if (Object.keys(nextRowCells).length === 0) {
+        delete next.rowCells;
+        delete next.rows;
+      }
+      return next;
+    });
   };
 
   const addRow = () => {
@@ -74,23 +156,11 @@ const Menus = () => {
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
 
-    if (!createCaseta) {
-      showToast('Please select a caseta', 'error');
-      return;
-    }
-
     const filled = createRows.filter((row) => !isRowEmpty(row));
-
-    if (filled.length === 0) {
-      showToast('Please add at least one menu item', 'error');
+    const validationErrors = validateCreate(filled);
+    if (Object.keys(validationErrors).length > 0) {
+      setCreateErrors(validationErrors);
       return;
-    }
-
-    for (const row of filled) {
-      if (!row.name.trim() || row.price === '') {
-        showToast('Each item needs at least a name and a price', 'error');
-        return;
-      }
     }
 
     try {
@@ -112,11 +182,17 @@ const Menus = () => {
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
+    const validationErrors = validateEdit();
+    if (Object.keys(validationErrors).length > 0) {
+      setEditErrors(validationErrors);
+      return;
+    }
     try {
       await menuService.updateMenu(editingMenu._id, editFormData);
       showToast('Menu item updated successfully', 'success');
       setShowForm(false);
       setEditingMenu(null);
+      setEditErrors({});
       loadData();
     } catch {
       setError('Error saving menu item');
@@ -132,6 +208,7 @@ const Menus = () => {
       price: menu.price,
       caseta: menu.caseta?._id || menu.caseta,
     });
+    setEditErrors({});
     setShowForm(true);
     document.querySelector('.main-content')?.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -175,22 +252,23 @@ const Menus = () => {
       {error && <p className="error">{error}</p>}
 
       {showForm && isEditing && (
-        <form onSubmit={handleEditSubmit} className="form-container">
+        <form onSubmit={handleEditSubmit} className="form-container" noValidate>
           <h2>Edit Menu Item</h2>
           <div className="form-group">
             <label>Name</label>
             <input
               type="text"
               value={editFormData.name}
-              onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
-              required
+              onChange={(e) => updateEditField('name', e.target.value)}
+              className={editErrors.name ? 'input-error' : ''}
             />
+            {editErrors.name && <span className="field-error">{editErrors.name}</span>}
           </div>
           <div className="form-group">
             <label>Description</label>
             <textarea
               value={editFormData.description}
-              onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+              onChange={(e) => updateEditField('description', e.target.value)}
             />
           </div>
           <div className="form-group">
@@ -199,16 +277,17 @@ const Menus = () => {
               type="number"
               step="0.01"
               value={editFormData.price}
-              onChange={(e) => setEditFormData({ ...editFormData, price: e.target.value })}
-              required
+              onChange={(e) => updateEditField('price', e.target.value)}
+              className={editErrors.price ? 'input-error' : ''}
             />
+            {editErrors.price && <span className="field-error">{editErrors.price}</span>}
           </div>
           <div className="form-group">
             <label>Caseta</label>
             <select
               value={editFormData.caseta}
-              onChange={(e) => setEditFormData({ ...editFormData, caseta: e.target.value })}
-              required
+              onChange={(e) => updateEditField('caseta', e.target.value)}
+              className={editErrors.caseta ? 'input-error' : ''}
             >
               <option value="">Select a caseta</option>
               {casetas.map((caseta) => (
@@ -217,6 +296,7 @@ const Menus = () => {
                 </option>
               ))}
             </select>
+            {editErrors.caseta && <span className="field-error">{editErrors.caseta}</span>}
           </div>
           <div className="form-actions">
             <button type="submit">Update</button>
@@ -226,7 +306,7 @@ const Menus = () => {
       )}
 
       {showForm && !isEditing && (
-        <form onSubmit={handleCreateSubmit} className="form-container">
+        <form onSubmit={handleCreateSubmit} className="form-container" noValidate>
           <h2>New Menu Items</h2>
           <p className="form-hint">
             Add multiple items at once. Empty rows will be ignored.
@@ -236,8 +316,11 @@ const Menus = () => {
             <label>Caseta</label>
             <select
               value={createCaseta}
-              onChange={(e) => setCreateCaseta(e.target.value)}
-              required
+              onChange={(e) => {
+                setCreateCaseta(e.target.value);
+                if (createErrors.caseta) setCreateErrors((prev) => ({ ...prev, caseta: '' }));
+              }}
+              className={createErrors.caseta ? 'input-error' : ''}
             >
               <option value="">Select a caseta</option>
               {casetas.map((caseta) => (
@@ -246,6 +329,7 @@ const Menus = () => {
                 </option>
               ))}
             </select>
+            {createErrors.caseta && <span className="field-error">{createErrors.caseta}</span>}
           </div>
 
           <div className="bulk-rows">
@@ -255,42 +339,48 @@ const Menus = () => {
               <span>Price (€)</span>
               <span aria-hidden="true"></span>
             </div>
-            {createRows.map((row, index) => (
-              <div className="bulk-row" key={index}>
-                <input
-                  type="text"
-                  value={row.name}
-                  placeholder="e.g. Salmorejo"
-                  onChange={(e) => updateRow(index, 'name', e.target.value)}
-                />
-                <input
-                  type="text"
-                  value={row.description}
-                  placeholder="Optional"
-                  onChange={(e) => updateRow(index, 'description', e.target.value)}
-                />
-                <input
-                  type="number"
-                  step="0.01"
-                  value={row.price}
-                  placeholder="0.00"
-                  onChange={(e) => updateRow(index, 'price', e.target.value)}
-                />
-                <button
-                  type="button"
-                  className="bulk-row-remove"
-                  onClick={() => removeRow(index)}
-                  disabled={createRows.length === 1}
-                  aria-label="Remove row"
-                  title="Remove row"
-                >
-                  ×
-                </button>
-              </div>
-            ))}
+            {createRows.map((row, index) => {
+              const cellErrors = createErrors.rowCells?.[index] || {};
+              return (
+                <div className="bulk-row" key={index}>
+                  <input
+                    type="text"
+                    value={row.name}
+                    placeholder="e.g. Salmorejo"
+                    onChange={(e) => updateRow(index, 'name', e.target.value)}
+                    className={cellErrors.name ? 'input-error' : ''}
+                  />
+                  <input
+                    type="text"
+                    value={row.description}
+                    placeholder="Optional"
+                    onChange={(e) => updateRow(index, 'description', e.target.value)}
+                  />
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={row.price}
+                    placeholder="0.00"
+                    onChange={(e) => updateRow(index, 'price', e.target.value)}
+                    className={cellErrors.price ? 'input-error' : ''}
+                  />
+                  <button
+                    type="button"
+                    className="bulk-row-remove"
+                    onClick={() => removeRow(index)}
+                    disabled={createRows.length === 1}
+                    aria-label="Remove row"
+                    title="Remove row"
+                  >
+                    ×
+                  </button>
+                </div>
+              );
+            })}
             <button type="button" className="bulk-row-add" onClick={addRow}>
               + Add row
             </button>
+            {createErrors.rows && <span className="field-error">{createErrors.rows}</span>}
           </div>
 
           <div className="form-actions">

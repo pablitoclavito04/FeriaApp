@@ -1659,3 +1659,20 @@ button {
     button { width: 100%; }
   }
 }
+
+// Form validation feedback (global)
+.field-error {
+  color: #e53e3e;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.input-error {
+  border-color: #e53e3e !important;
+
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(229, 62, 62, 0.2);
+    outline: none;
+  }
+}

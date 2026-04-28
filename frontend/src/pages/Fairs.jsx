@@ -18,10 +18,37 @@ const Fairs = () => {
     location: '',
     active: false,
   });
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     loadFairs();
   }, []);
+
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+    if (!formData.startDate) {
+      newErrors.startDate = 'Start date is required';
+    } else if (isNaN(new Date(formData.startDate).getTime())) {
+      newErrors.startDate = 'Invalid start date';
+    }
+    if (!formData.endDate) {
+      newErrors.endDate = 'End date is required';
+    } else if (isNaN(new Date(formData.endDate).getTime())) {
+      newErrors.endDate = 'Invalid end date';
+    }
+    if (formData.startDate && formData.endDate && new Date(formData.endDate) <= new Date(formData.startDate)) {
+      newErrors.endDate = 'End date must be after start date';
+    }
+    return newErrors;
+  };
+
+  const updateField = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: '' }));
+  };
 
   const loadFairs = async () => {
     try {
@@ -36,6 +63,11 @@ const Fairs = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
     try {
       if (editingFair) {
         await fairService.updateFair(editingFair._id, formData);
@@ -90,6 +122,7 @@ const Fairs = () => {
       location: '',
       active: false,
     });
+    setErrors({});
   };
 
   if (loading) return <p>Loading...</p>;
@@ -106,22 +139,23 @@ const Fairs = () => {
       {error && <p className="error">{error}</p>}
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="form-container">
+        <form onSubmit={handleSubmit} className="form-container" noValidate>
           <h2>{editingFair ? 'Edit Fair' : 'New Fair'}</h2>
           <div className="form-group">
             <label>Name</label>
             <input
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              required
+              onChange={(e) => updateField('name', e.target.value)}
+              className={errors.name ? 'input-error' : ''}
             />
+            {errors.name && <span className="field-error">{errors.name}</span>}
           </div>
           <div className="form-group">
             <label>Description</label>
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) => updateField('description', e.target.value)}
             />
           </div>
           <div className="form-group">
@@ -129,25 +163,27 @@ const Fairs = () => {
             <input
               type="date"
               value={formData.startDate}
-              onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-              required
+              onChange={(e) => updateField('startDate', e.target.value)}
+              className={errors.startDate ? 'input-error' : ''}
             />
+            {errors.startDate && <span className="field-error">{errors.startDate}</span>}
           </div>
           <div className="form-group">
             <label>End Date</label>
             <input
               type="date"
               value={formData.endDate}
-              onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-              required
+              onChange={(e) => updateField('endDate', e.target.value)}
+              className={errors.endDate ? 'input-error' : ''}
             />
+            {errors.endDate && <span className="field-error">{errors.endDate}</span>}
           </div>
           <div className="form-group">
             <label>Location</label>
             <input
               type="text"
               value={formData.location}
-              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+              onChange={(e) => updateField('location', e.target.value)}
             />
           </div>
           <div className="form-group">

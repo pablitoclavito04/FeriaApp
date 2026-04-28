@@ -7,7 +7,7 @@ import logotipo from '../assets/logotipo.png';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -15,17 +15,42 @@ const Login = () => {
   const { showToast } = useToast();
   const navigate = useNavigate();
 
+  const validate = () => {
+    const newErrors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!emailRegex.test(email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+
+    if (!password.trim()) {
+      newErrors.password = 'Password is required';
+    } else if (password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+
+    return newErrors;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setLoading(true);
+    setErrors({});
 
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setLoading(true);
     try {
       const data = await login(email, password);
       showToast(`Welcome, ${data.name}!`, 'success');
       navigate('/dashboard');
     } catch {
-      setError('Invalid email or password');
+      setErrors({ general: 'Invalid email or password' });
     } finally {
       setLoading(false);
     }
@@ -49,26 +74,33 @@ const Login = () => {
 
         <h2>Sign in to your account</h2>
 
-        {error && <p className="login-error">{error}</p>}
+        {errors.general && <p className="login-error">{errors.general}</p>}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <div className="login-field">
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (errors.email) setErrors((prev) => ({ ...prev, email: '' }));
+              }}
               placeholder="Email"
-              required
+              className={errors.email ? 'input-error' : ''}
             />
+            {errors.email && <span className="field-error">{errors.email}</span>}
           </div>
           <div className="login-field">
             <div className="login-password-wrapper">
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (errors.password) setErrors((prev) => ({ ...prev, password: '' }));
+                }}
                 placeholder="Password"
-                required
+                className={errors.password ? 'input-error' : ''}
               />
               <button
                 type="button"
@@ -90,6 +122,7 @@ const Login = () => {
                 )}
               </button>
             </div>
+            {errors.password && <span className="field-error">{errors.password}</span>}
           </div>
           <button type="submit" className="login-submit" disabled={loading}>
             {loading ? 'Signing in...' : 'Sign in'}

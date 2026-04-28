@@ -19,10 +19,33 @@ const Concerts = () => {
     time: '',
     caseta: '',
   });
+  const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.artist.trim()) {
+      newErrors.artist = 'Artist is required';
+    }
+    if (!formData.date) {
+      newErrors.date = 'Date is required';
+    } else if (isNaN(new Date(formData.date).getTime())) {
+      newErrors.date = 'Invalid date';
+    }
+    if (!formData.time) {
+      newErrors.time = 'Time is required';
+    } else if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(formData.time)) {
+      newErrors.time = 'Invalid time (HH:mm)';
+    }
+    if (!formData.caseta) {
+      newErrors.caseta = 'Please select a caseta';
+    }
+    return newErrors;
+  };
+
+  const updateField = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: '' }));
+  };
 
   const loadData = async () => {
     try {
@@ -39,8 +62,17 @@ const Concerts = () => {
     }
   };
 
+  useEffect(() => {
+    loadData();
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
     try {
       if (editingConcert) {
         await concertService.updateConcert(editingConcert._id, formData);
@@ -93,6 +125,7 @@ const Concerts = () => {
       time: '',
       caseta: '',
     });
+    setErrors({});
   };
 
   if (loading) return <p>Loading...</p>;
@@ -109,23 +142,24 @@ const Concerts = () => {
       {error && <p className="error">{error}</p>}
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="form-container">
+        <form onSubmit={handleSubmit} className="form-container" noValidate>
           <h2>{editingConcert ? 'Edit Concert' : 'New Concert'}</h2>
           <div className="form-group">
             <label>Artist</label>
             <input
               type="text"
               value={formData.artist}
-              onChange={(e) => setFormData({ ...formData, artist: e.target.value })}
-              required
+              onChange={(e) => updateField('artist', e.target.value)}
+              className={errors.artist ? 'input-error' : ''}
             />
+            {errors.artist && <span className="field-error">{errors.artist}</span>}
           </div>
           <div className="form-group">
             <label>Genre</label>
             <input
               type="text"
               value={formData.genre}
-              onChange={(e) => setFormData({ ...formData, genre: e.target.value })}
+              onChange={(e) => updateField('genre', e.target.value)}
             />
           </div>
           <div className="form-group">
@@ -133,25 +167,27 @@ const Concerts = () => {
             <input
               type="date"
               value={formData.date}
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              required
+              onChange={(e) => updateField('date', e.target.value)}
+              className={errors.date ? 'input-error' : ''}
             />
+            {errors.date && <span className="field-error">{errors.date}</span>}
           </div>
           <div className="form-group">
             <label>Time</label>
             <input
               type="time"
               value={formData.time}
-              onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-              required
+              onChange={(e) => updateField('time', e.target.value)}
+              className={errors.time ? 'input-error' : ''}
             />
+            {errors.time && <span className="field-error">{errors.time}</span>}
           </div>
           <div className="form-group">
             <label>Caseta</label>
             <select
               value={formData.caseta}
-              onChange={(e) => setFormData({ ...formData, caseta: e.target.value })}
-              required
+              onChange={(e) => updateField('caseta', e.target.value)}
+              className={errors.caseta ? 'input-error' : ''}
             >
               <option value="">Select a caseta</option>
               {casetas.map((caseta) => (
@@ -160,6 +196,7 @@ const Concerts = () => {
                 </option>
               ))}
             </select>
+            {errors.caseta && <span className="field-error">{errors.caseta}</span>}
           </div>
           <div className="form-actions">
             <button type="submit">{editingConcert ? 'Update' : 'Create'}</button>
