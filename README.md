@@ -25,8 +25,9 @@ Lighthouse audit of the deployed public site at `https://pablitoclavito04.github
 
 | Metric | Value |
 |---|---|
-| Unit tests | 232 |
-| Test files | 6 |
+| Unit tests | 287 |
+| Test files | 7 |
+| Code coverage | 86.61% (lines) |
 | Test framework | Jest + Supertest |
 | CI/CD | GitHub Actions |
 | Test execution | Serial (--runInBand) |

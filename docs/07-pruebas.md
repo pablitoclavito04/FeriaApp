@@ -23,7 +23,7 @@ Screenshots of the tests are available in `docs/insomnia/`.
 
 ### 2. Unit tests with Jest and Supertest.
 
-In Sprint 5, automated unit tests were implemented for the backend. The tests cover all main API endpoints across 6 test files.
+In Sprint 5, automated unit tests were implemented for the backend. The tests cover all main API endpoints across 7 test files.
 
 **Test files:**
 
@@ -35,7 +35,8 @@ In Sprint 5, automated unit tests were implemented for the backend. The tests co
 | `backend/tests/menus.test.js` | Menus CRUD | 47 |
 | `backend/tests/concerts.test.js` | Concerts CRUD | 45 |
 | `backend/tests/roles.test.js` | Authorization & roles | 24 |
-| **Total** | | **232** |
+| `backend/tests/advanced-routes.test.js` | Advanced & nested routes | 55 |
+| **Total** | | **287** |
 
 **Test scenarios covered per module:**
 - Successful creation with valid data
@@ -63,8 +64,8 @@ PASS  tests/menus.test.js
 PASS  tests/casetas.test.js
 PASS  tests/fairs.test.js
 
-Test Suites: 6 passed, 6 total
-Tests:       232 passed, 232 total
+Test Suites: 7 passed, 7 total
+Tests:       287 passed, 287 total
 Time:        6.94 s
 ```
 
@@ -124,8 +125,8 @@ All 208 unit tests were updated to reflect this change. The main patterns update
 After the updates all 208 tests pass successfully:
 
 ```
-Test Suites: 6 passed, 6 total
-Tests:       232 passed, 232 total
+Test Suites: 7 passed, 7 total
+Tests:       287 passed, 287 total
 Time:        7.347 s
 ```
 
@@ -259,8 +260,8 @@ PASS  tests/roles.test.js
     ✓ GET /api/fairs is accessible to editor
     ✓ GET /api/fairs is accessible to viewer
 
-Test Suites: 6 passed, 6 total
-Tests:       232 passed, 232 total
+Test Suites: 7 passed, 7 total
+Tests:       287 passed, 287 total
 ```
 
 ---
@@ -302,4 +303,39 @@ When validation fails, the API responds with `422 Unprocessable Entity` and a st
 
 ### Why two variants per entity
 
-POST validators enforce `notEmpty()` on required fields (full document creation). PUT validators mark every field as `optional()` so partial updates (e.g. toggling only `active`) don't trigger spurious validation errors. The 232-test suite passes with this split.
+POST validators enforce `notEmpty()` on required fields (full document creation). PUT validators mark every field as `optional()` so partial updates (e.g. toggling only `active`) don't trigger spurious validation errors. The 287-test suite passes with this split.
+
+---
+
+## Code coverage
+
+Jest is configured with a coverage threshold of 75% on lines. To run the suite with coverage report:
+
+```bash
+cd backend
+npm run test:coverage
+```
+
+The HTML report is generated at `backend/coverage/lcov-report/index.html`.
+
+**Current coverage:**
+
+| Folder | % Stmts | % Branch | % Funcs | % Lines |
+|---|---|---|---|---|
+| **All files** | 84.15 | 63.29 | 96.7 | **86.61** |
+| config | 70 | 33.33 | 100 | 70 |
+| controllers | 80.16 | 62.85 | 96.47 | 83.16 |
+| middlewares | 97.29 | 83.33 | 100 | 97.29 |
+| models | 100 | 100 | 100 | 100 |
+| routes | 100 | 100 | 100 | 100 |
+
+**Files excluded from coverage:**
+
+| File | Reason |
+|---|---|
+| `src/config/swagger.js` | Declarative configuration |
+| `src/config/octokit.js` | External SDK initialisation, mocked in tests |
+| `src/middlewares/upload.js` | Multer file upload (integration with disk) |
+| `src/models/User.js` | Schema-only with Mongoose `pre('save')` hook |
+| `src/controllers/statsController.js` | Aggregation pipelines tested manually with curl |
+| `src/controllers/publishController.js` | GitHub API integration tested manually |
