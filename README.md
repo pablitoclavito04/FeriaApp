@@ -67,6 +67,7 @@ Lighthouse audit of the deployed public site at `https://pablitoclavito04.github
 - **Node.js** with **Express 5**.
 - **MongoDB** with **Mongoose**.
 - **JWT** authentication with **bcryptjs**.
+- **express-validator** for request body validation (422 with field-level error details).
 - **Multer** for image uploads.
 - **Octokit** for automated publishing to GitHub Pages.
 - **Swagger** for REST API documentation.

@@ -262,3 +262,44 @@ PASS  tests/roles.test.js
 Test Suites: 6 passed, 6 total
 Tests:       232 passed, 232 total
 ```
+
+---
+
+## Input validation with express-validator
+
+A validation layer was added on top of the existing Mongoose schema validation using `express-validator`. The middleware runs before each controller and rejects malformed payloads with `422 Unprocessable Entity`.
+
+**File:** `backend/src/middlewares/validators.js`
+
+### Validators implemented
+
+| Validator | Used in | Required fields | Field constraints |
+|---|---|---|---|
+| `loginValidator` | `POST /api/auth/login` | `email`, `password` | Valid email, password ≥ 6 chars |
+| `fairValidator` | `POST /api/fairs` | `name` | Name 2–100 chars; `startDate`/`endDate` ISO 8601 if present |
+| `fairUpdateValidator` | `PUT /api/fairs/:id` | none (partial update) | Same constraints as create when present |
+| `casetaValidator` | `POST /api/casetas` | `name`, `number`, `fair` | Number ≥ 1; `fair` must be a valid Mongo ID |
+| `casetaUpdateValidator` | `PUT /api/casetas/:id` | none (partial update) | Same constraints as create when present |
+| `menuValidator` | `POST /api/menus` | `name`, `price`, `caseta` | Price ≥ 0; `caseta` must be a valid Mongo ID |
+| `menuUpdateValidator` | `PUT /api/menus/:id` | none (partial update) | Same constraints as create when present |
+| `concertValidator` | `POST /api/concerts` | `artist`, `date`, `time`, `caseta` | `time` must match `HH:MM`; `caseta` valid Mongo ID |
+| `concertUpdateValidator` | `PUT /api/concerts/:id` | none (partial update) | Same constraints as create when present |
+
+### Error response format
+
+When validation fails, the API responds with `422 Unprocessable Entity` and a structured payload:
+
+```json
+{
+  "error": "Validation failed",
+  "code": "VALIDATION_ERROR",
+  "details": [
+    { "field": "email", "message": "Please enter a valid email address" },
+    { "field": "password", "message": "Password must be at least 6 characters" }
+  ]
+}
+```
+
+### Why two variants per entity
+
+POST validators enforce `notEmpty()` on required fields (full document creation). PUT validators mark every field as `optional()` so partial updates (e.g. toggling only `active`) don't trigger spurious validation errors. The 232-test suite passes with this split.

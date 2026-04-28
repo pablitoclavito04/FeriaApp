@@ -8,6 +8,7 @@ const {
   getFairCasetasWithImage, getFairCasetasSearch
 } = require('../controllers/fairController');
 const { protect, authorize } = require('../middlewares/auth');
+const { fairValidator, fairUpdateValidator } = require('../middlewares/validators');
 
 /**
  * @swagger
@@ -316,7 +317,7 @@ router.get('/:id/full', getFairFull);
  *       401:
  *         description: Not authorized
  */
-router.post('/', protect, authorize('admin'), createFair);
+router.post('/', protect, authorize('admin'), fairValidator, createFair);
 
 /**
  * @swagger
@@ -338,7 +339,7 @@ router.post('/', protect, authorize('admin'), createFair);
  *       404:
  *         description: Fair not found
  */
-router.put('/:id', protect, authorize('admin'), updateFair);
+router.put('/:id', protect, authorize('admin'), fairUpdateValidator, updateFair);
 
 /**
  * @swagger

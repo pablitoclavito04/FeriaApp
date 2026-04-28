@@ -7,6 +7,7 @@ const {
   getConcertCaseta, getConcertsSameDay, getConcertsSameGenre, getConcertCasetaMenus
 } = require('../controllers/concertController');
 const { protect, authorize } = require('../middlewares/auth');
+const { concertValidator, concertUpdateValidator } = require('../middlewares/validators');
 
 /**
  * @swagger
@@ -186,7 +187,7 @@ router.get('/caseta/:casetaId', getConcertsByCaseta);
  *       401:
  *         description: Not authorized
  */
-router.post('/', protect, authorize('admin'), createConcert);
+router.post('/', protect, authorize('admin'), concertValidator, createConcert);
 
 /**
  * @swagger
@@ -208,7 +209,7 @@ router.post('/', protect, authorize('admin'), createConcert);
  *       404:
  *         description: Concert not found
  */
-router.put('/:id', protect, authorize('admin'), updateConcert);
+router.put('/:id', protect, authorize('admin'), concertUpdateValidator, updateConcert);
 
 /**
  * @swagger

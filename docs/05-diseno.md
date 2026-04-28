@@ -272,6 +272,15 @@ All error responses follow the same structure: `{ "error": "<message>", "code": 
 | 422 | `VALIDATION_ERROR` | Mongoose validation failed (e.g. invalid types, missing required fields on create/update). |
 | 500 | `SERVER_ERROR` | Unexpected server-side error. |
 
+### Input validation layer
+
+Beyond Mongoose schema validation, requests are pre-validated with `express-validator` before reaching the controllers. The middleware (`backend/src/middlewares/validators.js`) declares one validator per route group:
+
+- **Create validators** (`fairValidator`, `casetaValidator`, `menuValidator`, `concertValidator`, `loginValidator`) — enforce `notEmpty()` on required fields and check field-level constraints (lengths, numeric ranges, Mongo ID format, ISO 8601 dates, `HH:MM` time format).
+- **Update validators** (`fairUpdateValidator`, `casetaUpdateValidator`, `menuUpdateValidator`, `concertUpdateValidator`) — mark every field as `optional()` so PUT requests can be partial; constraints still apply when a field is present.
+
+When validation fails, the response is `422 Unprocessable Entity` with `code: VALIDATION_ERROR` and a `details` array listing each failing field and its message. This is consistent with the error response format described above and lets the frontend surface field-level feedback to the user.
+
 ---
 
 ## Use case diagram.

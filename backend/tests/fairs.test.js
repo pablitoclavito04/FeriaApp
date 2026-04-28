@@ -357,7 +357,7 @@ describe('Fairs API - Additional validation tests', () => {
       .post('/api/fairs')
       .set('Authorization', `Bearer ${token}`)
       .send({ name: longName, startDate: '2026-05-06', endDate: '2026-05-11' });
-    expect([201, 400, 500]).toContain(res.statusCode);
+    expect([201, 400, 422, 500]).toContain(res.statusCode);
   });
 
   test('should delete the extra fair', async () => {
