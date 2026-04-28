@@ -6,7 +6,7 @@ const {
   getUpcomingConcerts, countConcertsByCaseta, getConcertsWithoutGenre, getConcertsFull,
   getConcertCaseta, getConcertsSameDay, getConcertsSameGenre, getConcertCasetaMenus
 } = require('../controllers/concertController');
-const { protect } = require('../middlewares/auth');
+const { protect, authorize } = require('../middlewares/auth');
 
 /**
  * @swagger
@@ -186,7 +186,7 @@ router.get('/caseta/:casetaId', getConcertsByCaseta);
  *       401:
  *         description: Not authorized
  */
-router.post('/', protect, createConcert);
+router.post('/', protect, authorize('admin'), createConcert);
 
 /**
  * @swagger
@@ -208,7 +208,7 @@ router.post('/', protect, createConcert);
  *       404:
  *         description: Concert not found
  */
-router.put('/:id', protect, updateConcert);
+router.put('/:id', protect, authorize('admin'), updateConcert);
 
 /**
  * @swagger
@@ -310,6 +310,6 @@ router.get('/:id/samegenre', getConcertsSameGenre);
  */
 router.get('/:id/caseta/menus', getConcertCasetaMenus);
 
-router.delete('/:id', protect, deleteConcert);
+router.delete('/:id', protect, authorize('admin'), deleteConcert);
 
 module.exports = router;

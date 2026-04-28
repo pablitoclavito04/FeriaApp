@@ -9,7 +9,7 @@ const {
   getCasetaMenusCount, getCasetaUpcomingConcerts, getCasetaConcertsByGenre,
   getCasetaConcertsSortedDesc, getCasetaConcertsCount, getCasetaStats
 } = require('../controllers/casetaController');
-const { protect } = require('../middlewares/auth');
+const { protect, authorize } = require('../middlewares/auth');
 const upload = require('../middlewares/upload');
 
 /**
@@ -379,7 +379,7 @@ router.get('/:id/stats', getCasetaStats);
  *       401:
  *         description: Not authorized
  */
-router.post('/', protect, upload.single('image'), createCaseta);
+router.post('/', protect, authorize('admin'), upload.single('image'), createCaseta);
 
 /**
  * @swagger
@@ -401,7 +401,7 @@ router.post('/', protect, upload.single('image'), createCaseta);
  *       404:
  *         description: Caseta not found
  */
-router.put('/:id', protect, upload.single('image'), updateCaseta);
+router.put('/:id', protect, authorize('admin'), upload.single('image'), updateCaseta);
 
 /**
  * @swagger
@@ -423,6 +423,6 @@ router.put('/:id', protect, upload.single('image'), updateCaseta);
  *       404:
  *         description: Caseta not found
  */
-router.delete('/:id', protect, deleteCaseta);
+router.delete('/:id', protect, authorize('admin'), deleteCaseta);
 
 module.exports = router;

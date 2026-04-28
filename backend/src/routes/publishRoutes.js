@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { publish } = require('../controllers/publishController');
-const { protect } = require('../middlewares/auth');
+const { protect, authorize } = require('../middlewares/auth');
 
 /**
  * @swagger
@@ -19,6 +19,6 @@ const { protect } = require('../middlewares/auth');
  *       500:
  *         description: Error publishing
  */
-router.post('/', protect, publish);
+router.post('/', protect, authorize('admin'), publish);
 
 module.exports = router;

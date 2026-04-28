@@ -290,3 +290,56 @@ In addition to the nested routes under `/api/fairs/:id` and `/api/casetas/:id`, 
 | menuRoutes.js | 3 |
 | concertRoutes.js | 4 |
 | **Total** | **27** |
+
+---
+
+## Role-based authorization
+
+The original implementation used JWT only with a single `admin` user. To meet the rubric requirement of "authentication and authorization with roles", the system was extended with three roles (`admin`, `editor`, `viewer`) and a dedicated `authorize` middleware.
+
+### Decisions made
+
+- **Role enum on the `User` model** (`enum: ['admin', 'editor', 'viewer']`) instead of a free-form string — this keeps the set of valid roles closed and Mongoose rejects anything outside it.
+- **Role loaded from the database on every request, not from the JWT payload.** The JWT only carries the user id; `protect` reads the user (with their current role) from MongoDB. Effect: if an admin is demoted to `viewer`, the next request fails with 403 immediately, without waiting for the token to expire.
+- **`authorize(...roles)` is a separate middleware**, applied *after* `protect`. This separation keeps "is the request authenticated?" and "does this user have permission?" as two independent checks, each with its own status code (401 vs 403) and error code (`UNAUTHORIZED` vs `FORBIDDEN`).
+- **All write routes (`POST`, `PUT`, `DELETE`) require `admin`.** GET routes are open to all authenticated users (or public). This matches the actual product: only the administrator publishes data; editor/viewer roles exist as a demonstration of the access control layer.
+- **`seedAdmin.js` creates the three roles** in a single idempotent run (using `upsert`), so the demo accounts can be recreated without producing duplicates.
+
+### Implementation
+
+```javascript
+// backend/src/middlewares/auth.js
+const protect = async (req, res, next) => {
+  // ...verify JWT, load user from DB into req.user...
+};
+
+const authorize = (...roles) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ error: 'Not authorized', code: 'UNAUTHORIZED' });
+    }
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({
+        error: `Role '${req.user.role}' is not authorized to access this route`,
+        code: 'FORBIDDEN'
+      });
+    }
+    next();
+  };
+};
+
+module.exports = { protect, authorize };
+```
+
+Routes apply both middlewares in order:
+
+```javascript
+// backend/src/routes/fairRoutes.js
+router.post('/', protect, authorize('admin'), createFair);
+router.put('/:id', protect, authorize('admin'), updateFair);
+router.delete('/:id', protect, authorize('admin'), deleteFair);
+```
+
+### Verification
+
+A dedicated test file `backend/tests/roles.test.js` exercises the authorization layer end to end: it logs in as `editor` and `viewer`, hits every write endpoint and asserts `403 / code: FORBIDDEN`. It also confirms that GET routes remain accessible to non-admin authenticated users. See [docs/07-pruebas.md](07-pruebas.md) for the full test breakdown.

@@ -6,7 +6,7 @@ const {
   getCheapestMenu, getMenusWithoutDescription, countMenusByCaseta, getMenusFull,
   getMenuCaseta, getSimilarMenus, getMenuCasetaConcerts
 } = require('../controllers/menuController');
-const { protect } = require('../middlewares/auth');
+const { protect, authorize } = require('../middlewares/auth');
 
 /**
  * @swagger
@@ -182,7 +182,7 @@ router.get('/caseta/:casetaId', getMenusByCaseta);
  *       401:
  *         description: Not authorized
  */
-router.post('/', protect, createMenu);
+router.post('/', protect, authorize('admin'), createMenu);
 
 /**
  * @swagger
@@ -220,7 +220,7 @@ router.post('/', protect, createMenu);
  *       401:
  *         description: Not authorized
  */
-router.post('/bulk', protect, createMenusBulk);
+router.post('/bulk', protect, authorize('admin'), createMenusBulk);
 
 /**
  * @swagger
@@ -242,7 +242,7 @@ router.post('/bulk', protect, createMenusBulk);
  *       404:
  *         description: Menu item not found
  */
-router.put('/:id', protect, updateMenu);
+router.put('/:id', protect, authorize('admin'), updateMenu);
 
 /**
  * @swagger
@@ -324,6 +324,6 @@ router.get('/:id/similar', getSimilarMenus);
  */
 router.get('/:id/caseta/concerts', getMenuCasetaConcerts);
 
-router.delete('/:id', protect, deleteMenu);
+router.delete('/:id', protect, authorize('admin'), deleteMenu);
 
 module.exports = router;

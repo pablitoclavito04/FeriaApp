@@ -23,7 +23,7 @@ Screenshots of the tests are available in `docs/insomnia/`.
 
 ### 2. Unit tests with Jest and Supertest.
 
-In Sprint 5, automated unit tests were implemented for the backend. The tests cover all main API endpoints across 5 test files.
+In Sprint 5, automated unit tests were implemented for the backend. The tests cover all main API endpoints across 6 test files.
 
 **Test files:**
 
@@ -34,7 +34,8 @@ In Sprint 5, automated unit tests were implemented for the backend. The tests co
 | `backend/tests/casetas.test.js` | Casetas CRUD | 43 |
 | `backend/tests/menus.test.js` | Menus CRUD | 47 |
 | `backend/tests/concerts.test.js` | Concerts CRUD | 45 |
-| **Total** | | **208** |
+| `backend/tests/roles.test.js` | Authorization & roles | 24 |
+| **Total** | | **232** |
 
 **Test scenarios covered per module:**
 - Successful creation with valid data
@@ -62,8 +63,8 @@ PASS  tests/menus.test.js
 PASS  tests/casetas.test.js
 PASS  tests/fairs.test.js
 
-Test Suites: 5 passed, 5 total
-Tests:       208 passed, 208 total
+Test Suites: 6 passed, 6 total
+Tests:       232 passed, 232 total
 Time:        6.94 s
 ```
 
@@ -123,8 +124,8 @@ All 208 unit tests were updated to reflect this change. The main patterns update
 After the updates all 208 tests pass successfully:
 
 ```
-Test Suites: 5 passed, 5 total
-Tests:       208 passed, 208 total
+Test Suites: 6 passed, 6 total
+Tests:       232 passed, 232 total
 Time:        7.347 s
 ```
 
@@ -223,3 +224,41 @@ Audits run against the deployed public site at `https://pablitoclavito04.github.
 | Accessibility | 92/100 |
 | Best Practices | 100/100 |
 | SEO | 100/100 |
+
+---
+
+## Role-based authorization tests
+
+A new test file `backend/tests/roles.test.js` was created to verify that the role-based access control system works correctly.
+
+**Test coverage:**
+
+| Scenario | Tests |
+|---|---|
+| Editor role forbidden on write routes (fairs, casetas, menus, concerts, publish) | 14 |
+| Viewer role forbidden on write routes | 5 |
+| GET routes accessible to all authenticated roles | 5 |
+| **Total** | **24** |
+
+**Example test results:**
+
+```
+PASS  tests/roles.test.js
+  Authorization - editor role is forbidden on write routes
+    ✓ POST /api/fairs returns 403 for editor
+    ✓ PUT /api/fairs/:id returns 403 for editor
+    ✓ DELETE /api/fairs/:id returns 403 for editor
+    ✓ POST /api/casetas returns 403 for editor
+    ✓ POST /api/menus returns 403 for editor
+    ✓ POST /api/concerts returns 403 for editor
+    ✓ POST /api/publish returns 403 for editor
+  Authorization - viewer role is forbidden on write routes
+    ✓ POST /api/fairs returns 403 for viewer
+    ✓ POST /api/publish returns 403 for viewer
+  Authorization - GET routes accessible to all authenticated roles
+    ✓ GET /api/fairs is accessible to editor
+    ✓ GET /api/fairs is accessible to viewer
+
+Test Suites: 6 passed, 6 total
+Tests:       232 passed, 232 total
+```

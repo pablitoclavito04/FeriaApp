@@ -25,8 +25,8 @@ Lighthouse audit of the deployed public site at `https://pablitoclavito04.github
 
 | Metric | Value |
 |---|---|
-| Unit tests | 208 |
-| Test files | 5 |
+| Unit tests | 232 |
+| Test files | 6 |
 | Test framework | Jest + Supertest |
 | CI/CD | GitHub Actions |
 | Test execution | Serial (--runInBand) |
@@ -245,6 +245,7 @@ http://localhost:5000/api-docs
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
 | POST | /api/auth/login | Public | Administrator login |
+| GET | /api/auth/profile | Private (admin) | Get administrator profile |
 | GET | /api/fairs | Public | Get all fairs. Supports `?page=1&limit=10&active=true` |
 | GET | /api/fairs/active | Public | Get only active fairs |
 | GET | /api/fairs/latest | Public | Get most recent fair |
@@ -318,6 +319,19 @@ http://localhost:5000/api-docs
 | menuRoutes.js | 3 |
 | concertRoutes.js | 4 |
 | **Total** | **27** |
+
+
+### Role-based access control
+
+FeriaApp implements role-based authorization with three roles:
+
+| Role | Access |
+|---|---|
+| `admin` | Full access — can read, create, update and delete all resources |
+| `editor` | Read-only access — cannot write, update or delete |
+| `viewer` | Read-only access — cannot write, update or delete |
+
+All write endpoints (`POST`, `PUT`, `DELETE`) require the `admin` role. Attempts to access these endpoints with `editor` or `viewer` roles return `403 Forbidden` with `code: FORBIDDEN`.
 
 
 ### Paginated response format

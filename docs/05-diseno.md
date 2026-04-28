@@ -233,6 +233,47 @@ All `GET` collection endpoints return a paginated object instead of a plain arra
 
 ---
 
+## Authentication and authorization
+
+The API uses JWT for authentication and role-based access control for authorization. Tokens are obtained via `POST /api/auth/login` and must be sent in the `Authorization: Bearer <token>` header for any protected endpoint.
+
+### Roles
+
+| Role | Description | Permissions |
+|---|---|---|
+| `admin` | Full administrator | Read, create, update and delete on all resources. Can publish to GitHub Pages. |
+| `editor` | Authenticated read-only user | Read access only. Cannot perform write operations. |
+| `viewer` | Authenticated read-only user | Read access only. Cannot perform write operations. |
+
+The role is stored on the `User` model (`enum: ['admin', 'editor', 'viewer']`) and is loaded from the database on every request, so any change to a user's role takes effect immediately on the next request.
+
+### Authorization rules
+
+| Method | Endpoints | Required role |
+|---|---|---|
+| `GET` | All `/api/*` read endpoints | Public or any authenticated user (depending on the route) |
+| `POST` | `/api/fairs`, `/api/casetas`, `/api/menus`, `/api/menus/bulk`, `/api/concerts`, `/api/publish` | `admin` |
+| `PUT` | `/api/fairs/:id`, `/api/casetas/:id`, `/api/menus/:id`, `/api/concerts/:id` | `admin` |
+| `DELETE` | `/api/fairs/:id`, `/api/casetas/:id`, `/api/menus/:id`, `/api/concerts/:id` | `admin` |
+
+Any write attempt by `editor` or `viewer` returns `403 Forbidden` with `code: FORBIDDEN`.
+
+### Error response codes
+
+All error responses follow the same structure: `{ "error": "<message>", "code": "<CODE>" }`.
+
+| HTTP status | Code | Meaning |
+|---|---|---|
+| 400 | `VALIDATION_ERROR` | Required input is missing or malformed (e.g. login without email/password). |
+| 401 | `INVALID_CREDENTIALS` | Email or password do not match an existing user. |
+| 401 | `UNAUTHORIZED` | Missing or invalid JWT token. |
+| 403 | `FORBIDDEN` | Authenticated user does not have the required role for this route. |
+| 404 | `FAIR_NOT_FOUND` / `CASETA_NOT_FOUND` / `MENU_NOT_FOUND` / `CONCERT_NOT_FOUND` | Resource does not exist. |
+| 422 | `VALIDATION_ERROR` | Mongoose validation failed (e.g. invalid types, missing required fields on create/update). |
+| 500 | `SERVER_ERROR` | Unexpected server-side error. |
+
+---
+
 ## Use case diagram.
 
 **Administrator:**
