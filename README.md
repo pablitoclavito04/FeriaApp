@@ -10,12 +10,14 @@ A full stack web platform for consulting information about the **Feria de Jerez 
 
 ## Performance metrics
 
-| Metric | Score | Tool |
+Lighthouse audit of the deployed public site at `https://pablitoclavito04.github.io/FeriaApp/`. See [docs/07-pruebas.md](docs/07-pruebas.md#lighthouse-report) for the full reports.
+
+| Metric | Desktop | Mobile |
 |---|---|---|
-| Performance | 68/100 | Lighthouse |
-| Accessibility | 93/100 | Lighthouse |
-| Best Practices | 100/100 | Lighthouse |
-| SEO | 100/100 | Lighthouse |
+| Performance | 87/100 | 71/100 |
+| Accessibility | 93/100 | 92/100 |
+| Best Practices | 100/100 | 100/100 |
+| SEO | 100/100 | 100/100 |
 
 ---
 

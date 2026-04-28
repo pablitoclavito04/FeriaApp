@@ -195,3 +195,31 @@ curl http://localhost:5000/api/concerts/CONCERT_ID/caseta/menus
 ```
 
 All endpoints returned `200 OK` with the expected data.
+
+---
+
+## Lighthouse report
+
+Audits run against the deployed public site at `https://pablitoclavito04.github.io/FeriaApp/`.
+
+### Desktop
+
+![Lighthouse Report — Desktop](lighthouse-desktop.png)
+
+| Metric | Score |
+|---|---|
+| Performance | 87/100 |
+| Accessibility | 93/100 |
+| Best Practices | 100/100 |
+| SEO | 100/100 |
+
+### Mobile
+
+![Lighthouse Report — Mobile](lighthouse-mobile.png)
+
+| Metric | Score |
+|---|---|
+| Performance | 71/100 |
+| Accessibility | 92/100 |
+| Best Practices | 100/100 |
+| SEO | 100/100 |
