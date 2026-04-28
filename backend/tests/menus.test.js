@@ -354,7 +354,7 @@ describe('Menus API - DELETE /api/menus/:id', () => {
     const res = await request(app)
       .delete(`/api/menus/${menuId}`)
       .set('Authorization', `Bearer ${token}`);
-    expect(res.statusCode).toBe(200);
+    expect(res.statusCode).toBe(204);
   });
 });
 
@@ -509,7 +509,7 @@ describe('Menus API - Additional validation tests', () => {
       const res = await request(app)
         .delete(`/api/menus/${menu._id}`)
         .set('Authorization', `Bearer ${token}`);
-      expect(res.statusCode).toBe(200);
+      expect(res.statusCode).toBe(204);
     }
     const final = await request(app).get(`/api/menus/caseta/${casetaId}`);
     expect(final.body.length).toBe(0);

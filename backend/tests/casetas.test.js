@@ -269,7 +269,7 @@ describe('Casetas API - DELETE /api/casetas/:id', () => {
     const res = await request(app)
       .delete(`/api/casetas/${casetaId}`)
       .set('Authorization', `Bearer ${token}`);
-    expect(res.statusCode).toBe(200);
+    expect(res.statusCode).toBe(204);
   });
 
   test('should return empty array after deletion', async () => {
@@ -446,7 +446,7 @@ describe('Casetas API - Additional validation tests', () => {
       const res = await request(app)
         .delete(`/api/casetas/${caseta._id}`)
         .set('Authorization', `Bearer ${token}`);
-      expect(res.statusCode).toBe(200);
+      expect(res.statusCode).toBe(204);
     }
     const final = await request(app).get('/api/casetas');
     expect(final.body.data.length).toBe(0);

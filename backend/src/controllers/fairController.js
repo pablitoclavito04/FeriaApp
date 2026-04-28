@@ -25,6 +25,9 @@ const getFairs = async (req, res) => {
       data: fairs,
     });
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -40,6 +43,9 @@ const getFair = async (req, res) => {
     }
     res.json(fair);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -52,6 +58,9 @@ const createFair = async (req, res) => {
     const fair = await Fair.create(req.body);
     res.status(201).json(fair);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     if (error.name === 'ValidationError') {
       return res.status(422).json({ error: error.message, code: 'VALIDATION_ERROR' });
     }
@@ -73,6 +82,9 @@ const updateFair = async (req, res) => {
     }
     res.json(fair);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     if (error.name === 'ValidationError') {
       return res.status(422).json({ error: error.message, code: 'VALIDATION_ERROR' });
     }
@@ -89,8 +101,11 @@ const deleteFair = async (req, res) => {
     if (!fair) {
       return res.status(404).json({ error: 'Fair not found', code: 'FAIR_NOT_FOUND' });
     }
-    res.json({ message: 'Fair deleted successfully' });
+    res.status(204).send();
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -103,6 +118,9 @@ const getActiveFairs = async (req, res) => {
     const fairs = await Fair.find({ active: true }).sort({ startDate: 1 });
     res.json(fairs);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -117,6 +135,9 @@ const searchFairs = async (req, res) => {
     }).sort({ startDate: 1 });
     res.json(fairs);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -133,6 +154,9 @@ const getFairsByDateRange = async (req, res) => {
     const fairs = await Fair.find(filter).sort({ startDate: 1 });
     res.json(fairs);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -146,6 +170,9 @@ const getLatestFair = async (req, res) => {
     if (!fair) return res.status(404).json({ error: 'No fairs found', code: 'FAIR_NOT_FOUND' });
     res.json(fair);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -161,6 +188,9 @@ const getFairWithCasetas = async (req, res) => {
     const casetas = await Caseta.find({ fair: req.params.id }).sort({ number: 1 });
     res.json({ fair, casetas });
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -174,6 +204,9 @@ const countFairsByStatus = async (req, res) => {
     const inactive = await Fair.countDocuments({ active: false });
     res.json({ active, inactive, total: active + inactive });
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -186,6 +219,9 @@ const getFairsSortedByEndDate = async (req, res) => {
     const fairs = await Fair.find().sort({ endDate: -1 });
     res.json(fairs);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -209,6 +245,9 @@ const getFairFull = async (req, res) => {
 
     res.json({ fair, casetas, menus, concerts });
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -227,6 +266,9 @@ const getFairMenus = async (req, res) => {
       .sort({ name: 1 });
     res.json(menus);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -245,6 +287,9 @@ const getFairConcerts = async (req, res) => {
       .sort({ date: 1, time: 1 });
     res.json(concerts);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -275,6 +320,9 @@ const getFairStats = async (req, res) => {
       avgMenuPrice: avgMenuPrice[0] ? Math.round(avgMenuPrice[0].avg * 100) / 100 : 0,
     });
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -288,6 +336,9 @@ const getFairCasetasCount = async (req, res) => {
     const total = await Caseta.countDocuments({ fair: req.params.id });
     res.json({ total });
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -304,6 +355,9 @@ const getFairCasetasWithImage = async (req, res) => {
     }).sort({ number: 1 });
     res.json(casetas);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -320,6 +374,9 @@ const getFairCasetasSearch = async (req, res) => {
     }).sort({ number: 1 });
     res.json(casetas);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };

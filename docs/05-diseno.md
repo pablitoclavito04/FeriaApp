@@ -264,6 +264,10 @@ All error responses follow the same structure: `{ "error": "<message>", "code": 
 
 | HTTP status | Code | Meaning |
 |---|---|---|
+| 200 | – | Successful GET/PUT/POST returning a resource. |
+| 201 | – | Resource created (POST). |
+| 204 | – | Resource deleted successfully (DELETE returns no body). |
+| 400 | `INVALID_ID` | URL parameter is not a valid Mongo ObjectId. |
 | 400 | `VALIDATION_ERROR` | Required input is missing or malformed (e.g. login without email/password). |
 | 401 | `INVALID_CREDENTIALS` | Email or password do not match an existing user. |
 | 401 | `UNAUTHORIZED` | Missing or invalid JWT token. |

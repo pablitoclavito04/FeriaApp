@@ -215,7 +215,7 @@ describe('Fairs API - DELETE /api/fairs/:id', () => {
     const res = await request(app)
       .delete(`/api/fairs/${fairId}`)
       .set('Authorization', `Bearer ${token}`);
-    expect(res.statusCode).toBe(200);
+    expect(res.statusCode).toBe(204);
   });
 
   test('should return empty array after deletion', async () => {
@@ -364,7 +364,7 @@ describe('Fairs API - Additional validation tests', () => {
     const res = await request(app)
       .delete(`/api/fairs/${fairId}`)
       .set('Authorization', `Bearer ${token}`);
-    expect(res.statusCode).toBe(200);
+    expect(res.statusCode).toBe(204);
   });
 
   test('should return 404 after deleting a fair', async () => {

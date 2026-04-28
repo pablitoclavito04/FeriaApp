@@ -319,7 +319,7 @@ describe('Concerts API - DELETE /api/concerts/:id', () => {
     const res = await request(app)
       .delete(`/api/concerts/${concertId}`)
       .set('Authorization', `Bearer ${token}`);
-    expect(res.statusCode).toBe(200);
+    expect(res.statusCode).toBe(204);
   });
 
   test('should return empty array after all deletions', async () => {
@@ -500,7 +500,7 @@ describe('Concerts API - Additional validation tests', () => {
       const res = await request(app)
         .delete(`/api/concerts/${concert._id}`)
         .set('Authorization', `Bearer ${token}`);
-      expect(res.statusCode).toBe(200);
+      expect(res.statusCode).toBe(204);
     }
     const final = await request(app).get('/api/concerts');
     expect(final.body.data.length).toBe(0);

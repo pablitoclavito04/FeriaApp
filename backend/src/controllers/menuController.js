@@ -26,6 +26,9 @@ const getMenus = async (req, res) => {
       data: menus,
     });
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -38,6 +41,9 @@ const getMenusByCaseta = async (req, res) => {
     const menus = await Menu.find({ caseta: req.params.casetaId }).populate('caseta', 'name number');
     res.json(menus);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -104,6 +110,9 @@ const updateMenu = async (req, res) => {
     }
     res.json(menu);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     if (error.name === 'ValidationError') {
       return res.status(422).json({ error: error.message, code: 'VALIDATION_ERROR' });
     }
@@ -120,8 +129,11 @@ const deleteMenu = async (req, res) => {
     if (!menu) {
       return res.status(404).json({ error: 'Menu item not found', code: 'MENU_NOT_FOUND' });
     }
-    res.json({ message: 'Menu item deleted successfully' });
+    res.status(204).send();
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -136,6 +148,9 @@ const searchMenus = async (req, res) => {
     }).populate('caseta', 'name number').sort({ name: 1 });
     res.json(menus);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -150,6 +165,9 @@ const getMenusSortedByPrice = async (req, res) => {
       .sort({ price: 1 });
     res.json(menus);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -166,6 +184,9 @@ const getMenusByPriceRange = async (req, res) => {
     }).populate('caseta', 'name number').sort({ price: 1 });
     res.json(menus);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -181,6 +202,9 @@ const getMostExpensiveMenu = async (req, res) => {
     if (!menu) return res.status(404).json({ error: 'No menus found', code: 'MENU_NOT_FOUND' });
     res.json(menu);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -196,6 +220,9 @@ const getCheapestMenu = async (req, res) => {
     if (!menu) return res.status(404).json({ error: 'No menus found', code: 'MENU_NOT_FOUND' });
     res.json(menu);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -210,6 +237,9 @@ const getMenusWithoutDescription = async (req, res) => {
     }).populate('caseta', 'name number').sort({ name: 1 });
     res.json(menus);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -247,6 +277,9 @@ const countMenusByCaseta = async (req, res) => {
     ]);
     res.json(result);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -286,6 +319,9 @@ const getMenusFull = async (req, res) => {
     ]);
     res.json(menus);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -299,6 +335,9 @@ const getMenuCaseta = async (req, res) => {
     if (!menu) return res.status(404).json({ error: 'Menu not found', code: 'MENU_NOT_FOUND' });
     res.json(menu.caseta);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -316,6 +355,9 @@ const getSimilarMenus = async (req, res) => {
     }).populate('caseta', 'name number').sort({ price: 1 });
     res.json(similar);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
@@ -333,6 +375,9 @@ const getMenuCasetaConcerts = async (req, res) => {
       .sort({ date: 1, time: 1 });
     res.json(concerts);
   } catch (error) {
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
     res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
   }
 };
