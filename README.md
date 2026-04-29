@@ -83,7 +83,7 @@ Lighthouse audit of the deployed public site at `https://pablitoclavito04.github
 
 ### DevOps:
 - **Docker** and **Docker Compose** for containerisation.
-- **Nginx** as a reverse proxy.
+- **Nginx** as a reverse proxy with **HTTPS** (TLS 1.2/1.3, self-signed cert for local dev, Let's Encrypt-ready for production).
 - **GitHub Actions** for the CI/CD pipeline.
 - **GitHub Pages** for static hosting of the public website.
 
@@ -108,7 +108,7 @@ GitHub Pages (gh-pages branch)
 Administrator
       │
       ▼
-Nginx (port 80)
+Nginx (HTTPS on port 443, HTTP→HTTPS redirect on port 80)
 ├── /        → React admin panel
 ├── /api/    → Express backend (port 5000)
 └── /public/ → Static public website
@@ -206,18 +206,30 @@ cp .env.example .env
 # Edit .env with your real values
 ```
 
-**3. Start all containers**
+**3. Generate a self-signed SSL certificate for HTTPS**
+```bash
+mkdir -p nginx/ssl
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout nginx/ssl/feriaapp.key \
+  -out nginx/ssl/feriaapp.crt \
+  -subj "/C=ES/ST=Cadiz/L=Jerez/O=FeriaApp/OU=TFG/CN=localhost"
+```
+The certificate is `.gitignore`d, so each clone must regenerate it. See [docs/08-despliegue.md](docs/08-despliegue.md#https-configuration) for details and the production workflow with Let's Encrypt.
+
+**4. Start all containers**
 ```bash
 docker-compose up --build
 ```
 
 | Service | URL |
 |---|---|
-| Administration panel | http://localhost |
-| Public website | http://localhost/public/ |
-| API | http://localhost/api/ |
+| Administration panel | https://localhost |
+| Public website | https://localhost/public/ |
+| API | https://localhost/api/ |
 
-**4. Create the administrator user**
+> The browser will warn about the self-signed certificate the first time. Click **Advanced → Continue to localhost** to accept it.
+
+**5. Create the administrator user**
 ```bash
 docker exec feriaapp-backend node seedAdmin.js
 ```

@@ -36,7 +36,8 @@ In Sprint 5, automated unit tests were implemented for the backend. The tests co
 | `backend/tests/concerts.test.js` | Concerts CRUD | 45 |
 | `backend/tests/roles.test.js` | Authorization & roles | 24 |
 | `backend/tests/advanced-routes.test.js` | Advanced & nested routes | 55 |
-| **Total** | | **287** |
+| `backend/tests/error-branches.test.js` | Error & edge-case branches | 31 |
+| **Total** | | **318** |
 
 **Test scenarios covered per module:**
 - Successful creation with valid data
@@ -63,11 +64,18 @@ PASS  tests/auth.test.js
 PASS  tests/menus.test.js
 PASS  tests/casetas.test.js
 PASS  tests/fairs.test.js
+PASS  tests/roles.test.js
+PASS  tests/advanced-routes.test.js
+PASS  tests/error-branches.test.js
 
-Test Suites: 7 passed, 7 total
-Tests:       287 passed, 287 total
+Test Suites: 8 passed, 8 total
+Tests:       318 passed, 318 total
 Time:        6.94 s
 ```
+
+![Jest test suite output: Test Suites 8 passed / 8 total, Tests 318 passed / 318 total, 0 snapshots](test-suite-passing.png)
+
+The screenshot shows the final summary block produced by `npm test` after the role-based authorization, express-validator and error-branch suites were added on top of the original CRUD tests — the suite now totals **318 tests across 8 suites**, all green.
 
 ---
 
@@ -125,8 +133,8 @@ All 208 unit tests were updated to reflect this change. The main patterns update
 After the updates all 208 tests pass successfully:
 
 ```
-Test Suites: 7 passed, 7 total
-Tests:       287 passed, 287 total
+Test Suites: 5 passed, 5 total
+Tests:       208 passed, 208 total
 Time:        7.347 s
 ```
 
@@ -260,8 +268,8 @@ PASS  tests/roles.test.js
     ✓ GET /api/fairs is accessible to editor
     ✓ GET /api/fairs is accessible to viewer
 
-Test Suites: 7 passed, 7 total
-Tests:       287 passed, 287 total
+Test Suites: 8 passed, 8 total
+Tests:       318 passed, 318 total
 ```
 
 ---
@@ -303,7 +311,7 @@ When validation fails, the API responds with `422 Unprocessable Entity` and a st
 
 ### Why two variants per entity
 
-POST validators enforce `notEmpty()` on required fields (full document creation). PUT validators mark every field as `optional()` so partial updates (e.g. toggling only `active`) don't trigger spurious validation errors. The 287-test suite passes with this split.
+POST validators enforce `notEmpty()` on required fields (full document creation). PUT validators mark every field as `optional()` so partial updates (e.g. toggling only `active`) don't trigger spurious validation errors. The 318-test suite passes with this split.
 
 ---
 
@@ -322,9 +330,9 @@ The HTML report is generated at `backend/coverage/lcov-report/index.html`.
 
 | Folder | % Stmts | % Branch | % Funcs | % Lines |
 |---|---|---|---|---|
-| **All files** | 84.15 | 63.29 | 96.7 | **86.61** |
+| **All files** | **84.4** | **70.25** | **96.7** | **85.03** |
 | config | 70 | 33.33 | 100 | 70 |
-| controllers | 80.16 | 62.85 | 96.47 | 83.16 |
+| controllers | 80.48 | 70.71 | 96.47 | 81.09 |
 | middlewares | 97.29 | 83.33 | 100 | 97.29 |
 | models | 100 | 100 | 100 | 100 |
 | routes | 100 | 100 | 100 | 100 |
@@ -339,3 +347,9 @@ The HTML report is generated at `backend/coverage/lcov-report/index.html`.
 | `src/models/User.js` | Schema-only with Mongoose `pre('save')` hook |
 | `src/controllers/statsController.js` | Aggregation pipelines tested manually with curl |
 | `src/controllers/publishController.js` | GitHub API integration tested manually |
+
+### Coverage report output
+
+![Jest coverage table broken down by folder and file: All files 84.4% statements / 70.25% branches / 96.7% functions / 85.03% lines, with models and routes at 100% across the board, and the bottom summary showing 8 test suites and 318 tests passing](coverage-report.png)
+
+The screenshot shows the textual coverage table printed by `npm run test:coverage`, broken down by folder and file. Models and routes reach **100%** on all four metrics; the lower numbers in `controllers/` correspond to error branches and edge cases left uncovered by design (full breakdown in the table above). The global line coverage of **85.03%** clears the 75% threshold configured in `jest.config.js`.

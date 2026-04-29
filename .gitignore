@@ -36,6 +36,10 @@ Thumbs.db
 # MongoDB
 *.db
 
+# SSL certificates (generated locally, never committed)
+nginx/ssl/*.key
+nginx/ssl/*.crt
+
 # Insomnia
 docs/insomnia/*.json
 docs/insomnia/*.yaml

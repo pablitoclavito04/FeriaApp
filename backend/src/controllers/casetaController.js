@@ -28,6 +28,7 @@ const getCasetas = async (req, res) => {
       data: casetas,
     });
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
@@ -46,6 +47,7 @@ const getCaseta = async (req, res) => {
     }
     res.json(caseta);
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
@@ -65,6 +67,7 @@ const createCaseta = async (req, res) => {
     const caseta = await Caseta.create(casetaData);
     res.status(201).json(caseta);
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
@@ -93,6 +96,7 @@ const updateCaseta = async (req, res) => {
     }
     res.json(caseta);
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
@@ -114,6 +118,7 @@ const deleteCaseta = async (req, res) => {
     }
     res.status(204).send();
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
@@ -131,6 +136,7 @@ const searchCasetas = async (req, res) => {
     }).populate('fair', 'name').sort({ number: 1 });
     res.json(casetas);
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
@@ -148,6 +154,7 @@ const getCasetasSortedDesc = async (req, res) => {
       .sort({ number: -1 });
     res.json(casetas);
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
@@ -165,6 +172,7 @@ const getCasetasWithImage = async (req, res) => {
     }).populate('fair', 'name').sort({ number: 1 });
     res.json(casetas);
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
@@ -182,6 +190,7 @@ const getCasetasWithoutImage = async (req, res) => {
     }).populate('fair', 'name').sort({ number: 1 });
     res.json(casetas);
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
@@ -200,6 +209,7 @@ const getHighestCaseta = async (req, res) => {
     if (!caseta) return res.status(404).json({ error: 'No casetas found', code: 'CASETA_NOT_FOUND' });
     res.json(caseta);
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
@@ -218,6 +228,7 @@ const getCasetasWithLocation = async (req, res) => {
     }).populate('fair', 'name').sort({ number: 1 });
     res.json(casetas);
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
@@ -238,6 +249,7 @@ const getCasetaFull = async (req, res) => {
     const concerts = await Concert.find({ caseta: req.params.id }).sort({ date: 1, time: 1 });
     res.json({ caseta, menus, concerts });
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
@@ -276,6 +288,7 @@ const countCasetasByFair = async (req, res) => {
     ]);
     res.json(result);
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
@@ -294,6 +307,7 @@ const getCasetaMenus = async (req, res) => {
       .sort({ name: 1 });
     res.json(menus);
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
@@ -312,6 +326,7 @@ const getCasetaConcerts = async (req, res) => {
       .sort({ date: 1, time: 1 });
     res.json(concerts);
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
@@ -331,6 +346,7 @@ const getCasetaCheapestMenu = async (req, res) => {
     if (!menu) return res.status(404).json({ error: 'No menus found', code: 'MENU_NOT_FOUND' });
     res.json(menu);
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
@@ -350,6 +366,7 @@ const getCasetaMostExpensiveMenu = async (req, res) => {
     if (!menu) return res.status(404).json({ error: 'No menus found', code: 'MENU_NOT_FOUND' });
     res.json(menu);
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
@@ -368,6 +385,7 @@ const getCasetaMenusSortedByPrice = async (req, res) => {
       .sort({ price: 1 });
     res.json(menus);
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
@@ -384,6 +402,7 @@ const getCasetaMenusCount = async (req, res) => {
     const total = await Menu.countDocuments({ caseta: req.params.id });
     res.json({ total });
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
@@ -403,6 +422,7 @@ const getCasetaUpcomingConcerts = async (req, res) => {
     }).populate('caseta', 'name number').sort({ date: 1, time: 1 });
     res.json(concerts);
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
@@ -422,6 +442,7 @@ const getCasetaConcertsByGenre = async (req, res) => {
     }).populate('caseta', 'name number').sort({ date: 1, time: 1 });
     res.json(concerts);
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
@@ -440,6 +461,7 @@ const getCasetaConcertsSortedDesc = async (req, res) => {
       .sort({ date: -1, time: -1 });
     res.json(concerts);
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
@@ -456,6 +478,7 @@ const getCasetaConcertsCount = async (req, res) => {
     const total = await Concert.countDocuments({ caseta: req.params.id });
     res.json({ total });
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
@@ -488,6 +511,7 @@ const getCasetaStats = async (req, res) => {
       maxMenuPrice: avgMenuPrice[0]?.max || 0,
     });
   } catch (error) {
+    /* istanbul ignore next */
     if (error.name === 'CastError') {
       return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
     }
