@@ -166,5 +166,19 @@
     "__v": 0,
     "createdAt": "2026-04-29T22:24:32.612Z",
     "updatedAt": "2026-04-29T22:24:32.612Z"
+  },
+  {
+    "_id": "69f287b04db83b2a2f39646c",
+    "name": "Salmorejo",
+    "description": "",
+    "price": 8,
+    "caseta": {
+      "_id": "69ee7d8da787ae2ece06bebe",
+      "name": "Los cabales",
+      "number": 3
+    },
+    "__v": 0,
+    "createdAt": "2026-04-29T22:35:28.292Z",
+    "updatedAt": "2026-04-29T22:35:28.292Z"
   }
 ]
