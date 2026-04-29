@@ -1,4 +1,4 @@
-const CACHE_NAME = 'feriaapp-v39';
+const CACHE_NAME = 'feriaapp-v40';
 const urlsToCache = [
   '/FeriaApp/',
   '/FeriaApp/index.html',
@@ -12,8 +12,16 @@ const urlsToCache = [
   '/FeriaApp/data/concerts.json',
 ];
 
+const DATA_FILES = [
+  '/FeriaApp/data/fairs.json',
+  '/FeriaApp/data/casetas.json',
+  '/FeriaApp/data/menus.json',
+  '/FeriaApp/data/concerts.json',
+];
+
 // Install service worker and cache files
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(urlsToCache);
@@ -32,18 +40,39 @@ self.addEventListener('activate', (event) => {
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
 });
 
-// Fetch from cache first, then network
+// Network first for data files, cache first for everything else
 self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      if (response) {
-        return response;
-      }
-      return fetch(event.request);
-    })
-  );
+  const url = new URL(event.request.url);
+  const isDataFile = DATA_FILES.some(path => url.pathname === path);
+
+  if (isDataFile) {
+    // Network first: try to get fresh data, fall back to cache
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+          return networkResponse;
+        })
+        .catch(() => {
+          return caches.match(event.request);
+        })
+    );
+  } else {
+    // Cache first for static assets
+    event.respondWith(
+      caches.match(event.request).then((response) => {
+        if (response) {
+          return response;
+        }
+        return fetch(event.request);
+      })
+    );
+  }
 });
