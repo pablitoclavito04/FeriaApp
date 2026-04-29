@@ -1,4 +1,4 @@
-const CACHE_NAME = 'feriaapp-v40';
+const CACHE_NAME = 'feriaapp-v41';
 const urlsToCache = [
   '/FeriaApp/',
   '/FeriaApp/index.html',
@@ -50,12 +50,17 @@ self.addEventListener('fetch', (event) => {
   const isDataFile = DATA_FILES.some(path => url.pathname === path);
 
   if (isDataFile) {
-    // Network first: try to get fresh data, fall back to cache
+    // Network first with cache busting: try to get fresh data, fall back to cache
+    // We bypass HTTP cache and CDN cache by appending a timestamp and using no-store
+    const bustUrl = url.pathname + '?t=' + Date.now();
+    const bustRequest = new Request(bustUrl, { cache: 'no-store' });
+
     event.respondWith(
-      fetch(event.request)
+      fetch(bustRequest)
         .then((networkResponse) => {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
+            // Cache under the original (clean) URL so future cache lookups match
             cache.put(event.request, responseToCache);
           });
           return networkResponse;
