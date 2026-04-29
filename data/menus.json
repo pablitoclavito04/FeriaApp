@@ -110,5 +110,19 @@
     "__v": 0,
     "createdAt": "2026-04-26T23:56:41.367Z",
     "updatedAt": "2026-04-26T23:56:41.367Z"
+  },
+  {
+    "_id": "69f26a8341fe93bac5dd4529",
+    "name": "Caracoles",
+    "description": "",
+    "price": 10,
+    "caseta": {
+      "_id": "69ee7d52a787ae2ece06bebd",
+      "name": "Tio Jose de Paula",
+      "number": 2
+    },
+    "__v": 0,
+    "createdAt": "2026-04-29T20:30:59.263Z",
+    "updatedAt": "2026-04-29T20:30:59.263Z"
   }
 ]
