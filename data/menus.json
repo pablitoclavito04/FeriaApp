@@ -138,5 +138,19 @@
     "__v": 0,
     "createdAt": "2026-04-29T21:35:50.476Z",
     "updatedAt": "2026-04-29T21:35:50.476Z"
+  },
+  {
+    "_id": "69f2826b4db83b2a2f39646a",
+    "name": "Queso fresco",
+    "description": "",
+    "price": 6,
+    "caseta": {
+      "_id": "69ee7d8da787ae2ece06bebe",
+      "name": "Los cabales",
+      "number": 3
+    },
+    "__v": 0,
+    "createdAt": "2026-04-29T22:12:59.835Z",
+    "updatedAt": "2026-04-29T22:12:59.835Z"
   }
 ]
