@@ -124,5 +124,19 @@
     "__v": 0,
     "createdAt": "2026-04-29T20:30:59.263Z",
     "updatedAt": "2026-04-29T20:30:59.263Z"
+  },
+  {
+    "_id": "69f279b64db83b2a2f396469",
+    "name": "Boquerones",
+    "description": "",
+    "price": 13,
+    "caseta": {
+      "_id": "69ee7d52a787ae2ece06bebd",
+      "name": "Tio Jose de Paula",
+      "number": 2
+    },
+    "__v": 0,
+    "createdAt": "2026-04-29T21:35:50.476Z",
+    "updatedAt": "2026-04-29T21:35:50.476Z"
   }
 ]
