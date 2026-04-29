@@ -180,5 +180,19 @@
     "__v": 0,
     "createdAt": "2026-04-29T22:35:28.292Z",
     "updatedAt": "2026-04-29T22:35:28.292Z"
+  },
+  {
+    "_id": "69f28c19d198d15c4908a8d3",
+    "name": "Sandwich de pollo",
+    "description": "",
+    "price": 13,
+    "caseta": {
+      "_id": "69ee7ddea787ae2ece06bebf",
+      "name": "La crujía",
+      "number": 4
+    },
+    "__v": 0,
+    "createdAt": "2026-04-29T22:54:17.702Z",
+    "updatedAt": "2026-04-29T22:54:17.702Z"
   }
 ]
