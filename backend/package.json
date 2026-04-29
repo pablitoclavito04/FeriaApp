@@ -6,6 +6,7 @@
   "scripts": {
     "test": "cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --runInBand",
     "test:coverage": "cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --runInBand --coverage",
+    "export:openapi": "node export-openapi.js",
     "start": "node server.js"
   },
   "keywords": [],

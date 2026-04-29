@@ -12,17 +12,17 @@ Test of the `POST /api/ferias` endpoint. The JWT token is sent in the authorizat
 ![Obtener Ferias](<Captura de pantalla 2026-04-08 095205.png>)
 Test of the endpoint `GET /api/ferias`. Without the need for a token, the server returns **200 OK** with the list of all fairs stored in the database.
 
-## 4. Create booth
+## 4. Create caseta
 ![alt text](<Captura de pantalla 2026-04-08 095725.png>)
-Test of the endpoint `POST /api/casetas`. The JWT token is sent along with the data of booth number 1, "La Casapuerta", associated with the Jerez Fair 2025. The server returns **201 Created** with the data of the created booth.
+Test of the endpoint `POST /api/casetas`. The JWT token is sent along with the data of caseta number 1, "La Casapuerta", associated with the Jerez Fair 2025. The server returns **201 Created** with the data of the created caseta.
 
 ## 5. Create meniu
 ![alt text](<Captura de pantalla 2026-04-08 100258.png>)
-Test of the endpoint `POST /api/menus`. The JWT token is sent along with the data of a menu dish associated with the booth created earlier. The server returns **201 Created** with the data of the created dish.
+Test of the endpoint `POST /api/menus`. The JWT token is sent along with the data of a menu dish associated with the caseta created earlier. The server returns **201 Created** with the data of the created dish.
 
 ## 6. Create concert
 ![alt text](<Captura de pantalla 2026-04-08 100430.png>)
-Test of the endpoint `POST /api/conciertos`. The JWT token is sent along with the data of a concert associated with the booth. The server returns **201 Created** with the data of the created concert.
+Test of the endpoint `POST /api/conciertos`. The JWT token is sent along with the data of a concert associated with the caseta. The server returns **201 Created** with the data of the created concert.
 
 ## 7. Update fair
 ![alt text](<Captura de pantalla 2026-04-08 131144.png>)
@@ -32,21 +32,21 @@ Test of the `PUT /api/ferias/:id` endpoint. The JWT token is sent along with the
 ![alt text](<Captura de pantalla 2026-04-08 195125.png>)
 Test of the endpoint `DELETE /api/ferias/:id`. The JWT token is sent and the server returns **200 OK** with a message confirming that the fair has been successfully deleted.
 
-## 9. Get a booth
+## 9. Get a caseta
 ![alt text](<Captura de pantalla 2026-04-08 195223.png>)
 Test of the endpoint `GET /api/casetas/:id`. Without the need for a token, the server returns **200 OK** with the data of the caseta requested by its ID.
 
-## 10. Update booth
+## 10. Update caseta
 ![alt text](<Captura de pantalla 2026-04-08 195324.png>)
-Test of the endpoint `PUT /api/casetas/:id`. The JWT token is sent along with the updated booth data. The server returns **200 OK** with the updated booth data.
+Test of the endpoint `PUT /api/casetas/:id`. The JWT token is sent along with the updated caseta data. The server returns **200 OK** with the updated caseta data.
 
-## 11. Delete booth
+## 11. Delete caseta
 ![alt text](<Captura de pantalla 2026-04-08 195407.png>)
-Test of the endpoint `DELETE /api/casetas/:id`. The JWT token is sent and the server returns **200 OK** with a message confirming that the booth has been deleted successfully.
+Test of the endpoint `DELETE /api/casetas/:id`. The JWT token is sent and the server returns **200 OK** with a message confirming that the caseta has been deleted successfully.
 
-## 12. Get menu from a booth
+## 12. Get menu from a caseta
 ![alt text](<Captura de pantalla 2026-04-08 195603.png>)
-Test of the endpoint `GET /api/menus/caseta/:casetaId`. No token is needed, the server returns **200 OK** with the list of menu dishes associated with the requested booth.
+Test of the endpoint `GET /api/menus/caseta/:casetaId`. No token is needed, the server returns **200 OK** with the list of menu dishes associated with the requested caseta.
 
 ## 13. Update menu
 ![alt text](<Captura de pantalla 2026-04-08 195813.png>)
@@ -56,9 +56,9 @@ Test of the endpoint `PUT /api/menus/:id`. The JWT token is sent along with the 
 ![alt text](<Captura de pantalla 2026-04-08 195902.png>)
 Test of the endpoint `DELETE /api/menus/:id`. The JWT token is sent and the server returns **200 OK** with a message confirming that the dish has been successfully deleted.
 
-## 15. Get concerts from a booth
+## 15. Get concerts from a caseta
 ![alt text](<Captura de pantalla 2026-04-08 195938.png>)
-Test of the endpoint `GET /api/conciertos/caseta/:casetaId`. No token is needed, the server returns **200 OK** with the list of concerts associated with the requested booth.
+Test of the endpoint `GET /api/conciertos/caseta/:casetaId`. No token is needed, the server returns **200 OK** with the list of concerts associated with the requested caseta.
 
 ## 16. Update concert
 ![alt text](<Captura de pantalla 2026-04-08 200040.png>)

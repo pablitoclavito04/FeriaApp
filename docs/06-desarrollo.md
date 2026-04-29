@@ -343,3 +343,51 @@ router.delete('/:id', protect, authorize('admin'), deleteFair);
 ### Verification
 
 A dedicated test file `backend/tests/roles.test.js` exercises the authorization layer end to end: it logs in as `editor` and `viewer`, hits every write endpoint and asserts `403 / code: FORBIDDEN`. It also confirms that GET routes remain accessible to non-admin authenticated users. See [docs/07-pruebas.md](07-pruebas.md) for the full test breakdown.
+
+---
+
+## OpenAPI specification export
+
+The API is documented in three formats: an interactive Swagger UI served at `/api/docs` (runtime), an exported OpenAPI 3.0 JSON file committed at `docs/api/openapi.json` (offline), and curl examples in `docs/08-despliegue.md`.
+
+### Decisions made
+
+- **Single source of truth**: the spec is generated from JSDoc comments in `src/routes/*.js` via `swagger-jsdoc`. Both Swagger UI (runtime) and the exported JSON consume the *same* in-memory spec, so they never drift.
+- **Commit the artefact**: instead of relying on the backend running to inspect the API, a build step exports the spec to disk. The tribunal (or any reviewer) can import `docs/api/openapi.json` directly into Postman/Insomnia/Stoplight without cloning, installing dependencies or starting Mongo.
+- **No new dependency**: the export reuses `swagger-jsdoc` (already installed for Swagger UI) — the script is 14 lines of plain Node.
+
+### Implementation
+
+```javascript
+// backend/export-openapi.js
+const fs = require('fs');
+const path = require('path');
+const swaggerSpec = require('./src/config/swagger');
+
+const outDir = path.join(__dirname, '..', 'docs', 'api');
+const outFile = path.join(outDir, 'openapi.json');
+
+if (!fs.existsSync(outDir)) {
+  fs.mkdirSync(outDir, { recursive: true });
+}
+
+fs.writeFileSync(outFile, JSON.stringify(swaggerSpec, null, 2), 'utf8');
+console.log(`OpenAPI spec written to ${outFile}`);
+```
+
+It is exposed as an npm script in `backend/package.json`:
+
+```json
+"scripts": {
+  "export:openapi": "node export-openapi.js"
+}
+```
+
+Run it with:
+
+```bash
+cd backend
+npm run export:openapi
+```
+
+The current export is **~1.9k lines** covering every endpoint with its parameters, request bodies and response schemas.

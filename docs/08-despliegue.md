@@ -201,6 +201,8 @@ The OpenAPI 3.0 specification is served at `https://localhost/api/docs` through 
 
 The screenshot shows the `Fairs` tag expanded, listing all 19 fair-related routes — basic CRUD plus the advanced read-only endpoints (`/active`, `/latest`, `/range`, `/count/status`, `/sorted/enddate`, `/search/{name}`) and the nested resource endpoints (`/{id}/casetas`, `/{id}/menus`, `/{id}/concerts`, `/{id}/stats`, `/{id}/full`). Each operation is colour-coded by HTTP verb and write operations (POST/PUT/DELETE) display a padlock icon indicating they require the `Authorization: Bearer <token>` header.
 
+The full OpenAPI 3.0 specification is also exported as a static file in [`docs/api/openapi.json`](api/openapi.json) — see the API design section in `05-diseno.md` for details.
+
 ### curl reference
 
 Once the backend is running, you can verify the endpoints with the following curl commands:

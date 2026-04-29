@@ -233,9 +233,101 @@ All `GET` collection endpoints return a paginated object instead of a plain arra
 
 ---
 
+## API documentation
+
+The API is documented in three complementary formats so that it can be reviewed and tested both online and offline.
+
+### Swagger UI (interactive)
+
+When the backend is running, the OpenAPI 3.0 specification is served as an interactive Swagger UI at:
+
+```
+https://localhost/api/docs
+```
+
+The UI lists every endpoint grouped by tag (`Auth`, `Casetas`, `Concerts`, `Fairs`, `Menus`, `Publish`, `Stats`), shows request/response schemas, and exposes the **Authorize** button so JWT-protected routes can be exercised directly from the browser.
+
+### OpenAPI 3.0 specification (offline)
+
+The same spec is also exported as a static file in [`docs/api/openapi.json`](api/openapi.json) (~1.9k lines covering every endpoint with parameters, request bodies and response schemas). It is regenerated with:
+
+```bash
+cd backend
+npm run export:openapi
+```
+
+The file can be imported directly into **Postman**, **Insomnia**, **Stoplight** or any other OpenAPI-compatible tool without having the backend running, which makes it useful for offline review of the API contract.
+
+### Curl examples
+
+End-to-end curl examples for every endpoint (authentication, CRUD, advanced queries, nested routes and stats) are available in [`docs/08-despliegue.md`](08-despliegue.md#api-verification-with-curl), grouped by entity.
+
+---
+
 ## Authentication and authorization
 
 The API uses JWT for authentication and role-based access control for authorization. Tokens are obtained via `POST /api/auth/login` and must be sent in the `Authorization: Bearer <token>` header for any protected endpoint.
+
+### Authentication flow
+
+**1. Login** — exchange credentials for a token:
+
+```bash
+curl -X POST https://localhost/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@feriaapp.com","password":"admin1234"}'
+```
+
+Response (`200 OK`):
+
+```json
+{
+  "_id": "65f...",
+  "name": "Admin",
+  "email": "admin@feriaapp.com",
+  "role": "admin",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+The token is signed with `JWT_SECRET` (from `.env`) and **expires after 30 days**. There is no refresh-token endpoint — once expired, the user logs in again.
+
+**2. Authenticated requests** — send the token in the `Authorization` header:
+
+```bash
+curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+     https://localhost/api/auth/profile
+```
+
+**3. Failure modes**:
+
+| Scenario | Status | Code |
+|---|---|---|
+| Login with wrong email or password | 401 | `INVALID_CREDENTIALS` |
+| Login with missing email or password | 400 | `VALIDATION_ERROR` |
+| Protected route without `Authorization` header | 401 | `UNAUTHORIZED` |
+| Protected route with invalid/expired token | 401 | `UNAUTHORIZED` |
+| Authenticated user without the required role | 403 | `FORBIDDEN` |
+
+**4. Frontend token storage** — the React admin panel stores the token in `sessionStorage`. It is cleared automatically when the browser tab is closed (more secure than `localStorage` for an admin panel). An axios interceptor attaches the token to every outgoing request.
+
+### Demo credentials
+
+The `seedAdmin.js` script creates three demo users — one per role — to make it easy to test the authorization layer:
+
+| Role | Email | Password |
+|---|---|---|
+| `admin` | `admin@feriaapp.com` | `admin1234` |
+| `editor` | `editor@feriaapp.com` | `editor1234` |
+| `viewer` | `viewer@feriaapp.com` | `viewer1234` |
+
+To recreate them:
+
+```bash
+docker exec feriaapp-backend node seedAdmin.js
+```
+
+The script is idempotent (uses `upsert`), so it can be re-run safely.
 
 ### Roles
 

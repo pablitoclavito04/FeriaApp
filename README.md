@@ -71,7 +71,7 @@ Lighthouse audit of the deployed public site at `https://pablitoclavito04.github
 - **express-validator** for request body validation (422 with field-level error details).
 - **Multer** for image uploads.
 - **Octokit** for automated publishing to GitHub Pages.
-- **Swagger** for REST API documentation.
+- **Swagger / OpenAPI 3.0** for REST API documentation (interactive UI + exported `openapi.json`).
 
 ### Public website:
 - Vanilla **HTML5 / CSS3 / JavaScript**.
@@ -248,11 +248,11 @@ The GitHub Actions pipeline runs automatically on every push to `develop` or `ma
 
 ## API Documentation.
 
-The REST API is documented with Swagger. Once the backend is running, visit:
+The REST API is documented in three complementary formats:
 
-```
-http://localhost:5000/api-docs
-```
+- **Interactive Swagger UI** (runtime): with the stack running, browse to `https://localhost/api/docs` to see every endpoint grouped by tag and exercise JWT-protected routes from the browser.
+- **OpenAPI 3.0 spec** (offline): exported as a static file at [`docs/api/openapi.json`](docs/api/openapi.json) — importable into Postman, Insomnia or Stoplight without running the backend. Regenerate it with `npm run export:openapi` from `backend/`.
+- **Curl examples**: end-to-end requests for every endpoint in [`docs/08-despliegue.md`](docs/08-despliegue.md#api-verification-with-curl).
 
 ### Main endpoints
 
