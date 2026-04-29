@@ -1,0 +1,109 @@
+/* ============================================
+   Menus page — public website
+   ============================================ */
+
+/* Menus section */
+.menus-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+.menus-head-text { flex: 1; min-width: 260px; }
+.menus-head-text h2 {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: var(--dark);
+  margin: 0 0 0.4rem;
+}
+.menus-head-text p {
+  color: var(--muted);
+  margin: 0;
+  max-width: 420px;
+}
+.menus-search { margin: 0; max-width: 360px; width: 100%; }
+
+/* Menus grid */
+.menus-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+.menu-caseta-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.25rem 1.35rem;
+  display: flex;
+  flex-direction: column;
+}
+.menu-caseta-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 0 0 0.85rem;
+}
+.menu-caseta-image,
+.menu-caseta-no-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  background: var(--bg);
+  border-radius: 16px;
+  margin-bottom: 0.9rem;
+  display: block;
+}
+.menu-caseta-no-image {
+  background: var(--bg);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+.menu-caseta-no-image::after { content: 'Imagen no disponible'; }
+.menu-caseta-subtitle {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 0 0 0.55rem;
+}
+.menu-caseta-pdf { margin-top: 1.75rem; width: 100%; }
+.menu-caseta-card .menu-items {
+  list-style: none;
+  padding-top: 0.6rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-top: 1px dashed var(--border);
+}
+.menu-caseta-card .menu-items li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.93rem;
+  color: var(--text);
+  padding-bottom: 0.4rem;
+  border-bottom: 1px dashed var(--border);
+}
+.menu-caseta-card .menu-items li::before {
+  content: '';
+  flex: 1;
+  order: 2;
+  border-bottom: 1px dotted var(--muted);
+  transform: translateY(-0.25em);
+  opacity: 0.55;
+}
+.menu-caseta-card .menu-items li > span:first-child { order: 1; }
+.menu-caseta-card .menu-items li > span:last-child { order: 3; }
+.menu-caseta-card .menu-items li:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.menu-caseta-card .menu-items .price {
+  color: #5a8dc7;
+  font-weight: 700;
+}

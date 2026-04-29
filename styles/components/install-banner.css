@@ -1,0 +1,53 @@
+/* ============================================
+   Install banner — public website
+   ============================================ */
+
+/* Install banner */
+.install-banner {
+  max-width: 1100px;
+  margin: 1.75rem auto 0;
+  padding: 0 2rem;
+}
+.install-banner[hidden] { display: none; }
+.install-banner-inner {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.75rem 2rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 1.5rem;
+}
+.install-banner-text h3 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 0 0 0.35rem;
+}
+.install-banner-text p {
+  color: var(--text);
+  font-size: 0.95rem;
+  margin: 0;
+  max-width: 60ch;
+}
+.install-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.install-banner-close {
+  background: transparent;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color .2s ease, color .2s ease;
+}
+.install-banner-close:hover { background: rgba(0, 0, 0, 0.06); color: var(--dark); }
+.install-banner-close svg { width: 18px; height: 18px; }

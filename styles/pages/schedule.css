@@ -1,0 +1,154 @@
+/* ============================================
+   Schedule page — public website
+   Day chips, schedule list, caseta filter banner
+   ============================================ */
+
+/* Schedule day chips */
+.schedule-days {
+  display: flex;
+  gap: 0.6rem;
+  overflow-x: auto;
+  padding: 0.25rem 0 0.5rem;
+  margin-bottom: 0.5rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.schedule-days::-webkit-scrollbar { display: none; }
+.schedule-day {
+  flex: 0 0 auto;
+  min-width: 78px;
+  height: 74px;
+  padding: 0.6rem 1rem;
+  background: var(--card);
+  border: 2px solid #000;
+  border-radius: 12px;
+  color: var(--dark);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  font: inherit;
+  transition: background-color .2s ease, color .2s ease, transform .15s ease;
+}
+.schedule-day:hover { background: #FFDFA0; color: #000; transform: translateY(-1px); }
+.schedule-day.is-active {
+  background: #F6BE39;
+  color: #000;
+}
+[data-theme="dark"] .schedule-day { border-color: #f3efe9; }
+.schedule-day-all { justify-content: center; }
+.schedule-day-weekday {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.schedule-day-number {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.schedule-day-calendar {
+  position: relative;
+  padding: 0.6rem;
+  min-width: 74px;
+}
+.schedule-day-calendar svg { width: 24px; height: 24px; }
+.schedule-day-date-input {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  border: 0;
+  padding: 0;
+}
+
+/* Schedule */
+.schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.concert-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: border-color .2s ease, transform .15s ease;
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+.concert-card:hover {
+  border-color: #2c5f9e;
+  background: #ffe9c2;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(44, 95, 158, 0.18);
+}
+[data-theme="dark"] .concert-card:hover {
+  border-color: #f6be39;
+  background: #2a3142;
+  box-shadow: 0 6px 16px rgba(246, 190, 57, 0.25);
+}
+.concert-time {
+  background: var(--dark);
+  color: #fff;
+  padding: 0.5rem 0.9rem;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 1rem;
+  min-width: 80px;
+  text-align: center;
+}
+[data-theme="dark"] .concert-time { background: #f3efe9; color: #0f1320; }
+.concert-info {
+  flex: 1;
+  min-width: 0;
+}
+.concert-info h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 0 0 0.2rem;
+}
+.concert-info p {
+  color: var(--muted);
+  font-size: 0.88rem;
+  margin: 0;
+}
+.concert-date {
+  color: #5a8dc7 !important;
+  font-weight: 600;
+}
+
+/* Schedule caseta filter banner */
+.schedule-caseta-filter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  background: #FFEFD5;
+  border: 2px solid #000;
+  border-radius: 12px;
+  color: var(--dark);
+  font-size: 0.95rem;
+}
+.schedule-caseta-filter button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+.schedule-caseta-filter button svg { width: 18px; height: 18px; }
+[data-theme="dark"] .schedule-caseta-filter { background: #2F4467; color: #fff; border-color: #f3efe9; }
