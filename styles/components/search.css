@@ -1,0 +1,37 @@
+/* ============================================
+   App search — public website
+   ============================================ */
+
+/* App search */
+.app-search {
+  position: relative;
+  max-width: 620px;
+  margin: 0 auto 2rem;
+}
+.app-search input {
+  width: 100%;
+  padding: 0.95rem 1.25rem 0.95rem 3rem;
+  border: 2px solid #BCC1F1;
+  background: #E2E8F0;
+  border-radius: 16px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: #1e293b;
+  outline: none;
+  transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+}
+.app-search input::placeholder { color: #64748b; }
+.app-search input:focus {
+  border-color: #5a8dc7;
+  box-shadow: 0 0 0 4px rgba(90, 141, 199, 0.15);
+}
+.app-search-icon {
+  position: absolute;
+  left: 1.1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: #6B6B76;
+  pointer-events: none;
+}
