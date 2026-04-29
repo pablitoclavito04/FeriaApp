@@ -140,5 +140,23 @@
     "createdAt": "2026-04-26T21:08:28.070Z",
     "updatedAt": "2026-04-26T21:08:28.070Z",
     "__v": 0
+  },
+  {
+    "location": {
+      "x": 333.69896592407946,
+      "y": 537.8244720210149
+    },
+    "_id": "69f26ffc41fe93bac5dd452a",
+    "name": "Entre amigos",
+    "number": 9,
+    "description": "Caseta número 9 de la Feria de Jerez",
+    "image": "/uploads/1777496060025-Captura de pantalla 2026-04-29 225410.png",
+    "fair": {
+      "_id": "69ee7cc6a787ae2ece06bebb",
+      "name": "Feria de Jerez 2026"
+    },
+    "createdAt": "2026-04-29T20:54:20.037Z",
+    "updatedAt": "2026-04-29T20:54:20.037Z",
+    "__v": 0
   }
 ]
