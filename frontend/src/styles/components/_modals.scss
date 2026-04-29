@@ -1,0 +1,137 @@
+@use '../abstracts/variables' as *;
+
+// ============================================
+// Modal
+// ============================================
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.15s ease;
+}
+
+.modal {
+  background: var(--modal-bg);
+  border-radius: $radius-lg;
+  padding: 1.75rem;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+  animation: slideUp 0.2s ease;
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+  }
+
+  .modal-close {
+    width: 32px;
+    height: 32px;
+    border-radius: $radius-sm;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all $transition;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    &:hover {
+      background: var(--border-light);
+      color: var(--text-primary);
+    }
+  }
+
+  .modal-body {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 0.75rem;
+
+    button {
+      flex: 1;
+      padding: 0.7rem 1rem;
+      border-radius: $radius-sm;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 150ms cubic-bezier(0, 0, 0.2, 1);
+    }
+
+    .modal-btn-confirm {
+      background: var(--modal-confirm-bg);
+      color: var(--modal-confirm-color);
+      border: 1.5px solid var(--modal-confirm-border);
+
+      &:hover:not(:disabled) {
+        background: var(--modal-confirm-hover-bg);
+        border-color: var(--modal-confirm-hover-border);
+        transform: translateY(-1px);
+        box-shadow: var(--modal-confirm-shadow);
+      }
+
+      &:active:not(:disabled) {
+        background: var(--modal-confirm-active-bg);
+        transform: translateY(0);
+        box-shadow: none;
+      }
+    }
+
+    .modal-btn-cancel {
+      background: var(--modal-cancel-bg);
+      color: var(--modal-cancel-color);
+      border: 1.5px solid var(--modal-cancel-border);
+
+      &:hover:not(:disabled) {
+        background: var(--modal-cancel-hover-bg);
+        color: var(--modal-cancel-hover-color);
+        border-color: var(--modal-cancel-hover-border);
+        transform: translateY(-1px);
+      }
+
+      &:active:not(:disabled) {
+        background: var(--modal-cancel-active-bg);
+        transform: translateY(0);
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+[data-theme="dark"] .modal .modal-body {
+  color: #FFFFFF;
+}
+
+[data-theme="dark"] .modal .modal-actions {
+  .modal-btn-confirm,
+  .modal-btn-cancel {
+    &:hover:not(:disabled),
+    &:active:not(:disabled) {
+      box-shadow: none !important;
+    }
+  }
+}

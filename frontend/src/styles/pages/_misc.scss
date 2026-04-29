@@ -1,0 +1,40 @@
+// ============================================
+// Loading state
+// ============================================
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+// ============================================
+// Location info
+// ============================================
+.location-info {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+// ============================================
+// Empty state
+// ============================================
+.empty-state {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: var(--text-muted);
+
+  svg {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+  }
+
+  p {
+    font-size: 0.9rem;
+  }
+}

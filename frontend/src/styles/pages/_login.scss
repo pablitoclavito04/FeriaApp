@@ -1,0 +1,253 @@
+@use '../abstracts/variables' as *;
+
+// ============================================
+// Login (BEM: .login as block)
+// ============================================
+.login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem;
+  background: url('../../assets/yellow-lamps-shine-air.jpg') center/cover no-repeat fixed;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+  }
+
+  &__box {
+    background: white;
+    padding: 2rem 2.5rem 2.5rem;
+    border-radius: $radius-lg;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    position: relative;
+    z-index: 1;
+  }
+
+  &__header {
+    text-align: center;
+    margin-bottom: 1.25rem;
+
+    h1 {
+      color: #000;
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      word-break: break-word;
+    }
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  &__logo {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  &__subtitle {
+    display: block;
+    color: #999;
+    font-size: 0.85rem;
+    margin-top: 0.15rem;
+  }
+
+  &__welcome {
+    background: #fef9e7;
+    border: 1px solid #f9e79f;
+    border-radius: $radius-md;
+    padding: 0.6rem 1rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  &__welcome-title {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #333;
+    margin-bottom: 0.1rem;
+  }
+
+  &__welcome-text {
+    font-size: 0.72rem;
+    color: #777;
+  }
+
+  &__title {
+    text-align: center;
+    color: #333;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+  }
+
+  &__error {
+    background: #fef2f2;
+    color: $error;
+    padding: 0.7rem 1rem;
+    border-radius: $radius-sm;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  &__field {
+    margin-bottom: 1rem;
+
+    input {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      border: none !important;
+      border-radius: $radius-md;
+      font-size: 0.95rem;
+      background: #3D3D3D !important;
+      color: #fff !important;
+      transition: background 0.2s, box-shadow 0.2s;
+
+      &::placeholder {
+        color: #aaa;
+      }
+
+      &:focus {
+        outline: none;
+        background: #4a4a4a !important;
+        box-shadow: 0 0 0 3px rgba($primary, 0.3);
+      }
+
+      &:-webkit-autofill,
+      &:-webkit-autofill:hover {
+        -webkit-box-shadow: 0 0 0 1000px #3D3D3D inset !important;
+        -webkit-text-fill-color: #fff !important;
+        caret-color: #fff;
+      }
+
+      &:-webkit-autofill:focus {
+        -webkit-box-shadow: 0 0 0 1000px #4a4a4a inset !important;
+        box-shadow: 0 0 0 1000px #4a4a4a inset, 0 0 0 3px rgba($primary, 0.3) !important;
+        -webkit-text-fill-color: #fff !important;
+        caret-color: #fff;
+      }
+    }
+  }
+
+  &__password-wrapper {
+    position: relative;
+
+    input {
+      padding-right: 3rem;
+    }
+  }
+
+  &__toggle-password {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #aaa;
+    cursor: pointer;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+
+    &:hover {
+      color: #fff;
+    }
+  }
+
+  &__submit {
+    width: 100%;
+    padding: 0.9rem;
+    border: none;
+    border-radius: $radius-md;
+    font-size: 1rem;
+    font-weight: 700;
+    background: $primary;
+    color: white;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: all 0.2s;
+
+    &:hover:not(:disabled) {
+      background: $primary-dark;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  // Responsive overrides
+  @media (max-width: 600px) {
+    padding: 0.75rem;
+
+    &__box {
+      padding: 1.5rem 1.25rem 1.75rem;
+      max-width: 100%;
+    }
+
+    &__brand {
+      gap: 0.5rem;
+    }
+
+    &__logo {
+      width: 56px;
+      height: 56px;
+    }
+
+    &__header h1 {
+      font-size: 1.6rem;
+    }
+
+    &__title {
+      font-size: 1.05rem;
+    }
+
+    &__welcome-title { font-size: 0.8rem; }
+    &__welcome-text { font-size: 0.7rem; }
+  }
+
+  @media (max-width: 380px) {
+    &__box {
+      padding: 1.25rem 1rem 1.5rem;
+    }
+
+    &__brand {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    &__logo {
+      width: 48px;
+      height: 48px;
+    }
+
+    &__header h1 {
+      font-size: 1.4rem;
+    }
+  }
+}

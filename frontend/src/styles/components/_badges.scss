@@ -1,0 +1,25 @@
+// ============================================
+// Active badge
+// ============================================
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  border: 1.5px solid transparent;
+
+  &.badge-success {
+    background: var(--success-light);
+    color: var(--success);
+    border-color: var(--success);
+  }
+
+  &.badge-muted {
+    background: var(--border-light);
+    color: var(--text-muted);
+    border-color: var(--text-muted);
+  }
+}

@@ -57,27 +57,27 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <div className="login-header">
-          <div className="login-brand">
-            <img src={logotipo} alt="FeriaApp" className="login-logo" />
+    <div className="login">
+      <div className="login__box">
+        <div className="login__header">
+          <div className="login__brand">
+            <img src={logotipo} alt="FeriaApp" className="login__logo" />
             <h1>FeriaApp</h1>
           </div>
-          <span className="login-subtitle">Admin Panel</span>
+          <span className="login__subtitle">Admin Panel</span>
         </div>
 
-        <div className="login-welcome">
-          <p className="login-welcome-title">Welcome!</p>
-          <p className="login-welcome-text">Sign in to access the admin panel.</p>
+        <div className="login__welcome">
+          <p className="login__welcome-title">Welcome!</p>
+          <p className="login__welcome-text">Sign in to access the admin panel.</p>
         </div>
 
-        <h2>Sign in to your account</h2>
+        <h2 className="login__title">Sign in to your account</h2>
 
-        {errors.general && <p className="login-error">{errors.general}</p>}
+        {errors.general && <p className="login__error">{errors.general}</p>}
 
         <form onSubmit={handleSubmit} noValidate>
-          <div className="login-field">
+          <div className="login__field">
             <input
               type="email"
               value={email}
@@ -90,8 +90,8 @@ const Login = () => {
             />
             {errors.email && <span className="field-error">{errors.email}</span>}
           </div>
-          <div className="login-field">
-            <div className="login-password-wrapper">
+          <div className="login__field">
+            <div className="login__password-wrapper">
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
@@ -104,7 +104,7 @@ const Login = () => {
               />
               <button
                 type="button"
-                className="login-toggle-password"
+                className="login__toggle-password"
                 onClick={() => setShowPassword(!showPassword)}
                 tabIndex={-1}
               >
@@ -124,7 +124,7 @@ const Login = () => {
             </div>
             {errors.password && <span className="field-error">{errors.password}</span>}
           </div>
-          <button type="submit" className="login-submit" disabled={loading}>
+          <button type="submit" className="login__submit" disabled={loading}>
             {loading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>

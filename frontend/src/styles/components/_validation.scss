@@ -1,0 +1,49 @@
+@use '../abstracts/variables' as *;
+
+// ============================================
+// Messages
+// ============================================
+.error {
+  background: var(--error-light);
+  color: var(--error);
+  padding: 0.65rem 1rem;
+  border-radius: $radius-sm;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: 1px solid rgba($error, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.success {
+  background: var(--success-light);
+  color: var(--success);
+  padding: 0.65rem 1rem;
+  border-radius: $radius-sm;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: 1px solid rgba($success, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+// Form validation feedback (global)
+.field-error {
+  color: #e53e3e;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.input-error {
+  border-color: #e53e3e !important;
+
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(229, 62, 62, 0.2);
+    outline: none;
+  }
+}

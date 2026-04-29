@@ -1,0 +1,103 @@
+@use '../abstracts/variables' as *;
+
+// ============================================
+// Data Table
+// ============================================
+.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--surface);
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+
+  th {
+    background: var(--border);
+    color: var(--text-primary);
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border-strong);
+    border-right: 1px solid var(--border-strong);
+
+    &:last-child {
+      border-right: none;
+    }
+  }
+
+  td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border-strong);
+    border-right: 1px solid var(--border-strong);
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    vertical-align: middle;
+
+    &:last-child {
+      border-right: none;
+    }
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  tr:hover td {
+    background: var(--border-light);
+  }
+
+  .table-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  td button {
+    padding: 0.35rem 0.75rem;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 600;
+    transition: all $transition;
+    margin: 0 0.5rem 0.5rem 0;
+
+    &:last-child {
+      margin-right: 0;
+      margin-bottom: 0;
+    }
+
+    &:first-child {
+      background: rgba($primary, 0.1);
+      color: var(--primary);
+      border: 1.5px solid rgba($primary, 0.3);
+
+      &:hover {
+        background: rgba($primary, 0.2);
+        border-color: rgba($primary, 0.5);
+      }
+    }
+
+    &:last-child {
+      background: rgba($error, 0.1);
+      color: var(--error);
+      border: 1.5px solid rgba($error, 0.3);
+
+      &:hover {
+        background: rgba($error, 0.2);
+        border-color: rgba($error, 0.5);
+      }
+    }
+  }
+
+  img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: $radius-sm;
+    border: 1px solid var(--border);
+  }
+}

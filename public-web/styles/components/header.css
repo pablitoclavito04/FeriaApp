@@ -1,0 +1,108 @@
+/* ============================================
+   Header — public website
+   Landing header + App header
+   ============================================ */
+
+/* Header */
+.landing-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2.5rem;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: saturate(1.4) blur(8px);
+  -webkit-backdrop-filter: saturate(1.4) blur(8px);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--dark);
+}
+.brand-logo {
+  height: 56px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+.landing-footer .brand-logo {
+  height: 72px;
+}
+
+.landing-header-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+/* ============================================
+   App Header
+   ============================================ */
+
+/* App Header */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.85rem 2.5rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: saturate(1.4) blur(8px);
+  -webkit-backdrop-filter: saturate(1.4) blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+.app-brand {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+.app-brand-logo {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+.app-nav {
+  display: flex;
+  gap: 0.4rem;
+  flex: 1;
+  justify-content: center;
+}
+.app-nav-btn {
+  background: transparent;
+  border: none;
+  color: var(--dark);
+  font-family: inherit;
+  font-size: 0.98rem;
+  font-weight: 600;
+  padding: 0.55rem 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  position: relative;
+  transition: color .2s ease, background-color .2s ease;
+}
+.app-nav-btn::after {
+  content: '';
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 0;
+  height: 2px;
+  background: #cbd5e1;
+  border-radius: 2px;
+}
+.app-nav-btn:hover { background: #f3ece6; }
+.app-nav-btn.is-active::after {
+  background: var(--dark);
+}
+.app-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}

@@ -1,0 +1,14 @@
+@use 'sass:color';
+
+// ============================================
+// Static tokens (don't change with theme)
+// ============================================
+$primary: #3B82F6;
+$primary-dark: #2563EB;
+$error: #ef4444;
+$success: #10b981;
+$warning: #f59e0b;
+$radius-sm: 6px;
+$radius-md: 10px;
+$radius-lg: 16px;
+$transition: 0.15s ease;

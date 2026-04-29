@@ -1,0 +1,209 @@
+@use '../abstracts/variables' as *;
+
+// ============================================
+// Sidebar
+// ============================================
+.sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 90;
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-sm;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-primary);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  transition: background $transition;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover {
+    background: var(--sidebar-hover);
+  }
+}
+
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 95;
+  animation: fadeIn 0.15s ease;
+}
+
+.sidebar {
+  width: 260px;
+  min-width: 260px;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+
+  .sidebar-logo {
+    padding: 1.5rem 1.5rem 1.25rem;
+    border-bottom: 1px solid var(--sidebar-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+
+    .sidebar-logo-img {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .sidebar-logo-text {
+      h2 {
+        color: var(--sidebar-text-active);
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+        line-height: 1.2;
+      }
+
+      p {
+        font-size: 0.7rem;
+        color: var(--sidebar-text);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 1px;
+      }
+    }
+  }
+
+  .theme-toggle {
+    width: 34px;
+    height: 34px;
+    border-radius: $radius-sm;
+    border: 1px solid var(--theme-toggle-border);
+    background: var(--theme-toggle-bg);
+    color: var(--theme-toggle-color);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all $transition;
+    flex-shrink: 0;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    &:hover {
+      background: var(--theme-toggle-hover-bg);
+      color: var(--theme-toggle-hover-color);
+      border-color: var(--theme-toggle-hover-border);
+    }
+  }
+
+  .sidebar-section-label {
+    padding: 1.25rem 1.5rem 0.5rem;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--sidebar-section);
+  }
+
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem 0.75rem;
+    flex: 1;
+    gap: 2px;
+
+    a {
+      padding: 0.6rem 0.75rem;
+      color: var(--sidebar-text);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border-radius: $radius-sm;
+      transition: all $transition;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      svg {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+        opacity: 0.6;
+      }
+
+      &:hover {
+        color: var(--sidebar-text-active);
+        background: var(--sidebar-hover);
+
+        svg {
+          opacity: 1;
+        }
+      }
+
+      &.active {
+        color: var(--primary);
+        background: var(--sidebar-active-bg);
+        font-weight: 600;
+
+        svg {
+          opacity: 1;
+          color: var(--primary);
+        }
+      }
+    }
+  }
+
+  .sidebar-footer {
+    padding: 0.75rem;
+    border-top: 1px solid var(--sidebar-border);
+  }
+
+  .logout-btn {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    background: transparent;
+    border: none;
+    color: var(--sidebar-text);
+    border-radius: $radius-sm;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all $transition;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+
+    svg {
+      width: 18px;
+      height: 18px;
+      opacity: 0.7;
+    }
+
+    &:hover {
+      background: var(--logout-hover-bg);
+      color: var(--logout-hover-color);
+
+      svg {
+        opacity: 1;
+      }
+    }
+  }
+}
