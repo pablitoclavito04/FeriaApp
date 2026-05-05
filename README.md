@@ -414,6 +414,7 @@ Full project documentation is available in the `/docs` folder:
 - [06-development](docs/06-desarrollo.md) — Sprint sequence, decisions and code snippets
 - [07-testing](docs/07-pruebas.md) — Testing methodology and results
 - [08-deployment](docs/08-despliegue.md) — GitHub Pages and Docker deployment
+- [08-deployment-eval](docs/08-despliegue-eval.md) — Module rubric mapping for evaluation purposes
 - [09-user-manual](docs/09-manual-usuario.md) — End-user guide with FAQs
 - [10-conclusions](docs/10-conclusiones.md) — Evaluation, lessons learned and future work
 

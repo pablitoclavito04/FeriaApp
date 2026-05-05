@@ -46,6 +46,42 @@ The screenshot shows the public site live on GitHub Pages — the URL bar confir
 - Docker 28.x or higher.
 - Docker Compose 2.x or higher.
 
+### Architecture diagram.
+
+The administration stack is composed of five containerised services. Only the reverse proxy (`nginx`) is reachable from the host; every other service is reachable only through the internal Docker network `feriaapp_feriaapp-network` (bridge driver, subnet `172.23.0.0/16`).
+
+```
+                       ┌─────────────────────┐
+                       │   Browser / curl    │
+                       └──────────┬──────────┘
+                                  │ HTTPS (443) / HTTP (80 → 301 → 443)
+                                  ▼
+                  ┌────────────────────────────────┐
+                  │            nginx               │
+                  │  reverse proxy + TLS (Helmet)  │
+                  └───┬───────────┬───────────┬────┘
+                      │           │           │
+              /api/   │      /    │   /public/│
+                      ▼           ▼           ▼
+                ┌──────────┐ ┌──────────┐ ┌──────────┐
+                │ backend  │ │ frontend │ │public-web│
+                │ Node:5000│ │nginx:80  │ │nginx:80  │
+                └────┬─────┘ └──────────┘ └──────────┘
+                     │
+                     │ mongodb://mongo:27017
+                     ▼
+                ┌──────────┐
+                │  mongo   │
+                │  :27017  │  ─── volume: mongo-data → /data/db
+                └──────────┘
+                     ▲
+                     │
+                     └─── volume: backend-uploads → /app/uploads (used by backend)
+
+       Docker network: feriaapp_feriaapp-network (bridge, 172.23.0.0/16)
+       Host-exposed ports: 80, 443 (nginx only)
+```
+
 ### Docker services.
 
 | Service | Image | Internal port | Description |
@@ -55,6 +91,8 @@ The screenshot shows the public site live on GitHub Pages — the URL bar confir
 | frontend | feriaapp-frontend | 80 | Administration panel |
 | public-web | feriaapp-public | 80 | Public website |
 | mongo | mongo:7 | 27017 | Database |
+
+Two named Docker volumes are declared in the compose file: `mongo-data` (persists MongoDB data at `/data/db`) and `backend-uploads` (persists admin-uploaded caseta images at `/app/uploads`). Both survive `docker-compose down` and are only removed with `docker-compose down -v`.
 
 ### Deployment process.
 
@@ -154,16 +192,55 @@ The pipeline is located at `.github/workflows/ci.yml` and runs automatically on 
 
 **1. test-backend:**
 - Starts a MongoDB instance in the CI environment.
-- InCasetas backend dependencies.
+- Installs backend dependencies.
 - Runs tests with Jest.
 
 **2. build-frontend:**
-- InCasetas frontend dependencies.
+- Installs frontend dependencies.
 - Runs `npm run build` to verify it compiles correctly.
 
 **3. docker-build:**
 - Only runs if both previous jobs have passed.
 - Builds all Docker images to verify the Dockerfiles are valid.
+
+### Secrets management.
+
+The pipeline does **not** keep any sensitive value inside the YAML. Instead, the `test-backend` job pulls four values from **GitHub Secrets** (Repository → Settings → Secrets and variables → Actions) and injects them into the test environment:
+
+| Secret in GitHub | Injected as `env` | Used by |
+|---|---|---|
+| `JWT_SECRET` | `JWT_SECRET` | Backend test suite — signs/verifies tokens during integration tests |
+| `GH_TOKEN` | `GITHUB_TOKEN` | Octokit publish flow tested against the real GitHub API |
+| `GH_OWNER` | `GITHUB_OWNER` | Same as above — owner of the target repo |
+| `GH_REPO` | `GITHUB_REPO` | Same as above — name of the target repo |
+
+The relevant block in [.github/workflows/ci.yml](../.github/workflows/ci.yml) is:
+
+```yaml
+- name: Run backend tests
+  env:
+    MONGODB_URI: mongodb://localhost:27017/feriaApp_test
+    JWT_SECRET: ${{ secrets.JWT_SECRET }}
+    GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+    GITHUB_OWNER: ${{ secrets.GH_OWNER }}
+    GITHUB_REPO: ${{ secrets.GH_REPO }}
+  run: |
+    cd backend
+    npm test
+```
+
+`MONGODB_URI` is **not** a secret — it points to the throwaway `mongo:7` service container that the workflow itself starts on `localhost:27017`, so it is intentionally hard-coded.
+
+### Continuous delivery — `gh-pages` artifact.
+
+The CI side (build + test + docker-build) is the conventional half of the pipeline. The CD side, however, is **not** triggered by a push to `main`: it is triggered by the administrator pressing the **"Publish"** button in the panel. When that happens, the backend acts as the deployment runner:
+
+1. Queries MongoDB and produces the four JSON files (`fairs.json`, `casetas.json`, `menus.json`, `concerts.json`).
+2. Reads the caseta images from `/app/uploads` (the `backend-uploads` Docker volume — see [§Docker services](#docker-services)).
+3. Uses **Octokit** (authenticated with the `GITHUB_TOKEN` PAT) to upload all of them to the `gh-pages` branch under `data/` and `uploads/`.
+4. GitHub Pages picks up the new commit on `gh-pages` and re-publishes the public site within ~2 minutes.
+
+The deployed artifact is therefore the **`gh-pages` branch itself** — every "Publish" action produces a new commit on that branch, which is the durable, versioned deployment record. The live URL of the artifact is <https://pablitoclavito04.github.io/FeriaApp/> and the corresponding screenshot is [public-site-github-pages.png](public-site-github-pages.png) (already shown in [§Public website on GitHub Pages → Run evidence](#run-evidence) above).
 
 ### Pipeline flow.
 
