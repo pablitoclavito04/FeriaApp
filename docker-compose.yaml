@@ -31,6 +31,8 @@ services:
       - GITHUB_REPO=${GITHUB_REPO}
     depends_on:
       - mongo
+    volumes:
+      - backend-uploads:/app/uploads
     networks:
       - feriaapp-network
 
@@ -68,6 +70,7 @@ services:
 
 volumes:
   mongo-data:
+  backend-uploads:
 
 networks:
   feriaapp-network:

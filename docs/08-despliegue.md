@@ -1,5 +1,7 @@
 # 08. Deployment.
 
+> **Module evaluation note.** A separate document, [08-despliegue-eval.md](08-despliegue-eval.md), maps this deployment work to the criteria of the *Despliegue de Aplicaciones Web* module rubric (c1, c2, C7, C8). This main document describes the deployment itself; the `-eval` companion explains how each rubric criterion is covered, with cross-references to the relevant sections, files and screenshots.
+
 ## Deployment environments.
 
 FeriaApp has two distinct deployment environments:
