@@ -79,7 +79,7 @@ FeriaApp is split into **five independent services**, each running in its own co
 
 A typical request flows as follows:
 
-1. The browser hits `https://localhost/...`. The TCP connection is terminated at **nginx**, which performs TLS using the local self-signed certificate ([nginx/ssl/](../nginx/ssl/), generated with OpenSSL — see [08-despliegue.md §HTTPS configuration](08-despliegue.md#https-configuration)).
+1. The browser hits `https://localhost/...`. The TCP connection is terminated at **nginx**, which performs TLS using the local self-signed certificate (mounted from `nginx/ssl/` on the host — the `.crt` and `.key` files are gitignored, see [.gitignore](../.gitignore), and regenerated with OpenSSL as documented in [08-despliegue.md §HTTPS configuration](08-despliegue.md#https-configuration)).
 2. nginx routes the request **by path prefix**:
    - `/api/...` → `backend:5000` (Node.js / Express)
    - `/public/...` → `public-web:80` (static)
@@ -92,9 +92,17 @@ No service except nginx is reachable from the host. Internal-only ports use `exp
 ### Evidence.
 
 - **Compose file showing the five services and the network**: [docker-compose.yaml](../docker-compose.yaml). The five services and the `feriaapp-network` bridge are declared explicitly.
-- **Running stack**: [docker-compose-up-ps.png](docker-compose-up-ps.png) — `docker-compose up --build -d` followed by `docker-compose ps` shows all five services in `Up` state, with only `feriaapp-nginx` publishing ports to the host.
-- **End-to-end chain working**: [backend-curl-and-logs.png](backend-curl-and-logs.png) — three HTTPS curl requests against `https://localhost` returning 200/200/401, with the corresponding entries appearing in `docker logs feriaapp-backend`. This single capture exercises the whole chain *browser → nginx → backend → mongo*.
-- **Network membership of the five services**: [docker-network-inspect.png](docker-network-inspect.png) — `docker network inspect feriaapp_feriaapp-network` lists the five containers (`feriaapp-nginx`, `feriaapp-frontend`, `feriaapp-backend`, `feriaapp-public`, `feriaapp-mongo`) each with its own IPv4 address inside the `172.23.0.0/16` bridge subnet, confirming they all share the same private network.
+- **Running stack** — `docker-compose up --build -d` followed by `docker-compose ps` shows all five services in `Up` state, with only `feriaapp-nginx` publishing ports to the host:
+
+  ![docker-compose ps showing the five services in Up state, only nginx with host port mappings](docker-compose-up-ps.png)
+
+- **End-to-end chain working** — three HTTPS curl requests against `https://localhost` returning 200/200/401, with the corresponding entries appearing in `docker logs feriaapp-backend`. This single capture exercises the whole chain *browser → nginx → backend → mongo*:
+
+  ![Three curl requests over HTTPS and the matching backend log entries](backend-curl-and-logs.png)
+
+- **Network membership of the five services** — `docker network inspect feriaapp_feriaapp-network` lists the five containers (`feriaapp-nginx`, `feriaapp-frontend`, `feriaapp-backend`, `feriaapp-public`, `feriaapp-mongo`) each with its own IPv4 address inside the `172.23.0.0/16` bridge subnet, confirming they all share the same private network:
+
+  ![docker network inspect output showing the five containers as members of the bridge network with their IPv4 addresses](docker-network-inspect.png)
 
 ---
 
@@ -137,17 +145,26 @@ Each application service has its own Dockerfile, kept minimal:
 
 **Not applicable for this project.** Images are built locally from the Dockerfiles above; the project is not deployed to a public host, so there is no benefit to pushing the images to Docker Hub or GHCR. If the project moved to a VPS this would change — see the production note at the end of [08-despliegue.md §HTTPS configuration](08-despliegue.md#https-configuration).
 
-The locally built images can be listed with `docker images | findstr feriaapp` — see [docker-images-list.png](docker-images-list.png), which shows the three custom-built images (`feriaapp-backend`, `feriaapp-frontend`, `feriaapp-public-web`). The remaining two services (`mongo:7` and `nginx:alpine`) reuse official images from Docker Hub without modification, which is why they don't appear in the filtered listing.
+The locally built images can be listed with `docker images | findstr feriaapp` — the listing shows the three custom-built images (`feriaapp-backend`, `feriaapp-frontend`, `feriaapp-public-web`). The remaining two services (`mongo:7` and `nginx:alpine`) reuse official images from Docker Hub without modification, which is why they don't appear in the filtered listing:
+
+![docker images filtered by feriaapp, showing the three locally built images with their IDs and sizes](docker-images-list.png)
 
 ### Evidence.
 
 - **Reproducible startup**: [08-despliegue.md §Deployment process](08-despliegue.md#deployment-process-1) lists the four-command sequence (`git clone` → `cp .env.example .env` → `docker-compose up --build` → `seedAdmin.js`).
-- **Running stack** (`docker-compose up --build -d` + `docker-compose ps`): [docker-compose-up-ps.png](docker-compose-up-ps.png) — five services Up, only nginx with host port mappings.
-- **Clean teardown** (`docker-compose down`): [docker-compose-down.png](docker-compose-down.png) — all five containers and the network removed.
-- **Curl test through the full stack**: [backend-curl-and-logs.png](backend-curl-and-logs.png) — three HTTPS requests with their corresponding backend log lines (boot sequence + per-request morgan entries).
-- **Backend startup logs (isolated)**: [docker-logs-startup.png](docker-logs-startup.png) — first lines of `docker logs feriaapp-backend` showing `Server running on port 5000` and `MongoDB connected: mongo`, confirming both that the Node process booted correctly and that it resolved the `mongo` hostname inside the Docker network.
-- **HTTPS verification**: [https-curl-verification.png](https-curl-verification.png) — `curl -I http://localhost` returns `301 → https://localhost/`; `curl -k -I https://localhost/api/fairs` returns `200 OK` with Helmet security headers.
-- **Custom-built images**: [docker-images-list.png](docker-images-list.png).
+- **Running stack** (`docker-compose up --build -d` + `docker-compose ps`) — already shown in [§c1 → Evidence](#evidence) above.
+- **Clean teardown** — `docker-compose down` removes all five containers and the network in a single command:
+
+  ![docker-compose down output: 5 containers and 1 network removed](docker-compose-down.png)
+
+- **Curl test through the full stack** — three HTTPS requests and the corresponding backend log lines (boot sequence + per-request morgan entries) — already shown in [§c1 → Evidence](#evidence) above.
+- **Backend startup logs (isolated)** — first lines of `docker logs feriaapp-backend` showing `Server running on port 5000` and `MongoDB connected: mongo`, confirming both that the Node process booted correctly and that it resolved the `mongo` hostname inside the Docker network:
+
+  ![docker logs feriaapp-backend showing the boot sequence: Server running on port 5000, MongoDB connected: mongo, followed by morgan entries for incoming requests](docker-logs-startup.png)
+
+- **HTTPS verification** — `curl -I http://localhost` returns `301 → https://localhost/`; `curl -k -I https://localhost/api/fairs` returns `200 OK` with Helmet security headers:
+
+  ![curl -I http://localhost returning 301 with Location: https://localhost/, followed by curl -k -I https://localhost/api/fairs returning 200 OK with the API security headers](https-curl-verification.png)
 
 ---
 
@@ -178,7 +195,7 @@ These are produced automatically and are **not** committed:
 
 | Generated file / artifact | When | Where | Why it is not committed |
 |---|---|---|---|
-| Docker images (`feriaapp-backend`, `feriaapp-frontend`, `feriaapp-public-web`) | `docker-compose up --build` | Local Docker daemon — see [docker-images-list.png](docker-images-list.png) | Rebuilt from sources on demand. |
+| Docker images (`feriaapp-backend`, `feriaapp-frontend`, `feriaapp-public-web`) | `docker-compose up --build` | Local Docker daemon (image listing shown in [§c2](#c2-ra1--docker-implementation) above) | Rebuilt from sources on demand. |
 | `frontend/dist/` | `npm run build` (inside the frontend Dockerfile, stage 1) | Inside the build container — discarded after `COPY --from=build` | Build output, regenerable. |
 | `nginx/ssl/feriaapp.crt` and `feriaapp.key` | Manual OpenSSL command (see [08-despliegue.md §HTTPS configuration](08-despliegue.md#https-configuration)) | `nginx/ssl/` on the host | Self-signed certificate for *this* developer's machine — must not leak. |
 | `.env` | Manually copied from `.env.example` and edited with real values | Project root | Contains secrets. |
@@ -267,7 +284,9 @@ mongo:
     - mongo-data:/data/db
 ```
 
-The persistence of the `backend-uploads` volume was verified in practice by writing a test file inside the backend container, tearing the entire stack down with `docker-compose down`, restarting it with `docker-compose up -d` and confirming the file was still present at `/app/uploads/` after the new container was built from scratch. This proves that uploaded caseta images survive container recreation. Evidence: [docker-volume-persistence.png](docker-volume-persistence.png) — full captured sequence: `echo` creating `test.txt` → first `ls` showing it → `docker-compose down` removing the five containers and the network → `docker-compose up -d` recreating everything from scratch → final `ls` showing `test.txt` is still there.
+The persistence of the `backend-uploads` volume was verified in practice by writing a test file inside the backend container, tearing the entire stack down with `docker-compose down`, restarting it with `docker-compose up -d` and confirming the file was still present at `/app/uploads/` after the new container was built from scratch. This proves that uploaded caseta images survive container recreation. Full captured sequence: `echo` creating `test.txt` → first `ls` showing it → `docker-compose down` removing the five containers and the network → `docker-compose up -d` recreating everything from scratch → final `ls` showing `test.txt` is still there:
+
+![End-to-end persistence test: writing test.txt into /app/uploads inside the backend container, tearing the stack down, bringing it back up, and confirming test.txt is still there](docker-volume-persistence.png)
 
 ### Image and registry.
 
@@ -275,10 +294,16 @@ No Docker image is published to a public registry. The project runs locally with
 
 ### Evidence.
 
-- **Locally built images**: [docker-images-list.png](docker-images-list.png) — output of `docker images | findstr feriaapp` listing the three custom-built images with their IDs and sizes.
-- **Volume for caseta uploads**: [docker-volume-uploads.png](docker-volume-uploads.png) — `docker volume inspect feriaapp_backend-uploads` showing the volume's mount point on the Docker host (`/var/lib/docker/volumes/feriaapp_backend-uploads/_data`), creation timestamp and Compose labels.
-- **End-to-end persistence test for `backend-uploads`**: [docker-volume-persistence.png](docker-volume-persistence.png) — captured run of the test described above, demonstrating that a file written into `/app/uploads` survives a full `docker-compose down` + `up -d` cycle.
-- **Volume for MongoDB**: [docker-volume-mongo-data.png](docker-volume-mongo-data.png) — same inspection for `feriaapp_mongo-data`, confirming long-term persistence (`CreatedAt: 2026-04-25`).
+- **Locally built images** — already shown in [§c2](#c2-ra1--docker-implementation) above.
+- **End-to-end persistence test for `backend-uploads`** — already shown above in this section.
+- **Volume for caseta uploads** — `docker volume inspect feriaapp_backend-uploads` showing the volume's mount point on the Docker host (`/var/lib/docker/volumes/feriaapp_backend-uploads/_data`), creation timestamp and Compose labels:
+
+  ![docker volume inspect feriaapp_backend-uploads output: mount point, creation date, Compose labels](docker-volume-uploads.png)
+
+- **Volume for MongoDB** — same inspection for `feriaapp_mongo-data`, confirming long-term persistence (`CreatedAt: 2026-04-25`):
+
+  ![docker volume inspect feriaapp_mongo-data output: mount point, creation date, Compose labels](docker-volume-mongo-data.png)
+
 - **`.gitignore` content** — see the excerpt above; full file at [.gitignore](../.gitignore).
 
 ---
@@ -316,7 +341,7 @@ The whole chain is internal except for the first hop. From outside the host ther
 
 ### Network membership and IP assignment.
 
-The output of `docker network inspect feriaapp_feriaapp-network` (see [docker-network-inspect.png](docker-network-inspect.png)) lists the five containers as members of the same bridge network with the following IPs:
+The output of `docker network inspect feriaapp_feriaapp-network` (already shown in [§c1 → Evidence](#evidence) above) lists the five containers as members of the same bridge network with the following IPs:
 
 | Container | IPv4 inside the bridge |
 |---|---|
@@ -337,49 +362,53 @@ The following commands are reproducible from any clone of the repository after `
 docker-compose ps
 ```
 
-Expected: five rows in `Up` state; the only non-empty `Ports` column is on `feriaapp-nginx` (`0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp`). Evidence: [docker-compose-up-ps.png](docker-compose-up-ps.png).
+Expected: five rows in `Up` state; the only non-empty `Ports` column is on `feriaapp-nginx` (`0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp`). Evidence already shown in [§c1 → Evidence](#evidence) above.
 
 ```powershell
 # 2. Confirm the HTTP→HTTPS redirect at the proxy.
 curl -I http://localhost
 ```
 
-Expected: `HTTP/1.1 301 Moved Permanently` with `Location: https://localhost/`. This proves nginx is serving on port 80 and enforcing HTTPS. Evidence: [https-curl-verification.png](https-curl-verification.png) (top half).
+Expected: `HTTP/1.1 301 Moved Permanently` with `Location: https://localhost/`. This proves nginx is serving on port 80 and enforcing HTTPS. Evidence already shown in [§c2 → Evidence](#evidence-1) above (top half of the curl verification capture).
 
 ```powershell
 # 3. Confirm the proxy reaches the backend over HTTPS.
 curl -k -I https://localhost/api/fairs
 ```
 
-Expected: `HTTP/1.1 200 OK`, `Content-Type: application/json`, plus Helmet headers (`Strict-Transport-Security`, `X-Frame-Options`, `X-Content-Type-Options`). The `200` means the request was successfully proxied from nginx to `backend:5000` and back. The `-k` flag tells curl to accept the self-signed certificate. Evidence: [https-curl-verification.png](https-curl-verification.png) (bottom half).
+Expected: `HTTP/1.1 200 OK`, `Content-Type: application/json`, plus Helmet headers (`Strict-Transport-Security`, `X-Frame-Options`, `X-Content-Type-Options`). The `200` means the request was successfully proxied from nginx to `backend:5000` and back. The `-k` flag tells curl to accept the self-signed certificate. Evidence already shown in [§c2 → Evidence](#evidence-1) above (bottom half of the same capture).
 
 ```powershell
 # 4. Confirm an unauthenticated write is rejected (auth chain working).
 curl -k -X POST https://localhost/api/fairs -H "Content-Type: application/json" -d '{}'
 ```
 
-Expected: `401 UNAUTHORIZED`. This confirms the request reached the Express auth middleware. Evidence: [backend-curl-and-logs.png](backend-curl-and-logs.png).
+Expected: `401 UNAUTHORIZED`. This confirms the request reached the Express auth middleware. Evidence already shown in [§c1 → Evidence](#evidence) above.
 
 ```powershell
 # 5. Confirm Docker-internal name resolution from inside a container.
 docker exec feriaapp-backend ping -c 2 mongo
 ```
 
-Expected: the hostname `mongo` is resolved to a container IP on `feriaapp_feriaapp-network` (`172.23.0.2` in the current run), and two ICMP replies come back. This proves that **service-to-service name resolution works without any `/etc/hosts` entry on the host** — Docker provides the DNS automatically. Evidence: [docker-internal-dns.png](docker-internal-dns.png).
+Expected: the hostname `mongo` is resolved to a container IP on `feriaapp_feriaapp-network` (`172.23.0.2` in the current run), and two ICMP replies come back. This proves that **service-to-service name resolution works without any `/etc/hosts` entry on the host** — Docker provides the DNS automatically:
+
+![docker exec feriaapp-backend ping -c 2 mongo: PING mongo (172.23.0.2), two replies received, 0% packet loss](docker-internal-dns.png)
 
 ```powershell
 # 5b. Confirm real HTTP communication between proxy and backend by service name.
 docker exec feriaapp-nginx wget -qO- http://backend:5000/api/fairs
 ```
 
-Expected: a valid JSON payload returned by the backend (e.g. `{"total":0,"page":1,"pages":0,"data":[]}`). This goes one step further than the previous `ping`: it shows that nginx — the reverse proxy — can reach the backend **over HTTP, using the service name `backend` as the hostname**, and that the backend answers with a real API response. It is the strongest piece of evidence that the front/proxy/backend chain works end-to-end inside the Docker network. Evidence: [docker-internal-wget.png](docker-internal-wget.png).
+Expected: a valid JSON payload returned by the backend (e.g. `{"total":0,"page":1,"pages":0,"data":[]}`). This goes one step further than the previous `ping`: it shows that nginx — the reverse proxy — can reach the backend **over HTTP, using the service name `backend` as the hostname**, and that the backend answers with a real API response. It is the strongest piece of evidence that the front/proxy/backend chain works end-to-end inside the Docker network:
+
+![docker exec feriaapp-nginx wget -qO- http://backend:5000/api/fairs returning a valid JSON response from the backend](docker-internal-wget.png)
 
 ```powershell
 # 6. Inspect the network membership.
 docker network inspect feriaapp_feriaapp-network
 ```
 
-Expected: a JSON document listing all five containers as members of the `bridge` network, each with its internal IPv4 in `172.23.0.0/16`. Evidence: [docker-network-inspect.png](docker-network-inspect.png).
+Expected: a JSON document listing all five containers as members of the `bridge` network, each with its internal IPv4 in `172.23.0.0/16`. Evidence already shown in [§c1 → Evidence](#evidence) above.
 
 ### Note on `/etc/hosts` / local DNS.
 
