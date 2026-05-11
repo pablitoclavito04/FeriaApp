@@ -280,13 +280,21 @@ const changeCasetasSort = (value) => {
   renderCasetas(getFilteredCasetas());
 };
 
-// Determine if a caseta is currently open
-const isCasetaOpen = (caseta) => {
-  if (typeof caseta.isOpen === 'boolean') return caseta.isOpen;
-  if (caseta.status === 'open' || caseta.status === 'abierta') return true;
-  if (caseta.status === 'closed' || caseta.status === 'cerrada') return false;
-  return false;
+// True while today falls within the active fair's date range (inclusive)
+const isFairOngoing = () => {
+  const fair = fairs.find((f) => f.active) || fairs[0];
+  if (!fair?.startDate || !fair?.endDate) return false;
+  const start = new Date(fair.startDate);
+  const end = new Date(fair.endDate);
+  const today = new Date();
+  const startDay = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  const endDay = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+  const todayDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  return todayDay >= startDay && todayDay <= endDay;
 };
+
+// Casetas show as open while the active fair is ongoing
+const isCasetaOpen = (_caseta) => isFairOngoing();
 
 // Build caseta card markup
 const buildCasetaCard = (caseta) => {
