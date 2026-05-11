@@ -4,7 +4,10 @@
 
 The FeriaApp prototype was developed in Figma before implementation began. It includes the main flows for the administration panel and the public website, with interactive navigation between screens.
 
-https://www.figma.com/files/team/1552254852217140725/all-projects?fuid=1552254847944696626
+- [Mockup](https://www.figma.com/design/Yl0MYP8yugGAy1L8tQh9kA/Mockup-de-FeriaApp)
+- [Wireframe](https://www.figma.com/design/L6zzfNaLYFHTk8sE7yzBYQ/WireFrame-FeriaApp)
+- [Flow diagram](https://www.figma.com/board/UWFIxMcH9YrrtgggqFh2UN/Diagrama-de-flujo-de-FeriaApp)
+- [Sitemap](https://www.figma.com/board/cWkr8TztE7vuPHASmIO8ma/SiteMap-FeriaApp)
 
 ---
 

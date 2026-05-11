@@ -4,7 +4,11 @@ A full stack web platform for consulting information about the **Feria de Jerez 
 
 **Public website:** [pablitoclavito04.github.io/FeriaApp](https://pablitoclavito04.github.io/FeriaApp/)
 
-**Figma prototype:** [View prototype](https://www.figma.com/files/team/1552254852217140725/all-projects?fuid=1552254847944696626)
+**Figma prototype:**
+- [Mockup](https://www.figma.com/design/Yl0MYP8yugGAy1L8tQh9kA/Mockup-de-FeriaApp)
+- [Wireframe](https://www.figma.com/design/L6zzfNaLYFHTk8sE7yzBYQ/WireFrame-FeriaApp)
+- [Flow diagram](https://www.figma.com/board/UWFIxMcH9YrrtgggqFh2UN/Diagrama-de-flujo-de-FeriaApp)
+- [Sitemap](https://www.figma.com/board/cWkr8TztE7vuPHASmIO8ma/SiteMap-FeriaApp)
 
 ---
 
