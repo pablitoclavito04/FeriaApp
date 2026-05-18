@@ -104,6 +104,30 @@ When accessing a route like `/login` directly, Nginx returned 404 because it loo
 
 ---
 
+## Time tracking with Toggl Track.
+
+Throughout the project, **Toggl Track** was used to measure the actual time invested in each sprint, in coding sessions and in the writing of the documentation itself. Each work block (backend, admin panel, public site, deployment, testing and `/docs` writing) was started and stopped on the Toggl timer under the `FeriaApp` project, which produced a per-week breakdown of effort across the whole development cycle.
+
+This time-tracking exercise served two purposes:
+
+- **Self-management**: it made it visible when a sprint was running over its expected budget, allowing scope to be adjusted before the next sprint started.
+- **Evidence for the documentation**: the writing of the `/docs` files (this very document among them) was also tracked, so the effort behind the documentation is not just a claim — it is recorded as billable hours in the report.
+
+The summary report exported from Toggl is committed to the repository and covers the full development window (02/18/2026 – 05/18/2026):
+
+![Toggl Track summary report](toggl/toggl-report-summary.png)
+
+- **Total hours tracked**: 126:37:12
+- **Average daily hours**: 5.76 h
+- **Project distribution**: 100% allocated to `FeriaApp` (with a negligible 0.00154% logged without project).
+- **Per-week breakdown**: effort concentrates in weeks W14–W20, with the largest peaks in **W16 (37:11:23)** and **W18 (38:11:41)** — these correspond to the backend and administration panel sprints, which were the most code-intensive phases of the project. Weeks W19–W20 reflect the documentation-writing effort itself.
+
+The full report is also available as a downloadable PDF for reference:
+
+- [Toggl Track summary report (PDF)](toggl/toggl-report-summary.pdf)
+
+---
+
 ## Relevant code snippets.
 
 ### Publishing with Octokit:
