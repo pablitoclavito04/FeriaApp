@@ -194,5 +194,19 @@
     "__v": 0,
     "createdAt": "2026-04-29T22:54:17.702Z",
     "updatedAt": "2026-04-29T22:54:17.702Z"
+  },
+  {
+    "_id": "6a0b60710aa7ad252d714bca",
+    "name": "Tortilla de patata",
+    "description": "",
+    "price": 8,
+    "caseta": {
+      "_id": "69ee7d8da787ae2ece06bebe",
+      "name": "Los cabales",
+      "number": 3
+    },
+    "__v": 0,
+    "createdAt": "2026-05-18T18:54:41.069Z",
+    "updatedAt": "2026-05-18T18:54:41.069Z"
   }
 ]
