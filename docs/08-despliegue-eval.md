@@ -118,9 +118,60 @@ The rubric's "Excellent" level requires a fully *dockerized* and reproducible pr
 
 Each application service has its own Dockerfile, kept minimal:
 
-- [backend/Dockerfile](../backend/Dockerfile) — `node:20-alpine`, installs production dependencies only (`npm install --production`), copies sources and runs `node server.js`.
-- [frontend/Dockerfile](../frontend/Dockerfile) — **multi-stage build**: stage 1 builds the React app with `npm run build`; stage 2 serves the resulting `dist/` from `nginx:alpine`. The final image carries no Node.js runtime or `node_modules`.
-- [public-web/Dockerfile](../public-web/Dockerfile) — `nginx:alpine` serving static files.
+- [backend/Dockerfile](../backend/Dockerfile) — `node:20-alpine`, installs production dependencies only (`npm install --production`), copies sources and runs `node server.js`:
+
+  ```dockerfile
+  FROM node:20-alpine
+
+  WORKDIR /app
+
+  COPY package*.json ./
+
+  RUN npm install --production
+
+  COPY . .
+
+  EXPOSE 5000
+
+  CMD ["node", "server.js"]
+  ```
+
+- [frontend/Dockerfile](../frontend/Dockerfile) — **multi-stage build**: stage 1 builds the React app with `npm run build`; stage 2 serves the resulting `dist/` from `nginx:alpine`. The final image carries no Node.js runtime or `node_modules`:
+
+  ```dockerfile
+  FROM node:20-alpine AS build
+
+  WORKDIR /app
+
+  COPY package*.json ./
+
+  RUN npm install
+
+  COPY . .
+
+  RUN npm run build
+
+  FROM nginx:alpine
+
+  COPY --from=build /app/dist /usr/share/nginx/html
+  COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+  EXPOSE 80
+
+  CMD ["nginx", "-g", "daemon off;"]
+  ```
+
+- [public-web/Dockerfile](../public-web/Dockerfile) — `nginx:alpine` serving static files:
+
+  ```dockerfile
+  FROM nginx:alpine
+
+  COPY . /usr/share/nginx/html
+
+  EXPOSE 80
+
+  CMD ["nginx", "-g", "daemon off;"]
+  ```
 
 #### Compose file.
 
@@ -134,6 +185,47 @@ Each application service has its own Dockerfile, kept minimal:
   Both survive `docker-compose down` and are only removed with `down -v`.
 - **Configuration files are mounted read-only** into nginx (`./nginx.conf` and `./nginx/ssl/` with `:ro`).
 - **Secrets come from `.env` substitution**: the backend service reads `${JWT_SECRET}`, `${GITHUB_TOKEN}`, `${GITHUB_OWNER}`, `${GITHUB_REPO}` from the environment, never hard-coded in the compose file.
+
+The two services that own state (`backend` and `mongo`) attach their respective named volumes in the compose file as follows:
+
+```yaml
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: feriaapp-backend
+    expose:
+      - "5000"
+    environment:
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongo:27017/feriaApp
+      - JWT_SECRET=${JWT_SECRET}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - GITHUB_OWNER=${GITHUB_OWNER}
+      - GITHUB_REPO=${GITHUB_REPO}
+    depends_on:
+      - mongo
+    volumes:
+      - backend-uploads:/app/uploads
+    networks:
+      - feriaapp-network
+
+  mongo:
+    image: mongo:7
+    container_name: feriaapp-mongo
+    expose:
+      - "27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - feriaapp-network
+
+volumes:
+  mongo-data:
+  backend-uploads:
+```
+
+Both volumes are declared at the bottom of the file with no driver options — Docker uses the default `local` driver and stores them under `/var/lib/docker/volumes/feriaapp_<name>/_data` on the host (the exact mount points appear in [docker-volume-mongo-data.png](docker-volume-mongo-data.png) and [docker-volume-uploads.png](docker-volume-uploads.png) in [§C7](#c7-ra4--deployment-files-and-artifacts)).
 
 #### Environment variables and secrets.
 

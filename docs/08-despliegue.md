@@ -96,14 +96,21 @@ Two named Docker volumes are declared in the compose file: `mongo-data` (persist
 
 ### Deployment process.
 
+> ⚠️ **Step 2 is mandatory.** Skipping it makes Docker Compose start with empty values for `JWT_SECRET`, `GITHUB_TOKEN`, `GITHUB_OWNER` and `GITHUB_REPO`, which causes warning lines on startup and breaks two real features: **admin login** (the backend cannot sign/verify JWTs with an empty secret) and the **Publish** button (Octokit cannot authenticate against the GitHub API). The `.env` file is gitignored — every fresh clone needs to recreate it.
+
 ```bash
 # 1. Clone the repository
 git clone https://github.com/pablitoclavito04/FeriaApp.git
 cd FeriaApp
 
-# 2. Configure environment variables
+# 2. Configure environment variables (MANDATORY — see warning above)
 cp .env.example .env
-# Edit .env with real values
+# Edit .env with real values:
+#   JWT_SECRET     — any non-empty string (used to sign session tokens)
+#   GITHUB_TOKEN   — a GitHub PAT with "repo" scope (only needed if you plan to test the "Publish" button)
+#   GITHUB_OWNER   — owner of the target repo (e.g. your GitHub username)
+#   GITHUB_REPO    — name of the target repo (e.g. FeriaApp)
+#   MONGODB_URI    — leave as the default mongodb://mongo:27017/feriaApp for Docker
 
 # 3. Start the containers
 docker-compose up --build

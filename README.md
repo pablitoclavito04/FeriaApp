@@ -204,11 +204,13 @@ git clone https://github.com/pablitoclavito04/FeriaApp.git
 cd FeriaApp
 ```
 
-**2. Configure environment variables**
+**2. Configure environment variables** ⚠️ **mandatory step**
 ```bash
 cp .env.example .env
 # Edit .env with your real values
 ```
+
+The `.env` file is **gitignored** for security, so it does not come with the clone — you must create it yourself. Without it, `docker-compose up` will print four warnings about unset variables and the **admin login** and **Publish** button will not work. See [docs/08-despliegue.md](docs/08-despliegue.md#deployment-process-1) for the full list of variables and what each one is for.
 
 **3. Generate a self-signed SSL certificate for HTTPS**
 ```bash
