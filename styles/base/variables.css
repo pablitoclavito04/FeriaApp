@@ -101,3 +101,8 @@
 [data-theme="dark"] .app-footer-copy { color: var(--muted); }
 [data-theme="dark"] .footer-social a,
 [data-theme="dark"] .app-footer-social a { background: #2a3145; color: var(--text); }
+
+[data-theme="dark"] .info-modal-card,
+[data-theme="dark"] .modal-content { background: var(--surface); }
+[data-theme="dark"] .info-modal-x:hover,
+[data-theme="dark"] .modal-close:hover { background: #2a3145; color: var(--dark); }
