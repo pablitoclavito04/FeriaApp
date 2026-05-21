@@ -208,5 +208,19 @@
     "__v": 0,
     "createdAt": "2026-05-18T18:54:41.069Z",
     "updatedAt": "2026-05-18T18:54:41.069Z"
+  },
+  {
+    "_id": "6a0f3512f58f37a5dff57d92",
+    "name": "Huevos revueltos",
+    "description": "",
+    "price": 6,
+    "caseta": {
+      "_id": "69ee7ddea787ae2ece06bebf",
+      "name": "La crujía",
+      "number": 4
+    },
+    "__v": 0,
+    "createdAt": "2026-05-21T16:38:42.334Z",
+    "updatedAt": "2026-05-21T16:38:42.334Z"
   }
 ]
