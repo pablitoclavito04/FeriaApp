@@ -296,6 +296,29 @@ const isFairOngoing = () => {
 // Casetas show as open while the active fair is ongoing
 const isCasetaOpen = (_caseta) => isFairOngoing();
 
+// Default map (used when a fair has no map of its own — backward compatible).
+const DEFAULT_MAP_URL = '/FeriaApp/plano_feria.png';
+const DEFAULT_MAP_BOUNDS = [[0, 0], [1052, 1514]];
+
+// The fair whose map and casetas are shown.
+const getActiveFair = () => fairs.find((f) => f.active) || fairs[0];
+
+// Map image URL for the active fair: its own mapImage, else the default.
+const getMapUrl = () => {
+  const fair = getActiveFair();
+  if (fair?.mapImage) return fair.mapImage.replace('/uploads/', '/FeriaApp/uploads/');
+  return DEFAULT_MAP_URL;
+};
+
+// Leaflet bounds for the active fair's map: [[0,0],[height,width]], else default.
+const getMapBounds = () => {
+  const fair = getActiveFair();
+  if (fair?.mapBounds?.width && fair?.mapBounds?.height) {
+    return [[0, 0], [fair.mapBounds.height, fair.mapBounds.width]];
+  }
+  return DEFAULT_MAP_BOUNDS;
+};
+
 // Build caseta card markup
 const buildCasetaCard = (caseta) => {
   const open = isCasetaOpen(caseta);
@@ -559,8 +582,6 @@ const clearScheduleCasetaFilter = () => {
 };
 
 // ===== Casetas global map =====
-const CASETAS_MAP_BOUNDS = [[0, 0], [1052, 1514]];
-
 const buildCasetaMarker = (caseta) => {
   const open = isCasetaOpen(caseta);
   const cls = open ? 'caseta-pin is-open' : 'caseta-pin is-closed';
@@ -586,22 +607,24 @@ const initCasetasMap = () => {
     return;
   }
 
+  const bounds = getMapBounds();
+
   if (!casetasMap) {
     casetasMap = L.map(mapEl, {
       crs: L.CRS.Simple,
       minZoom: -2,
       maxZoom: 3,
-      maxBounds: CASETAS_MAP_BOUNDS,
+      maxBounds: bounds,
       maxBoundsViscosity: 1.0,
       zoomControl: true,
       attributionControl: false,
     });
-    L.imageOverlay('/FeriaApp/plano_feria.png', CASETAS_MAP_BOUNDS).addTo(casetasMap);
+    L.imageOverlay(getMapUrl(), bounds).addTo(casetasMap);
     casetasMarkersLayer = L.layerGroup().addTo(casetasMap);
   }
 
   casetasMap.invalidateSize();
-  casetasMap.fitBounds(CASETAS_MAP_BOUNDS);
+  casetasMap.fitBounds(bounds);
   renderCasetasMarkers(getFilteredCasetas());
 };
 
@@ -789,7 +812,7 @@ const initDetailMap = (caseta) => {
   const mapEl = document.getElementById('detail-map');
   if (!mapEl) return;
 
-  const bounds = [[0, 0], [1052, 1514]];
+  const bounds = getMapBounds();
 
   if (!detailMap) {
     detailMap = L.map(mapEl, {
@@ -801,7 +824,7 @@ const initDetailMap = (caseta) => {
       zoomControl: true,
       attributionControl: false,
     });
-    L.imageOverlay('/FeriaApp/plano_feria.png', bounds).addTo(detailMap);
+    L.imageOverlay(getMapUrl(), bounds).addTo(detailMap);
   }
 
   detailMap.invalidateSize();
