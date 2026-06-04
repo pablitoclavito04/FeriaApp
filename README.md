@@ -29,9 +29,8 @@ Lighthouse audit of the deployed public site at `https://pablitoclavito04.github
 
 | Metric | Value |
 |---|---|
-| Unit tests | 287 |
-| Test files | 7 |
-| Code coverage | 86.61% (lines) |
+| Unit tests | 342 |
+| Test files | 10 |
 | Test framework | Jest + Supertest |
 | CI/CD | GitHub Actions |
 | Test execution | Serial (--runInBand) |
@@ -41,9 +40,11 @@ Lighthouse audit of the deployed public site at `https://pablitoclavito04.github
 ## Main features
 
 ### Administration panel
-- JWT authentication with bcrypt password hashing.
+- JWT authentication with bcrypt password hashing, self-registration, and a "how do you want to access?" entry screen.
+- Role-based access control with three roles (admin, editor, viewer) and a Users section to manage them.
 - Full CRUD management for fairs, stalls, menus and concerts.
-- Interactive map editor using Leaflet.js with the official fairground plan — simply click to place each stall.
+- AI-powered stall detection: upload any fair map and Claude (Anthropic) detects each stall, reads its number, and proposes a position. The admin then drags markers to fine-tune, edits, adds or removes stalls, and bulk-imports them. Each fair stores its own map.
+- Interactive map editor using Leaflet.js — drag markers or click to place each stall.
 - Stall image uploads with Multer.
 - Bulk menu creation: add multiple dishes to a stall in a single operation.
 - One-click publishing: the backend generates all JSON files and uploads them to GitHub Pages via the GitHub API using Octokit.
@@ -74,6 +75,7 @@ Lighthouse audit of the deployed public site at `https://pablitoclavito04.github
 - **JWT** authentication with **bcryptjs**.
 - **express-validator** for request body validation (422 with field-level error details).
 - **Multer** for image uploads.
+- **Anthropic SDK** (`@anthropic-ai/sdk`, Claude vision) for AI stall detection from any fair map.
 - **Octokit** for automated publishing to GitHub Pages.
 - **Swagger / OpenAPI 3.0** for REST API documentation (interactive UI + exported `openapi.json`).
 
@@ -159,10 +161,12 @@ Create a `.env` file inside `backend/`:
 ```
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017/feriaApp
+MONGODB_TEST_URI=mongodb://localhost:27017/feriaApp_test
 JWT_SECRET=your_jwt_secret_here
 GITHUB_TOKEN=your_github_token_here
 GITHUB_OWNER=your_github_username
 GITHUB_REPO=FeriaApp
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
 ```
 
 **3. Create the administrator user**
@@ -314,20 +318,25 @@ The REST API is documented in three complementary formats:
 | GET | /api/concerts/:id/samegenre | Public | Get concerts of the same genre |
 | GET | /api/concerts/:id/caseta/menus | Public | Get menus of the caseta of a concert |
 | GET | /api/stats | Public | Get general statistics and aggregations |
-| POST | /api/fairs | Private | Create a fair |
-| POST | /api/casetas | Private | Create a stall |
-| POST | /api/menus | Private | Create a menu item |
-| POST | /api/menus/bulk | Private | Create multiple menu items at once |
-| POST | /api/concerts | Private | Create a concert |
-| PUT | /api/fairs/:id | Private | Update a fair |
-| PUT | /api/casetas/:id | Private | Update a stall |
-| PUT | /api/menus/:id | Private | Update a menu item |
-| PUT | /api/concerts/:id | Private | Update a concert |
-| DELETE | /api/fairs/:id | Private | Delete a fair |
-| DELETE | /api/casetas/:id | Private | Delete a stall |
-| DELETE | /api/menus/:id | Private | Delete a menu item |
-| DELETE | /api/concerts/:id | Private | Delete a concert |
-| POST | /api/publish | Private | Publish public website to GitHub Pages |
+| GET | /api/users | Private (admin) | List panel users |
+| PUT | /api/users/:id/role | Private (admin) | Change a user's role |
+| DELETE | /api/users/:id | Private (admin) | Delete a user |
+| POST | /api/casetas/detect | Private (admin) | Detect stalls from an uploaded map (AI vision) |
+| POST | /api/casetas/bulk | Private (admin) | Bulk create/update stalls after map review |
+| POST | /api/fairs | Private (admin) | Create a fair |
+| POST | /api/casetas | Private (admin) | Create a stall |
+| POST | /api/menus | Private (admin) | Create a menu item |
+| POST | /api/menus/bulk | Private (admin) | Create multiple menu items at once |
+| POST | /api/concerts | Private (admin) | Create a concert |
+| PUT | /api/fairs/:id | Private (admin, editor) | Update a fair |
+| PUT | /api/casetas/:id | Private (admin, editor) | Update a stall |
+| PUT | /api/menus/:id | Private (admin, editor) | Update a menu item |
+| PUT | /api/concerts/:id | Private (admin, editor) | Update a concert |
+| DELETE | /api/fairs/:id | Private (admin) | Delete a fair |
+| DELETE | /api/casetas/:id | Private (admin) | Delete a stall |
+| DELETE | /api/menus/:id | Private (admin) | Delete a menu item |
+| DELETE | /api/concerts/:id | Private (admin) | Delete a concert |
+| POST | /api/publish | Private (admin) | Publish public website to GitHub Pages |
 
 
 ### Nested routes summary
@@ -343,15 +352,15 @@ The REST API is documented in three complementary formats:
 
 ### Role-based access control
 
-FeriaApp implements role-based authorization with three roles:
+FeriaApp implements role-based authorization with three panel roles. Users reach the panel through an initial "how do you want to access?" screen with sign-in and sign-up; self-registration always creates a `viewer` account, and an administrator promotes users from a dedicated **Users** section (an admin cannot change their own role). On entering, each user sees a banner explaining what their role allows.
 
 | Role | Access |
 |---|---|
-| `admin` | Full access — can read, create, update and delete all resources |
-| `editor` | Read-only access — cannot write, update or delete |
-| `viewer` | Read-only access — cannot write, update or delete |
+| `admin` | Full access — read, create, update, delete, publish, and manage user roles |
+| `editor` | Can update existing resources (`PUT`), but cannot create, delete, publish or manage users |
+| `viewer` | Read-only access |
 
-All write endpoints (`POST`, `PUT`, `DELETE`) require the `admin` role. Attempts to access these endpoints with `editor` or `viewer` roles return `403 Forbidden` with `code: FORBIDDEN`.
+`PUT` (update) endpoints accept `admin` and `editor`. All other write endpoints (`POST`, `DELETE`, publish, and user management) require `admin`. Unauthorized attempts return `403 Forbidden` with `code: FORBIDDEN`.
 
 
 ### Paginated response format
@@ -431,7 +440,9 @@ Full project documentation is available in the `/docs` folder:
 | User type | Description |
 |---|---|
 | Fair visitor | Person attending the fair who needs quick, offline-capable information from their mobile |
-| Administrator | The developer, who loads and maintains data from the admin panel using official public sources |
+| Administrator | Full panel access: loads and maintains data, manages users and publishes the public website |
+| Editor | Panel user who can edit existing content but not create, delete or publish |
+| Viewer | Panel user with read-only access |
 
 ---
 

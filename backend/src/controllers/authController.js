@@ -43,6 +43,36 @@ const login = async (req, res) => {
   }
 };
 
+// @desc    Register a new user (always created as 'viewer')
+// @route   POST /api/auth/register
+// @access  Public
+const register = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    const existing = await User.findOne({ email });
+    if (existing) {
+      return res.status(409).json({ error: 'Email is already in use', code: 'EMAIL_IN_USE' });
+    }
+
+    // Force the role to 'viewer'; never trust a role coming from the client.
+    const user = await User.create({ name, email, password, role: 'viewer' });
+
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      token: generateToken(user._id),
+    });
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res.status(422).json({ error: error.message, code: 'VALIDATION_ERROR' });
+    }
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
 // @desc    Get admin profile
 // @route   GET /api/auth/profile
 // @access  Private
@@ -55,4 +85,4 @@ const getProfile = async (req, res) => {
   }
 };
 
-module.exports = { login, getProfile };
+module.exports = { login, register, getProfile };

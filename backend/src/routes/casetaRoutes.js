@@ -1,16 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const {
-  getCasetas, getCaseta, createCaseta, updateCaseta, deleteCaseta,
+  getCasetas, getCaseta, createCaseta, updateCaseta, deleteCaseta, deleteAllCasetas,
   searchCasetas, getCasetasSortedDesc, getCasetasWithImage, getCasetasWithoutImage,
   getHighestCaseta, getCasetasWithLocation, getCasetaFull, countCasetasByFair,
   getCasetaMenus, getCasetaConcerts,
   getCasetaCheapestMenu, getCasetaMostExpensiveMenu, getCasetaMenusSortedByPrice,
   getCasetaMenusCount, getCasetaUpcomingConcerts, getCasetaConcertsByGenre,
-  getCasetaConcertsSortedDesc, getCasetaConcertsCount, getCasetaStats
+  getCasetaConcertsSortedDesc, getCasetaConcertsCount, getCasetaStats,
+  detectCasetasFromMap, bulkCreateCasetas
 } = require('../controllers/casetaController');
 const { protect, authorize } = require('../middlewares/auth');
-const { casetaValidator, casetaUpdateValidator } = require('../middlewares/validators');
+const { casetaValidator, casetaUpdateValidator, bulkCasetasValidator } = require('../middlewares/validators');
 const upload = require('../middlewares/upload');
 
 /**
@@ -380,7 +381,57 @@ router.get('/:id/stats', getCasetaStats);
  *       401:
  *         description: Not authorized
  */
+/**
+ * @swagger
+ * /api/casetas/detect:
+ *   post:
+ *     summary: Detect casetas from an uploaded fair map (AI - CV + OCR)
+ *     tags: [Casetas]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Detected casetas with positions for review
+ *       400:
+ *         description: Map image is required
+ *       503:
+ *         description: Detection runtime not available
+ */
+router.post('/detect', protect, authorize('admin'), upload.single('image'), detectCasetasFromMap);
+
+/**
+ * @swagger
+ * /api/casetas/bulk:
+ *   post:
+ *     summary: Bulk create/update casetas (e.g. after reviewing map detection)
+ *     tags: [Casetas]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       201:
+ *         description: Casetas imported (created/updated counts)
+ *       422:
+ *         description: Validation error
+ */
+router.post('/bulk', protect, authorize('admin'), bulkCasetasValidator, bulkCreateCasetas);
+
 router.post('/', protect, authorize('admin'), upload.single('image'), casetaValidator, createCaseta);
+
+/**
+ * @swagger
+ * /api/casetas:
+ *   delete:
+ *     summary: Delete all casetas (optionally scoped to a fair via ?fair=)
+ *     tags: [Casetas]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Number of casetas deleted
+ *       401:
+ *         description: Not authorized
+ */
+router.delete('/', protect, authorize('admin'), deleteAllCasetas);
 
 /**
  * @swagger
@@ -402,7 +453,7 @@ router.post('/', protect, authorize('admin'), upload.single('image'), casetaVali
  *       404:
  *         description: Caseta not found
  */
-router.put('/:id', protect, authorize('admin'), upload.single('image'), casetaUpdateValidator, updateCaseta);
+router.put('/:id', protect, authorize('admin', 'editor'), upload.single('image'), casetaUpdateValidator, updateCaseta);
 
 /**
  * @swagger

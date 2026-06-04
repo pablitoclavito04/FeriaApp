@@ -1,4 +1,5 @@
 @use '../abstracts/variables' as *;
+@use 'sass:color';
 
 // ============================================
 // Pages
@@ -43,6 +44,14 @@
 
     &:active {
       transform: translateY(0);
+    }
+
+    &.btn-danger {
+      background: $error;
+
+      &:hover {
+        background: color.adjust($error, $lightness: -8%);
+      }
     }
   }
 }

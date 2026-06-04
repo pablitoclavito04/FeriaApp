@@ -23,7 +23,8 @@ const UserSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: ['admin', 'editor', 'viewer'],
-      default: 'admin',
+      // New accounts are viewers by default; only an admin can promote them.
+      default: 'viewer',
     },
   },
   {
@@ -31,14 +32,14 @@ const UserSchema = new mongoose.Schema(
   }
 );
 
-// Encrypt password before saving
-UserSchema.pre('save', async function (next) {
+// Encrypt password before saving. Mongoose 9 resolves async pre-hooks via the
+// returned promise, so we must NOT use a `next` callback here.
+UserSchema.pre('save', async function () {
   if (!this.isModified('password')) {
-    return next();
+    return;
   }
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
-  next();
 });
 
 // Method to compare passwords

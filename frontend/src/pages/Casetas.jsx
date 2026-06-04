@@ -2,17 +2,25 @@ import { useState, useEffect } from 'react';
 import casetaService from '../services/casetaService';
 import fairService from '../services/fairService';
 import MapPicker from '../components/MapPicker';
+import ImportCasetasModal from '../components/ImportCasetasModal';
 import useToast from '../context/useToast';
+import useAuth from '../context/useAuth';
+import { canCreate, canEdit, canDelete } from '../utils/permissions';
 
 const Casetas = () => {
   const { showToast } = useToast();
+  const { user } = useAuth();
   const [casetas, setCasetas] = useState([]);
   const [fairs, setFairs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [showImport, setShowImport] = useState(false);
   const [editingCaseta, setEditingCaseta] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
+  const [showDeleteAll, setShowDeleteAll] = useState(false);
+  const [deletingAll, setDeletingAll] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     number: '',
@@ -55,7 +63,8 @@ const Casetas = () => {
   const loadData = async () => {
     try {
       const [casetasData, fairsData] = await Promise.all([
-        casetaService.getCasetas(),
+        // Request a high limit so every caseta is loaded; we paginate client-side.
+        casetaService.getCasetas({ limit: 10000 }),
         fairService.getFairs(),
       ]);
       setCasetas(casetasData.data);
@@ -146,6 +155,22 @@ const Casetas = () => {
     }
   };
 
+  const confirmDeleteAll = async () => {
+    setDeletingAll(true);
+    try {
+      const { deleted } = await casetaService.deleteAllCasetas();
+      showToast(`${deleted} casetas deleted`, 'success');
+      setPage(1);
+      loadData();
+    } catch {
+      setError('Error deleting casetas');
+      showToast('Error deleting casetas', 'error');
+    } finally {
+      setDeletingAll(false);
+      setShowDeleteAll(false);
+    }
+  };
+
   const resetForm = () => {
     setFormData({
       name: '',
@@ -161,14 +186,66 @@ const Casetas = () => {
 
   if (loading) return <p>Loading...</p>;
 
+  // Client-side pagination: sort by number and show PAGE_SIZE per page.
+  const PAGE_SIZE = 80;
+  const sortedCasetas = [...casetas].sort((a, b) => (a.number ?? 0) - (b.number ?? 0));
+  const totalPages = Math.max(1, Math.ceil(sortedCasetas.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pageCasetas = sortedCasetas.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  const renderPagination = (position) =>
+    totalPages > 1 && (
+      <div className={`pagination pagination--${position}`}>
+        <button
+          className="pagination__btn"
+          onClick={() => setPage((p) => Math.max(1, p - 1))}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <span className="pagination__info">
+          Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong> ({sortedCasetas.length} casetas)
+        </span>
+        <button
+          className="pagination__btn"
+          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
+      </div>
+    );
+
   return (
     <div className="page-container">
       <div className="page-header">
         <h1>Casetas</h1>
-        <button onClick={() => { resetForm(); setEditingCaseta(null); setShowForm(true); }}>
-          + New Caseta
-        </button>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          {canDelete(user?.role) && casetas.length > 0 && (
+            <button className="btn-danger" onClick={() => setShowDeleteAll(true)}>
+              Delete all
+            </button>
+          )}
+          {canCreate(user?.role) && (
+            <button onClick={() => setShowImport(true)}>
+              Import from map
+            </button>
+          )}
+          {canCreate(user?.role) && (
+            <button onClick={() => { resetForm(); setEditingCaseta(null); setShowForm(true); }}>
+              + New Caseta
+            </button>
+          )}
+        </div>
       </div>
+
+      {showImport && (
+        <ImportCasetasModal
+          fairs={fairs}
+          onClose={() => setShowImport(false)}
+          onImported={() => { setShowImport(false); loadData(); }}
+        />
+      )}
 
       {error && <p className="error">{error}</p>}
 
@@ -257,6 +334,8 @@ const Casetas = () => {
         </form>
       )}
 
+      {renderPagination('top')}
+
       <table className="data-table">
         <thead>
           <tr>
@@ -270,7 +349,7 @@ const Casetas = () => {
           </tr>
         </thead>
         <tbody>
-          {casetas.map((caseta) => (
+          {pageCasetas.map((caseta) => (
             <tr key={caseta._id}>
               <td>{caseta.number}</td>
               <td>{caseta.name}</td>
@@ -287,13 +366,42 @@ const Casetas = () => {
                   : 'Not set'}
               </td>
               <td>
-                <button onClick={() => handleEdit(caseta)}>Edit</button>
-                <button onClick={() => setDeletingId(caseta._id)}>Delete</button>
+                {canEdit(user?.role) && <button onClick={() => handleEdit(caseta)}>Edit</button>}
+                {canDelete(user?.role) && <button onClick={() => setDeletingId(caseta._id)}>Delete</button>}
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {renderPagination('bottom')}
+
+      {showDeleteAll && (
+        <div className="modal-overlay" onClick={() => !deletingAll && setShowDeleteAll(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Delete all casetas</h3>
+              <button className="modal-close" onClick={() => setShowDeleteAll(false)} disabled={deletingAll}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+            <p className="modal-body">
+              This will permanently delete <strong>all {casetas.length} casetas</strong>. This action cannot be undone. Are you sure?
+            </p>
+            <div className="modal-actions">
+              <button className="modal-btn-confirm" onClick={confirmDeleteAll} disabled={deletingAll}>
+                {deletingAll ? 'Deleting...' : 'Delete all'}
+              </button>
+              <button className="modal-btn-cancel" onClick={() => setShowDeleteAll(false)} disabled={deletingAll}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {deletingId && (
         <div className="modal-overlay" onClick={() => setDeletingId(null)}>

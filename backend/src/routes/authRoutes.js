@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { login, getProfile } = require('../controllers/authController');
+const { login, register, getProfile } = require('../controllers/authController');
 const { protect } = require('../middlewares/auth');
-const { loginValidator } = require('../middlewares/validators');
+const { loginValidator, registerValidator } = require('../middlewares/validators');
 
 /**
  * @swagger
@@ -28,6 +28,33 @@ const { loginValidator } = require('../middlewares/validators');
  *         description: Invalid credentials
  */
 router.post('/login', loginValidator, login);
+
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Register a new user (created as viewer)
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: User registered, returns JWT token
+ *       409:
+ *         description: Email already in use
+ */
+router.post('/register', registerValidator, register);
 
 /**
  * @swagger

@@ -10,10 +10,12 @@
 @use 'components/buttons';
 @use 'components/forms';
 @use 'components/tables';
+@use 'components/pagination';
 @use 'components/modals';
 @use 'components/toast';
 @use 'components/badges';
 @use 'components/validation';
+@use 'components/role-banner';
 @use 'pages/login';
 @use 'pages/dashboard';
 @use 'pages/misc';

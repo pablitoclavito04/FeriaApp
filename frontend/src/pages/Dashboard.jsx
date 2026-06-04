@@ -5,6 +5,8 @@ import fairService from '../services/fairService';
 import casetaService from '../services/casetaService';
 import menuService from '../services/menuService';
 import concertService from '../services/concertService';
+import RoleBanner from '../components/RoleBanner';
+import { canPublish } from '../utils/permissions';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -25,7 +27,10 @@ const Dashboard = () => {
         ]);
         setStats({
           fairs: fairs.data.length,
-          casetas: casetas.data.length,
+          // Use the backend's total count (countDocuments), not data.length,
+          // which is capped by the default page limit of 100. The response body
+          // is { total, page, pages, data: [...] }, so the count is `total`.
+          casetas: casetas.total ?? casetas.data.length,
           menus: menus.data.length,
           concerts: concerts.data.length,
         });
@@ -60,6 +65,8 @@ const Dashboard = () => {
     <div className="dashboard-container">
       <h1>Welcome, {user?.name}</h1>
       <p>Here's an overview of your fair management system.</p>
+
+      <RoleBanner role={user?.role} />
 
       <div className="dashboard-stats">
         <div className="stat-card">
@@ -121,20 +128,22 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="publish-section">
-        <h2>Publish Website</h2>
-        <p>Generate static files and publish the public website to GitHub Pages.</p>
-        {message && <p className="success">{message}</p>}
-        {error && <p className="error">{error}</p>}
-        <button onClick={handlePublish} disabled={publishing}>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
-            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-            <polyline points="16 6 12 2 8 6" />
-            <line x1="12" y1="2" x2="12" y2="15" />
-          </svg>
-          {publishing ? 'Publishing...' : 'Publish Website'}
-        </button>
-      </div>
+      {canPublish(user?.role) && (
+        <div className="publish-section">
+          <h2>Publish Website</h2>
+          <p>Generate static files and publish the public website to GitHub Pages.</p>
+          {message && <p className="success">{message}</p>}
+          {error && <p className="error">{error}</p>}
+          <button onClick={handlePublish} disabled={publishing}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+              <polyline points="16 6 12 2 8 6" />
+              <line x1="12" y1="2" x2="12" y2="15" />
+            </svg>
+            {publishing ? 'Publishing...' : 'Publish Website'}
+          </button>
+        </div>
+      )}
 
       {showPublishModal && (
         <div className="modal-overlay" onClick={() => setShowPublishModal(false)}>

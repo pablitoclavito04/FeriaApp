@@ -2,9 +2,12 @@ import { useState, useEffect } from 'react';
 import concertService from '../services/concertService';
 import casetaService from '../services/casetaService';
 import useToast from '../context/useToast';
+import useAuth from '../context/useAuth';
+import { canCreate, canEdit, canDelete } from '../utils/permissions';
 
 const Concerts = () => {
   const { showToast } = useToast();
+  const { user } = useAuth();
   const [concerts, setConcerts] = useState([]);
   const [casetas, setCasetas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -134,9 +137,11 @@ const Concerts = () => {
     <div className="page-container">
       <div className="page-header">
         <h1>Concerts</h1>
-        <button onClick={() => { resetForm(); setEditingConcert(null); setShowForm(true); }}>
-          + New Concert
-        </button>
+        {canCreate(user?.role) && (
+          <button onClick={() => { resetForm(); setEditingConcert(null); setShowForm(true); }}>
+            + New Concert
+          </button>
+        )}
       </div>
 
       {error && <p className="error">{error}</p>}
@@ -225,8 +230,8 @@ const Concerts = () => {
               <td>{concert.time}</td>
               <td>{concert.caseta?.name}</td>
               <td>
-                <button onClick={() => handleEdit(concert)}>Edit</button>
-                <button onClick={() => setDeletingId(concert._id)}>Delete</button>
+                {canEdit(user?.role) && <button onClick={() => handleEdit(concert)}>Edit</button>}
+                {canDelete(user?.role) && <button onClick={() => setDeletingId(concert._id)}>Delete</button>}
               </td>
             </tr>
           ))}

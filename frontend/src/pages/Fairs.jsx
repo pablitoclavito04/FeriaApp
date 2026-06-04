@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
 import fairService from '../services/fairService';
 import useToast from '../context/useToast';
+import useAuth from '../context/useAuth';
+import { canCreate, canEdit, canDelete } from '../utils/permissions';
 
 const Fairs = () => {
   const { showToast } = useToast();
+  const { user } = useAuth();
   const [fairs, setFairs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -131,9 +134,11 @@ const Fairs = () => {
     <div className="page-container">
       <div className="page-header">
         <h1>Fairs</h1>
-        <button onClick={() => { resetForm(); setEditingFair(null); setShowForm(true); }}>
-          + New Fair
-        </button>
+        {canCreate(user?.role) && (
+          <button onClick={() => { resetForm(); setEditingFair(null); setShowForm(true); }}>
+            + New Fair
+          </button>
+        )}
       </div>
 
       {error && <p className="error">{error}</p>}
@@ -227,8 +232,8 @@ const Fairs = () => {
                 </span>
               </td>
               <td>
-                <button onClick={() => handleEdit(fair)}>Edit</button>
-                <button onClick={() => setDeletingId(fair._id)}>Delete</button>
+                {canEdit(user?.role) && <button onClick={() => handleEdit(fair)}>Edit</button>}
+                {canDelete(user?.role) && <button onClick={() => setDeletingId(fair._id)}>Delete</button>}
               </td>
             </tr>
           ))}

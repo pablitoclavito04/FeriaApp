@@ -23,29 +23,33 @@ Screenshots of the tests are available in `docs/insomnia/`.
 
 ### 2. Unit tests with Jest and Supertest.
 
-In Sprint 5, automated unit tests were implemented for the backend. The tests cover all main API endpoints across 7 test files.
+In Sprint 5, automated unit tests were implemented for the backend; they were extended as new features were added. The tests cover all main API endpoints across 10 test files.
 
 **Test files:**
 
 | File | Module | Tests |
 |---|---|---|
-| `backend/tests/auth.test.js` | Authentication | 33 |
-| `backend/tests/fairs.test.js` | Fairs CRUD | 40 |
-| `backend/tests/casetas.test.js` | Casetas CRUD | 43 |
+| `backend/tests/auth.test.js` | Authentication | 36 |
+| `backend/tests/users.test.js` | User & role management | 13 |
+| `backend/tests/fairs.test.js` | Fairs CRUD | 36 |
+| `backend/tests/casetas.test.js` | Casetas CRUD | 45 |
+| `backend/tests/casetas-import.test.js` | AI detection & bulk import | 9 |
 | `backend/tests/menus.test.js` | Menus CRUD | 47 |
-| `backend/tests/concerts.test.js` | Concerts CRUD | 45 |
+| `backend/tests/concerts.test.js` | Concerts CRUD | 46 |
 | `backend/tests/roles.test.js` | Authorization & roles | 24 |
 | `backend/tests/advanced-routes.test.js` | Advanced & nested routes | 55 |
 | `backend/tests/error-branches.test.js` | Error & edge-case branches | 31 |
-| **Total** | | **318** |
+| **Total** | | **342** |
 
 **Test scenarios covered per module:**
 - Successful creation with valid data
 - Authentication failures (no token, invalid token)
+- Authorization by role (editor/viewer forbidden on write routes)
 - Validation failures (missing required fields, empty fields, invalid formats)
 - Non-existent resource errors (invalid IDs, deleted resources)
 - Edge cases (special characters, long strings, null values)
-- Bulk operations (menus bulk creation)
+- Bulk operations (menus bulk creation, caseta bulk import)
+- AI map detection: the Anthropic SDK is mocked, so tests never call the API or incur cost; they verify the response shape and that error codes (`AI_NO_KEY`, `AI_FAILED`) map to the right HTTP status.
 
 ---
 
@@ -61,21 +65,23 @@ npm test
 ```
 PASS  tests/concerts.test.js
 PASS  tests/auth.test.js
+PASS  tests/users.test.js
 PASS  tests/menus.test.js
 PASS  tests/casetas.test.js
+PASS  tests/casetas-import.test.js
 PASS  tests/fairs.test.js
 PASS  tests/roles.test.js
 PASS  tests/advanced-routes.test.js
 PASS  tests/error-branches.test.js
 
-Test Suites: 8 passed, 8 total
-Tests:       318 passed, 318 total
-Time:        6.94 s
+Test Suites: 10 passed, 10 total
+Tests:       342 passed, 342 total
+Time:        16.4 s
 ```
 
-![Jest test suite output: Test Suites 8 passed / 8 total, Tests 318 passed / 318 total, 0 snapshots](test-suite-passing.png)
+![Jest test suite output (earlier run: 318 tests across 8 suites, all green)](test-suite-passing.png)
 
-The screenshot shows the final summary block produced by `npm test` after the role-based authorization, express-validator and error-branch suites were added on top of the original CRUD tests — the suite now totals **318 tests across 8 suites**, all green.
+The suite grew as new features landed: the user/role-management and AI-import suites were added on top of the role-based authorization, express-validator and error-branch suites, which themselves built on the original CRUD tests. It now totals **342 tests across 10 suites**, all green. (The screenshot above is from an earlier run showing 318 tests across 8 suites, before the user-management and AI-import suites were added.)
 
 ---
 

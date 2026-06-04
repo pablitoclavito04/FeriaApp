@@ -14,6 +14,7 @@ const menuRoutes = require('./src/routes/menuRoutes');
 const concertRoutes = require('./src/routes/concertRoutes');
 const publishRoutes = require('./src/routes/publishRoutes');
 const statsRoutes = require('./src/routes/statsRoutes');
+const userRoutes = require('./src/routes/userRoutes');
 const path = require('path');
 
 dotenv.config();
@@ -36,8 +37,17 @@ app.use(helmet());
 app.use(morgan('dev'));
 app.use(cors());
 
-// Serve uploaded files
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Serve uploaded files. Allow them to be loaded cross-origin (the admin panel
+// runs on a different port in dev, and the public web on a different host), so
+// Helmet's default same-origin resource policy does not block the images.
+app.use(
+  '/uploads',
+  (req, res, next) => {
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    next();
+  },
+  express.static(path.join(__dirname, 'uploads'))
+);
 
 // Swagger documentation
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -50,6 +60,7 @@ app.use('/api/menus', menuRoutes);
 app.use('/api/concerts', concertRoutes);
 app.use('/api/publish', publishRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/users', userRoutes);
 
 // Health check
 app.get('/', (req, res) => {

@@ -12,6 +12,7 @@ jest.mock('../src/config/octokit', () => ({
 jest.setTimeout(30000);
 
 const request = require('supertest');
+const connectTestDb = require('./testDb');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
@@ -20,7 +21,7 @@ dotenv.config();
 const app = require('../server');
 
 beforeAll(async () => {
-  await mongoose.connect(process.env.MONGODB_TEST_URI || process.env.MONGODB_URI);
+  await connectTestDb();
 
   const bcrypt = require('bcryptjs');
   const hash = await bcrypt.hash('admin1234', 10);

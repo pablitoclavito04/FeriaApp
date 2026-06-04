@@ -22,6 +22,9 @@ Development was organised into 5 sprints following an agile methodology with Git
 - Login system implementation with JWT and protected routes.
 - CRUD forms for fairs, stalls, menus and concerts.
 - Leaflet.js integration for the stall location editor on the official plan.
+- AI-powered stall detection: upload a fair map and have Claude (Anthropic) detect each stall, read its number, and propose a position, with a review map for manual fine-tuning before a bulk import.
+- Per-fair maps: each fair stores its own map and bounds, travelling together with the stall coordinates.
+- Role-based access control with three panel roles (admin, editor, viewer) and a Users section to manage them.
 - Image uploads with Multer.
 - "Publish" button implementation with Octokit to generate and publish the public website.
 
@@ -44,6 +47,12 @@ Development was organised into 5 sprints following an agile methodology with Git
 ---
 
 ## Key technical decisions.
+
+### AI vision for stall detection (Claude / Anthropic):
+
+The core differentiating feature of the project is automatic stall detection from a fair map. The first implementation used a computer-vision pipeline (OpenCV + OCR in Python) calibrated specifically for the Jerez plan: it was accurate there but rigid, and could not adapt to a different map. It was therefore replaced by an AI vision model (Claude `claude-opus-4-8`, via the official `@anthropic-ai/sdk`), which interprets any map visually and returns each stall with its number and an approximate relative position.
+
+To stay independent of any image-processing library, the model returns **relative** coordinates (a fraction of the map's width and height); the backend reads the image's real dimensions directly from the PNG/JPEG file header and scales those fractions to the project's Leaflet coordinate convention. Because AI positions are approximate, the panel shows the detected stalls on a review map where the administrator drags each marker to its exact spot and edits, adds or removes stalls before importing. Automatic detection does the bulk of the work; a final human adjustment guarantees precision. The API key lives only in a server-side environment variable and is never committed to the repository.
 
 ### Hybrid architecture (MERN + GitHub Pages):
 

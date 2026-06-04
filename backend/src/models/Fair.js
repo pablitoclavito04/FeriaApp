@@ -23,6 +23,16 @@ const FairSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    // Fair map for caseta positioning. Casetas store pixel coordinates relative
+    // to this image, so the map and its coordinates travel together per fair.
+    mapImage: {
+      type: String,
+      trim: true,
+    },
+    mapBounds: {
+      width: { type: Number },
+      height: { type: Number },
+    },
     active: {
       type: Boolean,
       default: false,

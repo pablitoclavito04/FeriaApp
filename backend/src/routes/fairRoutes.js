@@ -339,7 +339,7 @@ router.post('/', protect, authorize('admin'), fairValidator, createFair);
  *       404:
  *         description: Fair not found
  */
-router.put('/:id', protect, authorize('admin'), fairUpdateValidator, updateFair);
+router.put('/:id', protect, authorize('admin', 'editor'), fairUpdateValidator, updateFair);
 
 /**
  * @swagger

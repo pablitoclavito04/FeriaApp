@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import useAuth from '../context/useAuth';
 import useToast from '../context/useToast';
 import logotipo from '../assets/logotipo.png';
@@ -59,6 +59,18 @@ const Login = () => {
   return (
     <div className="login">
       <div className="login__box">
+        <button
+          type="button"
+          className="login__close"
+          onClick={() => navigate('/')}
+          aria-label="Go back"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+
         <div className="login__header">
           <div className="login__brand">
             <img src={logotipo} alt="FeriaApp" className="login__logo" />
@@ -128,6 +140,10 @@ const Login = () => {
             {loading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
+
+        <p className="login__alt">
+          Don&apos;t have an account? <Link to="/register">Sign up</Link>
+        </p>
       </div>
     </div>
   );

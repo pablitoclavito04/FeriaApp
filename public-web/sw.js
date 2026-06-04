@@ -1,4 +1,8 @@
-const CACHE_NAME = 'feriaapp-v43';
+const CACHE_NAME = 'feriaapp-v44';
+// Precache the default map as a fallback. Per-fair maps live under
+// /FeriaApp/uploads/ with unique (timestamped) filenames and are cached on
+// first fetch by the cache-first handler below; a new map gets a new URL, so
+// there is never a stale-image problem.
 const urlsToCache = [
   '/FeriaApp/',
   '/FeriaApp/index.html',

@@ -1,0 +1,59 @@
+@use '../abstracts/variables' as *;
+
+// ============================================
+// Pagination (BEM: .pagination as block)
+// ============================================
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+
+  &--top {
+    margin-bottom: 1rem;
+  }
+
+  &--bottom {
+    margin-top: 1rem;
+  }
+
+  &__btn {
+    background: var(--surface);
+    color: var(--primary);
+    border: 1.5px solid var(--border-strong);
+    padding: 0.45rem 1rem;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all $transition;
+
+    &:hover:not(:disabled) {
+      background: rgba($primary, 0.08);
+      border-color: rgba($primary, 0.5);
+      transform: translateY(-1px);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      color: var(--text-muted);
+      border-color: var(--border);
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &__info {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+
+    strong {
+      color: var(--text-primary);
+    }
+  }
+}

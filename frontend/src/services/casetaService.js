@@ -29,4 +29,35 @@ const deleteCaseta = async (id) => {
   return response.data;
 };
 
-export default { getCasetas, getCaseta, createCaseta, updateCaseta, deleteCaseta };
+// Delete every caseta (optionally scoped to a fair). Returns { deleted }.
+const deleteAllCasetas = async (params = {}) => {
+  const response = await api.delete('/casetas', { params });
+  return response.data;
+};
+
+// Upload a fair map and run AI detection on it. Returns
+// { mapUrl, bounds, imageSize, expectedCount, casetas }.
+const detectFromMap = async (formData) => {
+  const response = await api.post('/casetas/detect', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data;
+};
+
+// Bulk create/update casetas (e.g. after reviewing map detection).
+// payload: { fair, mapImage, mapBounds, casetas: [{ number, location }] }.
+const bulkCreateCasetas = async (payload) => {
+  const response = await api.post('/casetas/bulk', payload);
+  return response.data;
+};
+
+export default {
+  getCasetas,
+  getCaseta,
+  createCaseta,
+  updateCaseta,
+  deleteCaseta,
+  deleteAllCasetas,
+  detectFromMap,
+  bulkCreateCasetas,
+};

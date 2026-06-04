@@ -35,10 +35,15 @@ Create the `.env` file inside the `backend/` folder with the following content:
 ```
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017/feriaApp
+# Separate database for the test suite (tests run deleteMany; never point at the real DB).
+MONGODB_TEST_URI=mongodb://localhost:27017/feriaApp_test
 JWT_SECRET=your_jwt_secret_here
 GITHUB_TOKEN=your_github_token_here
 GITHUB_OWNER=your_github_username
 GITHUB_REPO=FeriaApp
+# API key for AI stall detection (Claude / Anthropic). Without it, the map
+# detection endpoint returns a 503. Get one at https://console.anthropic.com
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
 ```
 
 ### 3. Create the administrator user.
@@ -132,7 +137,9 @@ Credentials:
 |---|---|---|
 | PORT | Backend server port | 5000 |
 | MONGODB_URI | MongoDB connection URI | mongodb://localhost:27017/feriaApp |
+| MONGODB_TEST_URI | Separate DB for the test suite (must contain "test") | mongodb://localhost:27017/feriaApp_test |
 | JWT_SECRET | Secret key for JWT | any_random_string |
 | GITHUB_TOKEN | GitHub personal access token | ghp_xxxxxxxxxxxx |
 | GITHUB_OWNER | GitHub username | pablitoclavito04 |
 | GITHUB_REPO | Repository name | FeriaApp |
+| ANTHROPIC_API_KEY | API key for AI stall detection (Claude) | sk-ant-xxxxxxxxxxxx |

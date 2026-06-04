@@ -25,6 +25,28 @@ const loginValidator = [
   validate,
 ];
 
+// Register validator (public sign-up)
+const registerValidator = [
+  body('name')
+    .notEmpty().withMessage('Name is required')
+    .isLength({ min: 2, max: 100 }).withMessage('Name must be between 2 and 100 characters'),
+  body('email')
+    .notEmpty().withMessage('Email is required')
+    .isEmail().withMessage('Please enter a valid email address')
+    .normalizeEmail(),
+  body('password')
+    .notEmpty().withMessage('Password is required')
+    .isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+  validate,
+];
+
+// Role update validator (admin changing another user's role)
+const roleUpdateValidator = [
+  body('role')
+    .isIn(['admin', 'editor', 'viewer']).withMessage('Role must be admin, editor or viewer'),
+  validate,
+];
+
 // Fair validators
 const fairValidator = [
   body('name')
@@ -112,6 +134,22 @@ const casetaUpdateValidator = [
   validate,
 ];
 
+// Bulk caseta create/update (e.g. after reviewing map detection)
+const bulkCasetasValidator = [
+  body('casetas')
+    .isArray({ min: 1 }).withMessage('casetas must be a non-empty array'),
+  body('casetas.*.number')
+    .isInt({ min: 1 }).withMessage('Each caseta number must be a positive integer'),
+  body('casetas.*.location.x')
+    .isNumeric().withMessage('Each caseta location.x must be a number'),
+  body('casetas.*.location.y')
+    .isNumeric().withMessage('Each caseta location.y must be a number'),
+  body('fair')
+    .optional()
+    .isMongoId().withMessage('Fair must be a valid ID'),
+  validate,
+];
+
 // Menu validators for PUT (all optional)
 const menuUpdateValidator = [
   body('name')
@@ -145,10 +183,13 @@ const concertUpdateValidator = [
 
 module.exports = {
   loginValidator,
+  registerValidator,
+  roleUpdateValidator,
   fairValidator,
   fairUpdateValidator,
   casetaValidator,
   casetaUpdateValidator,
+  bulkCasetasValidator,
   menuValidator,
   menuUpdateValidator,
   concertValidator,

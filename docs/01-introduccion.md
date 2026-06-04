@@ -23,6 +23,7 @@ Develop a full stack web platform based on the MERN stack that centralises local
 - Automatically generate a static page published on GitHub Pages whenever the administrator updates the data.
 - Design the public web as an installable, offline-capable Progressive Web App (PWA).
 - Integrate an interactive map with Leaflet.js showing the location of each stall on the official venue map.
+- Detect stalls automatically from any fair map using an AI vision model (Claude, by Anthropic), with a manual review step to fine-tune positions.
 - Implement a smart search engine with typo tolerance using Fuse.js.
 - Deploy the application with Docker and Docker Compose, with Nginx as a reverse proxy.
 - Configure a CI/CD pipeline with GitHub Actions.

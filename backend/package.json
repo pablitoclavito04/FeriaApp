@@ -7,6 +7,7 @@
     "test": "cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --runInBand",
     "test:coverage": "cross-env NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --runInBand --coverage",
     "export:openapi": "node export-openapi.js",
+    "seed:admin": "node seedAdmin.js",
     "start": "node server.js"
   },
   "keywords": [],
@@ -14,6 +15,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.100.1",
     "@octokit/rest": "^22.0.1",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",

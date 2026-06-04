@@ -12,10 +12,14 @@ All information comes from official public sources such as the Jerez de la Front
 
 ### 1. Authentication and roles.
 
-The authentication system is based on JSON Web Tokens (JWT). There are two distinct roles:
+The authentication system is based on JSON Web Tokens (JWT). Users reach the panel through an initial screen that lets them sign in or sign up; self-registration always creates a read-only account, and an administrator promotes users from a dedicated Users section. There are three panel roles plus the public visitor:
 
-- **Administrator:** Full access to the administration panel. Can manage fairs, stalls, menus, concerts and generate the public website.
+- **Administrator:** Full access to the administration panel. Can manage fairs, stalls, menus, concerts, change user roles, and publish the public website.
+- **Editor:** Can edit existing content, but cannot create, delete, publish, or manage users.
+- **Viewer:** Read-only access to the panel.
 - **Visitor:** Access to the static public website. No registration or authentication required.
+
+On entering the panel, each user sees an information banner explaining what their role allows.
 
 ### 2. Fair management.
 
@@ -62,9 +66,11 @@ The website visited by users is a static page designed as a Progressive Web App 
 - Works without an internet connection once loaded, thanks to Service Workers.
 - Especially useful when mobile coverage inside the fairground is limited.
 
-### 8. Official map import.
+### 8. AI-powered map import.
 
-The administrator can upload the image or PDF of the official map published by the Jerez City Council. That map is displayed as a background in the panel and the administrator simply clicks on it to mark the location of each stall, minimising manual data entry.
+The administrator uploads the image of any fair map and an AI vision model (Claude, by Anthropic) analyses it automatically: it detects each stall, reads its number, and proposes an approximate position on the map. Because the model interprets the map visually rather than relying on rules tuned to one specific plan, the feature adapts to **any** fair map, not just a single venue.
+
+The detected stalls are shown for review on the map: the administrator drags each marker to fine-tune its exact position, edits numbers or names, and can add or remove stalls before confirming the import. This combines automatic detection (which does the bulk of the work) with a final human adjustment that guarantees precise placement. Each fair stores its own map, so the public website always shows the active fair's plan with its stalls in the right place.
 
 ### 9. Interactive map.
 

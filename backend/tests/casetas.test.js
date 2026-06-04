@@ -12,6 +12,7 @@ jest.mock('../src/config/octokit', () => ({
 jest.setTimeout(30000);
 
 const request = require('supertest');
+const connectTestDb = require('./testDb');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const dotenv = require('dotenv');
@@ -25,7 +26,7 @@ let casetaId;
 let fairId;
 
 beforeAll(async () => {
-  await mongoose.connect(process.env.MONGODB_TEST_URI || process.env.MONGODB_URI);
+  await connectTestDb();
 
   const hash = await bcrypt.hash('admin1234', 10);
   await mongoose.connection.collection('users').updateOne(
@@ -450,5 +451,33 @@ describe('Casetas API - Additional validation tests', () => {
     }
     const final = await request(app).get('/api/casetas');
     expect(final.body.data.length).toBe(0);
+  });
+});
+
+describe('Casetas API - DELETE /api/casetas (delete all)', () => {
+  beforeEach(async () => {
+    await mongoose.connection.collection('casetas').deleteMany({});
+    await request(app).post('/api/casetas').set('Authorization', `Bearer ${token}`).send({ name: 'Caseta A', number: 1, fair: fairId });
+    await request(app).post('/api/casetas').set('Authorization', `Bearer ${token}`).send({ name: 'Caseta B', number: 2, fair: fairId });
+    await request(app).post('/api/casetas').set('Authorization', `Bearer ${token}`).send({ name: 'Caseta C', number: 3, fair: fairId });
+  });
+
+  test('should delete every caseta and report the count', async () => {
+    const res = await request(app)
+      .delete('/api/casetas')
+      .set('Authorization', `Bearer ${token}`);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.deleted).toBe(3);
+
+    const final = await request(app).get('/api/casetas');
+    expect(final.body.data.length).toBe(0);
+  });
+
+  test('should fail to delete all without authentication token', async () => {
+    const res = await request(app).delete('/api/casetas');
+    expect(res.statusCode).toBe(401);
+
+    const final = await request(app).get('/api/casetas');
+    expect(final.body.data.length).toBe(3);
   });
 });

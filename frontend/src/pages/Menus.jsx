@@ -2,12 +2,15 @@ import { useState, useEffect } from 'react';
 import menuService from '../services/menuService';
 import casetaService from '../services/casetaService';
 import useToast from '../context/useToast';
+import useAuth from '../context/useAuth';
+import { canCreate, canEdit, canDelete } from '../utils/permissions';
 
 const INITIAL_ROWS = 3;
 const emptyRow = () => ({ name: '', description: '', price: '' });
 
 const Menus = () => {
   const { showToast } = useToast();
+  const { user } = useAuth();
   const [menus, setMenus] = useState([]);
   const [casetas, setCasetas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -246,7 +249,7 @@ const Menus = () => {
     <div className="page-container">
       <div className="page-header">
         <h1>Menus</h1>
-        <button onClick={openCreateForm}>+ New Menu</button>
+        {canCreate(user?.role) && <button onClick={openCreateForm}>+ New Menu</button>}
       </div>
 
       {error && <p className="error">{error}</p>}
@@ -408,8 +411,8 @@ const Menus = () => {
               <td>{menu.price}€</td>
               <td>{menu.caseta?.name}</td>
               <td>
-                <button onClick={() => handleEdit(menu)}>Edit</button>
-                <button onClick={() => setDeletingId(menu._id)}>Delete</button>
+                {canEdit(user?.role) && <button onClick={() => handleEdit(menu)}>Edit</button>}
+                {canDelete(user?.role) && <button onClick={() => setDeletingId(menu._id)}>Delete</button>}
               </td>
             </tr>
           ))}

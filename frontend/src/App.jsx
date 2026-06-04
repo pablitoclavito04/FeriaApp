@@ -1,12 +1,15 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import PrivateRoute from './components/PrivateRoute';
 import Sidebar from './components/Sidebar';
+import AccessChoice from './pages/AccessChoice';
 import Login from './pages/Login';
+import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Fairs from './pages/Fairs';
 import Casetas from './pages/Casetas';
 import Menus from './pages/Menus';
 import Concerts from './pages/Concerts';
+import Users from './pages/Users';
 import useAuth from './context/useAuth';
 
 const Layout = ({ children }) => (
@@ -23,7 +26,9 @@ const App = () => {
 
   return (
     <Routes>
+      <Route path="/access" element={user ? <Navigate to="/dashboard" /> : <AccessChoice />} />
       <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
+      <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <Register />} />
       <Route path="/dashboard" element={
         <PrivateRoute>
           <Layout>
@@ -59,7 +64,14 @@ const App = () => {
           </Layout>
         </PrivateRoute>
       } />
-      <Route path="*" element={<Navigate to="/login" />} />
+      <Route path="/users" element={
+        <PrivateRoute requiredRole="admin">
+          <Layout>
+            <Users />
+          </Layout>
+        </PrivateRoute>
+      } />
+      <Route path="*" element={<Navigate to="/access" />} />
     </Routes>
   );
 };

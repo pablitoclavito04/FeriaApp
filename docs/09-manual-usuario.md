@@ -5,12 +5,27 @@
 ### Accessing the panel.
 
 1. Open the browser and go to `http://localhost` (with Docker) or `http://localhost:5173` (local development).
-2. Enter the administrator credentials:
-   - **Email:** admin@feriaapp.com
-   - **Password:** admin1234
-3. Press **Log in**.
+2. On the entry screen ("how do you want to access?"), choose **Sign in** or **Sign up**.
+   - **Sign in** with existing credentials. The default administrator is:
+     - **Email:** admin@feriaapp.com
+     - **Password:** admin1234
+   - **Sign up** to create a new account. New accounts are always created as **viewer** (read-only); an administrator can promote them later (see *User management* below).
+3. After logging in, a banner shows your role and what it allows.
 
 ![alt text](image.png)
+
+---
+
+### User management (admin only).
+
+Administrators can manage who accesses the panel and with which role:
+
+1. Go to the **Users** section in the sidebar (visible to administrators only).
+2. Each user has a role selector to set **admin**, **editor** or **viewer**:
+   - **admin** — full access, including publishing and managing users.
+   - **editor** — can edit existing content, but cannot create, delete, publish or manage users.
+   - **viewer** — read-only access.
+3. Your own account is not listed here, so you cannot change or remove your own role by accident.
 
 ---
 
@@ -60,6 +75,38 @@ From here you can press the **Publish website** button to generate and publish t
 ![alt text](image-4.png)
 
 ![alt text](image-5.png)
+
+---
+
+### Import stalls from a map (AI).
+
+Instead of creating stalls one by one, the administrator can detect them all automatically from a fair map.
+
+1. In the **Casetas** section, press **Import from map**.
+2. Choose the fair the stalls belong to (or leave the active fair) and select the map image.
+3. Press **Detect**. The AI analyses the map and, after a moment, shows every detected stall as a numbered marker.
+
+While the AI is working, the modal shows a progress message. Detection of a full map typically takes under a minute:
+
+![AI detection in progress: the import modal shows the message "Running AI detection, this can take up to a minute…"](ai-import-detecting.png)
+
+4. Review the result:
+   - **Drag** any marker to fine-tune its exact position.
+   - **Edit** the number or name of any stall in the list on the right.
+   - **Click** an empty spot on the map to add a stall the AI missed.
+   - Use the **trash icon** to remove a false detection.
+   - Untick any stall you do not want to import.
+5. Press **Import** to save the selected stalls into the fair.
+
+The review screen shows the detected stalls as numbered markers on the uploaded map (left), alongside an editable list (right) with each stall's number, name and detection confidence. A summary at the top reports how many stalls were detected, how many need review and how many are selected for import:
+
+![Review screen: the uploaded fair map with numbered stall markers on the left, and an editable table on the right listing each stall's number (#), name, confidence (CONF.) and a trash icon to remove it. The header reads "Detected 178. To review: 0. Selected: 178." and the import button reads "Import 178 casetas".](ai-import-review.png)
+
+> Notes: stall names are optional during import (a default "Caseta N" is used and can be edited later with the Edit button). Re-importing the same fair updates the matching stalls by number instead of duplicating them. Images are added afterwards from each stall's Edit form.
+
+If the chosen fair already contains stalls, the review screen shows a warning before importing. This makes it clear that importing will update the matching stalls and replace the fair's map, so a different fair should be created first if the new map belongs to a different venue:
+
+![Re-import warning: a red notice at the top of the review screen reading "This fair already has 175 casetas. Importing updates casetas with a matching number and adds new ones; casetas you don't re-detect are kept with their old positions, and the fair's map is replaced by this one. To set up a different fair instead, cancel and pick (or create) that fair first."](ai-import-reimport-warning.png)
 
 ---
 

@@ -15,26 +15,30 @@ The FeriaApp prototype was developed in Figma before implementation began. It in
 
 ### Public website.
 
-The public site evokes the visual identity of the *Feria de Jerez* — a warm earthy palette built around a deep red and a saffron accent, layered over creamy off-white backgrounds. Every value is declared as a CSS custom property in `public-web/styles/base/variables.css`, and the site supports a full **dark theme** activated with `[data-theme="dark"]` on `<html>` (the user's choice is persisted to `localStorage` and re-applied before paint to avoid the dark-mode flash).
+The public site evokes the visual identity of the *Feria de Jerez* with a warm earthy palette: creamy off-white backgrounds carry the layout, deep ink-navy text gives the structure, and a deep red plus a saffron accent are reserved for occasional highlights. Every value is declared as a CSS custom property in `public-web/styles/base/variables.css`, and the site supports a full **dark theme** activated with `[data-theme="dark"]` on `<html>` (the user's choice is persisted to `localStorage` and re-applied before paint to avoid the dark-mode flash).
 
-**Light theme** (default):
+The table below lists the **light theme** tokens ordered by how dominant each colour actually is across the rendered site (measured as the number of `var(--token)` references in the stylesheet). The off-white shells and the ink-navy text carry the visual weight; the red and saffron are accents applied sparingly, not the dominant colours.
 
-| CSS variable | HEX | Usage |
-|---|---|---|
-| `--primary` | `#C0392B` | Primary brand colour, links, active states |
-| `--primary-dark` | `#9E2E22` | Hover state of primary CTAs |
-| `--secondary` | `#F39C12` | Saffron accent for secondary highlights |
-| `--dark` | `#1A1A2E` | Headings and main text |
-| `--dark-soft` | `#222A44` | Footers, secondary surfaces |
-| `--cream` | `#F7E7DC` | Soft warm backgrounds |
-| `--cream-soft` | `#FBF1E9` | App-shell background |
-| `--card` | `#F1D9C8` | Stall and feature cards |
-| `--background` | `#FAFAFA` | Landing page background |
-| `--surface` | `#FFFFFF` | White panels and modals |
-| `--text` | `#2A2A35` | Body text |
-| `--muted` | `#6B6B76` | Captions, footer copy |
-| `--border` | `#E5DCD4` | Default border |
-| `--header-bg` | `rgba(255,255,255,0.95)` | Sticky header background (light) |
+**Light theme** (default), ordered by real usage:
+
+| CSS variable | HEX | `var()` refs | Usage |
+|---|---|---|---|
+| `--dark` | `#1A1A2E` | 52 | Headings and main text — the most-used colour on the site |
+| `--border` | `#E5DCD4` | 28 | Default borders and dividers |
+| `--muted` | `#6B6B76` | 26 | Captions, footer copy, secondary text |
+| `--text` | `#2A2A35` | 19 | Body text |
+| `--card` | `#F1D9C8` | 11 | Stall and feature cards |
+| `--cream` | `#F7E7DC` | 6 | Soft warm backgrounds, maps |
+| `--cream-soft` | `#FBF1E9` | 4 | App-shell background — the dominant page surface |
+| `--surface` | `#FFFFFF` | 3 | White panels and modals |
+| `--background` | `#FAFAFA` | 3 | Landing page background |
+| `--primary` | `#C0392B` | 2 | Red accent — closed-stall map pin and focus outline only |
+| `--header-bg` | `rgba(255,255,255,0.95)` | 1 | Sticky header background (light) |
+| `--secondary` | `#F39C12` | 0 | Saffron accent — declared for state/highlight use |
+| `--primary-dark` | `#9E2E22` | 0 | Declared hover state for primary CTAs |
+| `--dark-soft` | `#222A44` | 0 | Declared secondary-surface tone |
+
+> **Note on the palette hierarchy.** Although `--primary` carries the conventional CSS name for a "brand colour", in this site it is *not* the dominant colour: it is referenced only twice (the closed-stall map pin and a focus outline). The colours that actually define the look are the off-white shells (`--cream-soft` `#FBF1E9`, `--cream`, `--surface`) and the ink-navy text scale (`--dark`, `--text`, `--muted`). The red and saffron remain in the palette as deliberate, sparing accents. The tokens `--secondary`, `--primary-dark` and `--dark-soft` are declared for completeness but currently have no `var()` references in the stylesheet.
 
 **Dark theme** (`[data-theme="dark"]`) — same semantic tokens remapped to a navy palette while preserving the warm accents:
 
@@ -203,7 +207,7 @@ The public site is a single `index.html` that toggles between two views (`#landi
 | Class | Description |
 |---|---|
 | `.btn` | Base button — pill-ish radius, `font-weight: 600`, lifts 1px on hover. |
-| `.btn-primary` | Primary CTA on filled `--primary` red. |
+| `.btn-primary` | Primary CTA on a filled teal-blue (`#2280A4`), with a lighter blue (`#459AC0`) in dark mode. |
 | `.btn-ghost` | Outline button used for secondary actions ("Entrar", "Volver"). |
 | `.btn-dark` | Solid dark button for the *Instalar* PWA CTA. |
 | `.btn-lg` | Larger size variant for hero CTAs. |
@@ -215,7 +219,7 @@ The public site is a single `index.html` that toggles between two views (`#landi
 | **Hero** (`.hero`, `.hero-overlay`, `.hero-inner`) | `pages/landing.css` | Full-bleed background image with a tinted overlay, centred title, lead paragraph and a pair of CTAs. |
 | **Feature card** (`.feature-card`) | `pages/landing.css` | Square illustration card used in the "Todo al alcance de tus manos" grid (icon + heading + body). |
 | **Feature split** (`.feature-split`) | `pages/landing.css` | Image-on-one-side / list-on-the-other block that introduces the app's main highlights. |
-| **CTA banner** (`.cta`) | `pages/landing.css` | Full-bleed red panel with the *Entrar* call-to-action at the bottom of the landing. |
+| **CTA banner** (`.cta`) | `pages/landing.css` | Full-bleed background-image panel under an ink-navy overlay (`rgba(26,26,46,0.7)`), with the *Entrar* call-to-action at the bottom of the landing. |
 | **Stall card** (`.caseta-card`) | `pages/casetas.css` | Stall preview with image (or fallback), name, opening status (`.caseta-status.is-open` / `is-closed`) and a CTA button. |
 | **Menu caseta card** (`.menu-caseta-card`) | `pages/menus.css` | Per-stall card on the Menús page that lists the stall's dishes. |
 | **Detail tab card** (`.detail-tab-card`) | `pages/caseta-detail.css` | Tabbed panel on the stall detail page (menu list, schedule list). |
@@ -225,7 +229,7 @@ The public site is a single `index.html` that toggles between two views (`#landi
 
 | Component | Partial | Description |
 |---|---|---|
-| **Stalls map** (`.casetas-map`) | `pages/casetas.css` | Leaflet map showing every stall with custom red pins (`.caseta-pin`). |
+| **Stalls map** (`.casetas-map`) | `pages/casetas.css` | Leaflet map showing every stall with custom status-coloured pins (`.caseta-pin`): green (`#2ecc71`) for open stalls, red (`--primary`) for closed ones. |
 | **Detail map** (`.detail-map`) | `pages/caseta-detail.css` | Single-marker Leaflet map on the stall detail page, plus a "nearby stalls" link block. |
 
 **Modals & overlays**

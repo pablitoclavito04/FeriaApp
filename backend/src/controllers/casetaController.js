@@ -1,5 +1,7 @@
 const Caseta = require('../models/Caseta');
+const Fair = require('../models/Fair');
 const path = require('path');
+const { runAIDetection } = require('../services/detectCasetasAI');
 
 // @desc    Get all casetas
 // @route   GET /api/casetas
@@ -117,6 +119,24 @@ const deleteCaseta = async (req, res) => {
       return res.status(404).json({ error: 'Caseta not found', code: 'CASETA_NOT_FOUND' });
     }
     res.status(204).send();
+  } catch (error) {
+    /* istanbul ignore next */
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
+// @desc    Delete all casetas (optionally scoped to a fair)
+// @route   DELETE /api/casetas
+// @access  Private (admin)
+const deleteAllCasetas = async (req, res) => {
+  try {
+    const filter = {};
+    if (req.query.fair) filter.fair = req.query.fair;
+    const result = await Caseta.deleteMany(filter);
+    res.json({ deleted: result.deletedCount });
   } catch (error) {
     /* istanbul ignore next */
     if (error.name === 'CastError') {
@@ -519,8 +539,109 @@ const getCasetaStats = async (req, res) => {
   }
 };
 
+// @desc    Detect casetas from an uploaded fair map (AI vision, adapts to any map)
+// @route   POST /api/casetas/detect
+// @access  Private (admin)
+const detectCasetasFromMap = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'Map image is required', code: 'VALIDATION_ERROR' });
+  }
+  try {
+    const imagePath = path.resolve(req.file.path);
+    const { width, height, casetas } = await runAIDetection(imagePath);
+    res.json({
+      mapUrl: `/uploads/${req.file.filename}`,
+      imageSize: { width, height },
+      // Leaflet bounds in the existing convention: [[0,0],[height,width]].
+      bounds: [[0, 0], [height, width]],
+      expectedCount: casetas.length,
+      casetas,
+    });
+  } catch (error) {
+    if (error.code === 'AI_NO_KEY') {
+      return res.status(503).json({ error: 'AI detection is not configured on the server', code: 'AI_NO_KEY' });
+    }
+    if (error.code === 'AI_TIMEOUT') {
+      return res.status(504).json({ error: 'AI detection timed out', code: 'AI_TIMEOUT' });
+    }
+    if (error.code === 'AI_FAILED') {
+      return res.status(500).json({ error: 'AI detection failed', code: 'AI_FAILED' });
+    }
+    res.status(500).json({ error: 'Detection failed', code: 'DETECT_FAILED' });
+  }
+};
+
+// @desc    Bulk create/update casetas (e.g. after reviewing map detection)
+// @route   POST /api/casetas/bulk
+// @access  Private (admin)
+const bulkCreateCasetas = async (req, res) => {
+  try {
+    const { casetas, mapImage, mapBounds } = req.body;
+
+    // Resolve the target fair: explicit id, else the active one.
+    const fair = req.body.fair
+      ? await Fair.findById(req.body.fair)
+      : await Fair.findOne({ active: true });
+    if (!fair) {
+      return res.status(404).json({ error: 'Fair not found', code: 'FAIR_NOT_FOUND' });
+    }
+
+    // Reject duplicate numbers within the payload before writing anything.
+    const numbers = casetas.map((c) => c.number);
+    const duplicates = numbers.filter((n, i) => numbers.indexOf(n) !== i);
+    if (duplicates.length > 0) {
+      return res.status(422).json({
+        error: `Duplicate caseta numbers in payload: ${[...new Set(duplicates)].join(', ')}`,
+        code: 'VALIDATION_ERROR',
+      });
+    }
+
+    let created = 0;
+    let updated = 0;
+    for (const c of casetas) {
+      const providedName = c.name && c.name.trim() ? c.name.trim() : null;
+      const setFields = { location: { x: c.location.x, y: c.location.y } };
+      const setOnInsert = { number: c.number, fair: fair._id };
+      if (providedName) {
+        // A name was typed: overwrite it on existing casetas too.
+        setFields.name = providedName;
+      } else {
+        // No name: default only on insert; keep existing name on update.
+        setOnInsert.name = `Caseta ${c.number}`;
+      }
+      const result = await Caseta.updateOne(
+        { number: c.number, fair: fair._id },
+        { $set: setFields, $setOnInsert: setOnInsert },
+        { upsert: true }
+      );
+      if (result.upsertedCount) created += 1;
+      else if (result.modifiedCount) updated += 1;
+    }
+
+    // Associate the map (and its bounds) the casetas were detected on with the
+    // fair, so the public web renders markers on the right image.
+    if (mapImage) {
+      fair.mapImage = mapImage;
+      if (mapBounds) fair.mapBounds = { width: mapBounds.width, height: mapBounds.height };
+      await fair.save();
+    }
+
+    res.status(201).json({ created, updated, total: casetas.length });
+  } catch (error) {
+    /* istanbul ignore next */
+    if (error.name === 'CastError') {
+      return res.status(400).json({ error: 'Invalid ID format', code: 'INVALID_ID' });
+    }
+    if (error.name === 'ValidationError') {
+      return res.status(422).json({ error: error.message, code: 'VALIDATION_ERROR' });
+    }
+    res.status(500).json({ error: 'Server error', code: 'SERVER_ERROR' });
+  }
+};
+
 module.exports = {
-  getCasetas, getCaseta, createCaseta, updateCaseta, deleteCaseta,
+  getCasetas, getCaseta, createCaseta, updateCaseta, deleteCaseta, deleteAllCasetas,
+  detectCasetasFromMap, bulkCreateCasetas,
   searchCasetas, getCasetasSortedDesc, getCasetasWithImage, getCasetasWithoutImage,
   getHighestCaseta, getCasetasWithLocation, getCasetaFull, countCasetasByFair,
   getCasetaMenus, getCasetaConcerts,

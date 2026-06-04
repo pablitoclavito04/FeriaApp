@@ -243,7 +243,7 @@ router.post('/bulk', protect, authorize('admin'), createMenusBulk);
  *       404:
  *         description: Menu item not found
  */
-router.put('/:id', protect, authorize('admin'), menuUpdateValidator, updateMenu);
+router.put('/:id', protect, authorize('admin', 'editor'), menuUpdateValidator, updateMenu);
 
 /**
  * @swagger

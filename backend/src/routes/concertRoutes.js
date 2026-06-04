@@ -209,7 +209,7 @@ router.post('/', protect, authorize('admin'), concertValidator, createConcert);
  *       404:
  *         description: Concert not found
  */
-router.put('/:id', protect, authorize('admin'), concertUpdateValidator, updateConcert);
+router.put('/:id', protect, authorize('admin', 'editor'), concertUpdateValidator, updateConcert);
 
 /**
  * @swagger

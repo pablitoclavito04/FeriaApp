@@ -12,6 +12,7 @@ jest.mock('../src/config/octokit', () => ({
 jest.setTimeout(30000);
 
 const request = require('supertest');
+const connectTestDb = require('./testDb');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const dotenv = require('dotenv');
@@ -47,7 +48,7 @@ const login = async (email) => {
 };
 
 beforeAll(async () => {
-  await mongoose.connect(process.env.MONGODB_TEST_URI || process.env.MONGODB_URI);
+  await connectTestDb();
 
   // Seed admin and obtain token to set up fixture data
   await seedUser('admin-roles@feriaapp.com', 'admin');
@@ -114,13 +115,12 @@ describe('Authorization - editor role is forbidden on write routes', () => {
     expect(res.body.code).toBe('FORBIDDEN');
   });
 
-  test('PUT /api/fairs/:id returns 403 for editor', async () => {
+  test('PUT /api/fairs/:id succeeds for editor (editor may edit)', async () => {
     const res = await request(app)
       .put(`/api/fairs/${fairId}`)
       .set('Authorization', `Bearer ${editorToken}`)
-      .send({ name: 'X' });
-    expect(res.statusCode).toBe(403);
-    expect(res.body.code).toBe('FORBIDDEN');
+      .send({ name: 'Roles Fixture Fair edited' });
+    expect(res.statusCode).toBe(200);
   });
 
   test('DELETE /api/fairs/:id returns 403 for editor', async () => {
@@ -140,13 +140,12 @@ describe('Authorization - editor role is forbidden on write routes', () => {
     expect(res.body.code).toBe('FORBIDDEN');
   });
 
-  test('PUT /api/casetas/:id returns 403 for editor', async () => {
+  test('PUT /api/casetas/:id succeeds for editor (editor may edit)', async () => {
     const res = await request(app)
       .put(`/api/casetas/${casetaId}`)
       .set('Authorization', `Bearer ${editorToken}`)
-      .send({ name: 'X' });
-    expect(res.statusCode).toBe(403);
-    expect(res.body.code).toBe('FORBIDDEN');
+      .send({ name: 'Roles Fixture Caseta edited' });
+    expect(res.statusCode).toBe(200);
   });
 
   test('DELETE /api/casetas/:id returns 403 for editor', async () => {
@@ -175,13 +174,12 @@ describe('Authorization - editor role is forbidden on write routes', () => {
     expect(res.body.code).toBe('FORBIDDEN');
   });
 
-  test('PUT /api/menus/:id returns 403 for editor', async () => {
+  test('PUT /api/menus/:id succeeds for editor (editor may edit)', async () => {
     const res = await request(app)
       .put(`/api/menus/${menuId}`)
       .set('Authorization', `Bearer ${editorToken}`)
-      .send({ name: 'X' });
-    expect(res.statusCode).toBe(403);
-    expect(res.body.code).toBe('FORBIDDEN');
+      .send({ name: 'Roles Fixture Dish edited' });
+    expect(res.statusCode).toBe(200);
   });
 
   test('DELETE /api/menus/:id returns 403 for editor', async () => {
@@ -201,13 +199,12 @@ describe('Authorization - editor role is forbidden on write routes', () => {
     expect(res.body.code).toBe('FORBIDDEN');
   });
 
-  test('PUT /api/concerts/:id returns 403 for editor', async () => {
+  test('PUT /api/concerts/:id succeeds for editor (editor may edit)', async () => {
     const res = await request(app)
       .put(`/api/concerts/${concertId}`)
       .set('Authorization', `Bearer ${editorToken}`)
-      .send({ artist: 'X' });
-    expect(res.statusCode).toBe(403);
-    expect(res.body.code).toBe('FORBIDDEN');
+      .send({ artist: 'Roles Fixture Artist edited' });
+    expect(res.statusCode).toBe(200);
   });
 
   test('DELETE /api/concerts/:id returns 403 for editor', async () => {
