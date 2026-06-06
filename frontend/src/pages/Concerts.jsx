@@ -6,6 +6,8 @@ import useAuth from '../context/useAuth';
 import useModalClose from '../hooks/useModalClose';
 import { canCreate, canEdit, canDelete } from '../utils/permissions';
 
+// Concerts page: CRUD for the concert/activity schedule, each linked to a
+// stall. Includes client-side validation and role-gated actions.
 const Concerts = () => {
   const { showToast } = useToast();
   const { user } = useAuth();

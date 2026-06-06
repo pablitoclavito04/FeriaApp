@@ -2,8 +2,11 @@ import { createContext, useState, useCallback } from 'react';
 
 export const ToastContext = createContext();
 
+// Monotonic id source so each toast has a unique key.
 let toastId = 0;
 
+// Toast provider: exposes showToast(message, type, duration) and renders the
+// stack of notifications, auto-dismissing each one with a fade-out animation.
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
 

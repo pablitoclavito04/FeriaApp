@@ -5,6 +5,7 @@ import useTheme from '../context/useTheme';
 import useToast from '../context/useToast';
 import logotipo from '../assets/logotipo.png';
 
+// Inline SVG icons for the light/dark theme toggle.
 const SunIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="5" />
@@ -25,6 +26,8 @@ const MoonIcon = () => (
   </svg>
 );
 
+// Panel sidebar: navigation links (some role-gated), the light/dark theme
+// toggle, the logout button and a mobile hamburger menu.
 const Sidebar = () => {
   const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();

@@ -6,6 +6,8 @@ import useModalClose from '../hooks/useModalClose';
 import { canCreate, canEdit, canDelete } from '../utils/permissions';
 import { formatDate } from '../utils/format';
 
+// Fairs page: CRUD for fair events (name, dates, location, active flag), with
+// client-side validation (including start/end date checks) and role-gated actions.
 const Fairs = () => {
   const { showToast } = useToast();
   const { user } = useAuth();

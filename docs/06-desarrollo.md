@@ -431,4 +431,50 @@ cd backend
 npm run export:openapi
 ```
 
+---
+
+## Client-side development (DWEC) — feature traceability.
+
+This section maps the client-side rubric criteria to where each is implemented in the React admin panel (`frontend/src/`), so the evaluation can be traced directly to the code.
+
+### 1. Modern language syntax and user-defined structures.
+
+The panel is written entirely in modern ES6+: ES modules (`import`/`export`), arrow functions, destructuring, the spread operator, template literals, optional chaining (`?.`) and `async`/`await`. Beyond the built-in features, the project defines its own reusable structures:
+
+- **Custom hooks:** `hooks/useModalClose.js` (close dialogs with Escape), `context/useAuth.js`, `context/useTheme.js`, `context/useToast.js`.
+- **Reusable components:** `PrivateRoute`, `Sidebar`, `MapPicker`, `MapReview`, `ImportCasetasModal`, `RoleBanner`.
+- **Utility modules:** `utils/permissions.js` (role checks), `utils/format.js` (price/date formatters).
+
+The code is commented throughout: each file has a header explaining its purpose and non-obvious logic is annotated inline.
+
+### 2. Built-in (predefined) objects of the language.
+
+The application uses the language's predefined objects to process data and produce output:
+
+- `Intl.NumberFormat` / `Intl.DateTimeFormat` — format prices as euros and dates in Spanish (`utils/format.js`).
+- `Array` methods — `map`, `filter`, `sort`, `slice`, `reduce` (e.g. average menu price), `some`, `find`.
+- `Set` — de-duplicate and track selected stalls during map import (`ImportCasetasModal.jsx`).
+- `JSON.parse`/`JSON.stringify` and `sessionStorage`/`localStorage` — persist the session and theme.
+- `Promise.all` — load dashboard counts in parallel.
+- `RegExp` — client-side email/time validation.
+- `FormData` — multipart uploads (images, map detection).
+
+The document itself is updated as a result of execution: lists are rendered dynamically from fetched data, and the light/dark theme changes the document appearance via `document.documentElement.setAttribute('data-theme', …)`.
+
+### 3. Event handling and form validation.
+
+Interaction is event-driven: `onSubmit` (with `e.preventDefault()`), `onChange`, `onClick`, drag events on map markers (`dragend`), map click capture (`useMapEvents`) and a global `keydown` listener for the Escape key. Every form runs its own JavaScript validation function before submitting (with `noValidate` to disable the browser's native validation), producing field-level error messages — see `validate()` in `Login`, `Register`, `Fairs`, `Casetas`, `Menus`, `Concerts`.
+
+### 4. Document Object Model (DOM).
+
+The app accesses and modifies the document and associates actions to model events: `document.querySelector(...).scrollTo(...)` (scroll to the edit form), `document.documentElement.setAttribute` (theme), `document.body.style` (lock scroll when the mobile menu is open), `document.addEventListener`/`removeEventListener` (Escape handler, cleaned up on unmount), `useRef` for stable references, and dynamic conditional rendering that creates and removes elements from data.
+
+### 5. Asynchronous client–server communication.
+
+All communication is asynchronous through the **axios** library (`services/api.js`), with a request interceptor that attaches the JWT automatically. Calls use `async`/`await` with `try`/`catch` error handling, and two data formats are used: **JSON** for CRUD operations and **multipart/FormData** for file uploads (stall images and the fair map sent to AI detection). The document is updated dynamically after each response by re-rendering React state.
+
+### Performance and accessibility.
+
+The panel applies **route-based code splitting** (`React.lazy` + `Suspense` in `App.jsx`), so each page is a separate chunk downloaded on demand. Modal dialogs are accessible: `role="dialog"`, `aria-modal`, `aria-labelledby`, labelled close buttons and Escape-to-close keyboard support.
+
 The current export is **~1.9k lines** covering every endpoint with its parameters, request bodies and response schemas.

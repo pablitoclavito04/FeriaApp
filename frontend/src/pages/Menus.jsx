@@ -10,6 +10,8 @@ import { formatPrice, average } from '../utils/format';
 const INITIAL_ROWS = 3;
 const emptyRow = () => ({ name: '', description: '', price: '' });
 
+// Menus page: per-stall menu items with single edit and bulk creation, prices
+// formatted as euros, client-side validation and role-gated actions.
 const Menus = () => {
   const { showToast } = useToast();
   const { user } = useAuth();

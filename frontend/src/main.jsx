@@ -8,6 +8,8 @@ import './styles/main.scss'
 import 'leaflet/dist/leaflet.css'
 import App from './App.jsx'
 
+// Application entry point: mounts <App> on #root, wrapped in the router and the
+// global providers (theme, toasts, authentication).
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>

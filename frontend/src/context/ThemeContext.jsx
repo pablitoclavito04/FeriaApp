@@ -2,6 +2,9 @@ import { createContext, useState, useEffect } from 'react';
 
 export const ThemeContext = createContext();
 
+// Theme provider: keeps the light/dark theme, persists it in localStorage and
+// applies it by setting the data-theme attribute on the document root, which
+// the CSS variables react to.
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem('theme') || 'light';

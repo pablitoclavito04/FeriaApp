@@ -5,6 +5,8 @@ import useModalClose from '../hooks/useModalClose';
 
 const ROLES = ['admin', 'editor', 'viewer'];
 
+// Users page (admin only): lists panel users and lets an admin change each
+// user's role or delete them. The admin's own account is excluded by the API.
 const Users = () => {
   const { showToast } = useToast();
   const [users, setUsers] = useState([]);

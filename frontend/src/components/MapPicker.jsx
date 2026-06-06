@@ -14,6 +14,7 @@ L.Icon.Default.mergeOptions({
 // Bounds del plano (ajusta estos valores según tu imagen)
 const bounds = [[0, 0], [1052, 1514]];
 
+// Captures clicks on the map and reports the clicked coordinates upward.
 const LocationPicker = ({ onLocationSelect }) => {
   useMapEvents({
     click(e) {
@@ -23,6 +24,8 @@ const LocationPicker = ({ onLocationSelect }) => {
   return null;
 };
 
+// Single-stall location editor: shows the fair plan and lets the admin click
+// to place (or move) one marker, reporting its coordinates to the parent form.
 const MapPicker = ({ onLocationSelect, initialPosition }) => {
   const [marker, setMarker] = useState(initialPosition || null);
 

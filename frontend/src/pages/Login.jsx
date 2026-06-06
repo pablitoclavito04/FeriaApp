@@ -4,6 +4,8 @@ import useAuth from '../context/useAuth';
 import useToast from '../context/useToast';
 import logotipo from '../assets/logotipo.png';
 
+// Login page: validates email/password on the client, authenticates against
+// the API and stores the session, then redirects into the panel.
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

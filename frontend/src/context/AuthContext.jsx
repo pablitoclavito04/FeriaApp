@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { AuthContext } from './AuthContextDef';
 import authService from '../services/authService';
 
+// Authentication provider: holds the logged-in user and exposes login,
+// register and logout. The session (token + user) is persisted in
+// sessionStorage so it survives reloads but clears when the browser closes.
 export const AuthProvider = ({ children }) => {
   const token = sessionStorage.getItem('token');
   const savedUser = sessionStorage.getItem('user');

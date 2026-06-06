@@ -1,3 +1,4 @@
+// Authentication API calls: login, register and fetch the current profile.
 import api from './api';
 
 const login = async (email, password) => {

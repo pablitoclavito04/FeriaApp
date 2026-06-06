@@ -4,6 +4,8 @@ import useAuth from '../context/useAuth';
 import useToast from '../context/useToast';
 import logotipo from '../assets/logotipo.png';
 
+// Registration page: validates the form on the client and creates a new
+// account. Self-registered accounts are always created as 'viewer'.
 const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');

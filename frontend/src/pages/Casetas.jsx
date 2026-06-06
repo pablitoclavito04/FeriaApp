@@ -8,6 +8,8 @@ import useAuth from '../context/useAuth';
 import useModalClose from '../hooks/useModalClose';
 import { canCreate, canEdit, canDelete } from '../utils/permissions';
 
+// Casetas page: CRUD for stalls plus the map location editor, AI map import
+// (ImportCasetasModal), client-side pagination and role-gated actions.
 const Casetas = () => {
   const { showToast } = useToast();
   const { user } = useAuth();

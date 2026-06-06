@@ -9,6 +9,8 @@ import RoleBanner from '../components/RoleBanner';
 import useModalClose from '../hooks/useModalClose';
 import { canPublish } from '../utils/permissions';
 
+// Dashboard: shows summary counts (fairs, stalls, menus, concerts) and, for
+// admins, the one-click "Publish website" action.
 const Dashboard = () => {
   const { user } = useAuth();
   const [publishing, setPublishing] = useState(false);

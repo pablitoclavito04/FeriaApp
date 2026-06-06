@@ -1,3 +1,6 @@
+// Shared axios instance for all API calls. Uses VITE_API_URL when set (dev),
+// else a relative /api base so requests go through the nginx proxy (Docker /
+// production). A request interceptor attaches the JWT to every call.
 import axios from 'axios';
 
 const api = axios.create({
