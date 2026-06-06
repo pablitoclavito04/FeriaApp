@@ -4,6 +4,7 @@ import useToast from '../context/useToast';
 import useAuth from '../context/useAuth';
 import useModalClose from '../hooks/useModalClose';
 import { canCreate, canEdit, canDelete } from '../utils/permissions';
+import { formatDate } from '../utils/format';
 
 const Fairs = () => {
   const { showToast } = useToast();
@@ -228,8 +229,8 @@ const Fairs = () => {
             <tr key={fair._id}>
               <td>{fair.name}</td>
               <td>{fair.location}</td>
-              <td>{new Date(fair.startDate).toLocaleDateString()}</td>
-              <td>{new Date(fair.endDate).toLocaleDateString()}</td>
+              <td>{formatDate(fair.startDate)}</td>
+              <td>{formatDate(fair.endDate)}</td>
               <td>
                 <span className={`badge ${fair.active ? 'badge-success' : 'badge-muted'}`}>
                   {fair.active ? 'Active' : 'Inactive'}

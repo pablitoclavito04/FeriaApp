@@ -5,6 +5,7 @@ import useToast from '../context/useToast';
 import useAuth from '../context/useAuth';
 import useModalClose from '../hooks/useModalClose';
 import { canCreate, canEdit, canDelete } from '../utils/permissions';
+import { formatPrice, average } from '../utils/format';
 
 const INITIAL_ROWS = 3;
 const emptyRow = () => ({ name: '', description: '', price: '' });
@@ -256,6 +257,12 @@ const Menus = () => {
         {canCreate(user?.role) && <button onClick={openCreateForm}>+ New Menu</button>}
       </div>
 
+      {menus.length > 0 && (
+        <p className="location-info">
+          {menus.length} items · average price {formatPrice(average(menus.map((m) => m.price)))}
+        </p>
+      )}
+
       {error && <p className="error">{error}</p>}
 
       {showForm && isEditing && (
@@ -412,7 +419,7 @@ const Menus = () => {
             <tr key={menu._id}>
               <td>{menu.name}</td>
               <td>{menu.description}</td>
-              <td>{menu.price}€</td>
+              <td>{formatPrice(menu.price)}</td>
               <td>{menu.caseta?.name}</td>
               <td>
                 {canEdit(user?.role) && <button onClick={() => handleEdit(menu)}>Edit</button>}
