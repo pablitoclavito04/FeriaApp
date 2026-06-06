@@ -11,8 +11,10 @@ L.Icon.Default.mergeOptions({
 });
 
 // Backend origin where /uploads images are served. Derived from the API URL
-// (strip the trailing /api), falling back to the dev backend.
-const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// (strip the trailing /api). When VITE_API_URL is unset (Docker/production
+// build), fall back to a relative origin so images are requested as
+// /uploads/... and served through the same nginx proxy as the API.
+const apiUrl = import.meta.env.VITE_API_URL || '';
 const BACKEND_ORIGIN = apiUrl.replace(/\/api\/?$/, '');
 
 // Build a numbered, color-coded marker icon. Green = confident/selected,
