@@ -235,7 +235,7 @@ Both volumes are declared at the bottom of the file with no driver options — D
 
 #### Image registry.
 
-**Not applicable for this project.** Images are built locally from the Dockerfiles above; the project is not deployed to a public host, so there is no benefit to pushing the images to Docker Hub or GHCR. If the project moved to a VPS this would change — see the production note at the end of [08-despliegue.md §HTTPS configuration](08-despliegue.md#https-configuration).
+**Not used for this project.** The images are built directly on each host from the Dockerfiles above (locally and on the cloud server), rather than pulled from a registry. For a small single-server deployment like this one, building from source on the server with `docker compose up --build` is simpler than maintaining a published image on Docker Hub or GHCR; the cloud deployment (see [08-despliegue.md §Cloud deployment](08-despliegue.md#cloud-deployment-digitalocean)) does exactly that. Publishing to a registry would only pay off with multiple servers or an automated rollout.
 
 The locally built images can be listed with `docker images | findstr feriaapp` — the listing shows the three custom-built images (`feriaapp-backend`, `feriaapp-frontend`, `feriaapp-public-web`). The remaining two services (`mongo:7` and `nginx:alpine`) reuse official images from Docker Hub without modification, which is why they don't appear in the filtered listing:
 
@@ -415,6 +415,7 @@ The rubric's "Excellent" level requires a clear and reproducible network verific
 | `https://localhost/api/...` | 443 | `feriaapp-nginx` | `backend:5000` | REST API (Express). |
 | `https://localhost/api/docs` | 443 | `feriaapp-nginx` → `backend:5000` | Swagger UI | Interactive API documentation. |
 | `https://localhost/public/...` | 443 | `feriaapp-nginx` | `public-web:80` | Public website (static). |
+| `https://feriaapp.com/...` | 443 | `feriaapp-nginx` | (same routing as above) | Cloud deployment — public domain with trusted Let's Encrypt certificate, resolved by public DNS. |
 | `https://pablitoclavito04.github.io/FeriaApp/` | 443 (CDN) | GitHub Pages | n/a | Public site for end users — separate deployment. |
 
 The routing rules live in [nginx.conf](../nginx.conf). Only ports `80` and `443` are published to the host (see `ports:` in [docker-compose.yaml](../docker-compose.yaml)); every other port (`5000`, `27017`, the two internal `80`s of `frontend` and `public-web`) is `expose:`d only to the Docker network.
@@ -504,7 +505,46 @@ Expected: a JSON document listing all five containers as members of the `bridge`
 
 ### Note on `/etc/hosts` / local DNS.
 
-No host-side `/etc/hosts` modification is required for this project — `localhost` is sufficient because nginx is the only entry point and it accepts requests for any `Host` header. Inside the Docker network, name resolution is provided by Docker itself, not by `/etc/hosts`. If a custom local domain were desired (e.g. `feriaapp.local`), the standard approach would be to add `127.0.0.1 feriaapp.local` to the host's `hosts` file and reissue the self-signed certificate with that CN; this is not done here because `localhost` already serves the purpose for a local developer setup.
+No host-side `/etc/hosts` modification is required for the local setup — `localhost` is sufficient because nginx is the only entry point and it accepts requests for any `Host` header. Inside the Docker network, name resolution is provided by Docker itself, not by `/etc/hosts`.
+
+### Public DNS name resolution (cloud deployment).
+
+The application is also deployed on a public server under the real domain **feriaapp.com** (see the cloud-deployment section of [08-despliegue.md](08-despliegue.md#cloud-deployment-digitalocean)). Here name resolution is performed by **public DNS**, which is exactly the "name resolution" evidence the criterion asks for. The chain is:
+
+1. The domain was registered and its **nameservers delegated to DigitalOcean** (`ns1/ns2/ns3.digitalocean.com`).
+2. An **A record** (`feriaapp.com → 165.227.170.216`, the Droplet's public IP) was created in DigitalOcean's DNS.
+
+This is verified with `nslookup` from any machine:
+
+```bash
+# Which nameservers are authoritative for the domain
+nslookup -type=NS feriaapp.com
+#   feriaapp.com   nameserver = ns1.digitalocean.com
+#   feriaapp.com   nameserver = ns2.digitalocean.com
+#   feriaapp.com   nameserver = ns3.digitalocean.com
+
+# Which IP the domain resolves to
+nslookup feriaapp.com
+#   Name:    feriaapp.com
+#   Address: 165.227.170.216      <- the Droplet
+```
+
+The first command proves the DNS delegation took effect (the authoritative nameservers are DigitalOcean's). The second proves the public name resolves to the server's IP — so a request to `https://feriaapp.com` reaches this Droplet, where nginx terminates TLS and proxies to the internal services exactly as described above.
+
+Finally, the published name and its trusted certificate are confirmed end-to-end (no `-k` needed, because the Let's Encrypt certificate is trusted):
+
+```bash
+curl -I https://feriaapp.com
+#   HTTP/1.1 200 OK    <- name resolves, TLS trusted, proxy reaches the panel
+
+# Inspect the certificate issuer/subject
+echo | openssl s_client -connect feriaapp.com:443 -servername feriaapp.com 2>/dev/null \
+  | openssl x509 -noout -issuer -subject
+#   issuer = C=US, O=Let's Encrypt, CN=YR2
+#   subject = CN=feriaapp.com
+```
+
+In summary: on the **local** deployment, name resolution is internal (Docker DNS) and the host name is `localhost`; on the **cloud** deployment, name resolution is public (DNS A record on the `feriaapp.com` domain) and the certificate is a trusted Let's Encrypt one.
 
 ### Evidence index.
 
@@ -515,6 +555,7 @@ No host-side `/etc/hosts` modification is required for this project — `localho
 | HTTP→HTTPS redirect + HTTPS reaches backend (Helmet headers visible) | [https-curl-verification.png](https-curl-verification.png) |
 | End-to-end request chain (curl + backend logs) | [backend-curl-and-logs.png](backend-curl-and-logs.png) |
 | Public website reachable on its real domain | [public-site-github-pages.png](public-site-github-pages.png) |
+| Public DNS name resolution (`nslookup feriaapp.com` → Droplet IP) + trusted HTTPS on the domain | `nslookup`/`curl` commands above (cloud deployment) |
 | Docker-internal DNS (`ping mongo` from `feriaapp-backend`) | [docker-internal-dns.png](docker-internal-dns.png) |
 | Real HTTP call between proxy and backend by service name (`wget` from nginx to `backend:5000`) | [docker-internal-wget.png](docker-internal-wget.png) |
 | Backend startup logs (`Server running on port 5000`, `MongoDB connected: mongo`) | [docker-logs-startup.png](docker-logs-startup.png) |
