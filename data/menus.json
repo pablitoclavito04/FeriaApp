@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "_id": "6a249753420765914a01df13",
+    "name": "Tortilla de patatas",
+    "description": "",
+    "price": 10,
+    "caseta": {
+      "_id": "6a21e8bc0c07ee970e9d543c",
+      "number": 1,
+      "name": "La casapuerta"
+    },
+    "__v": 0,
+    "createdAt": "2026-06-06T21:55:31.213Z",
+    "updatedAt": "2026-06-06T21:55:31.213Z"
+  }
+]
