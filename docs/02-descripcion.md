@@ -88,8 +88,9 @@ The stall search engine incorporates typo tolerance via Fuse.js. Visitors find w
 
 - **Mobile first:** The design is primarily intended for mobile, since most visitors will consult the application from their phone during the fair.
 - **Simplicity:** Clean and intuitive interface that allows information to be found quickly.
-- **Accessibility:** Compliance with WCAG 2.1 level AA standard, with a minimum colour contrast ratio of 4.5:1 and keyboard-accessible navigation.
-- **Performance:** The public website is a static page, ensuring minimal load times even on a slow connection.
+- **Accessibility:** Compliance with WCAG 2.1 level AA standard, with a minimum colour contrast ratio of 4.5:1 and keyboard-accessible navigation. In the panel, modal dialogs use `role="dialog"`/`aria-modal` with labelled titles and can be closed with the Escape key.
+- **Usability feedback:** Toast notifications for every action, inline form validation messages, confirmation dialogs for destructive actions, loading states and pagination for large listings.
+- **Performance:** The public website is a static page, ensuring minimal load times even on a slow connection. The panel applies route-based code splitting (lazy loading) so each section is downloaded only when visited.
 
 ### Administration panel.
 

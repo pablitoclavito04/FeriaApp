@@ -54,6 +54,14 @@ The core differentiating feature of the project is automatic stall detection fro
 
 To stay independent of any image-processing library, the model returns **relative** coordinates (a fraction of the map's width and height); the backend reads the image's real dimensions directly from the PNG/JPEG file header and scales those fractions to the project's Leaflet coordinate convention. Because AI positions are approximate, the panel shows the detected stalls on a review map where the administrator drags each marker to its exact spot and edits, adds or removes stalls before importing. Automatic detection does the bulk of the work; a final human adjustment guarantees precision. The API key lives only in a server-side environment variable and is never committed to the repository.
 
+### Lazy loading of panel pages (code splitting):
+
+The administration panel uses route-based **code splitting**: every page (`Dashboard`, `Fairs`, `Casetas`, `Menus`, `Concerts`, `Users`, `Login`, `Register`) is loaded with `React.lazy()` and rendered inside a `<Suspense>` boundary with a loading fallback. Vite emits a separate JavaScript chunk per page, so the browser only downloads the code for the page the user actually visits instead of the whole panel up front. This noticeably reduces the initial bundle — the heaviest page (`Casetas`, which bundles the Leaflet map) is no longer part of the first load and is fetched on demand only when its route is opened.
+
+### Accessibility of dialogs:
+
+All modal dialogs (delete confirmations, publish, map import) are marked up as accessible dialogs: `role="dialog"`, `aria-modal="true"` and `aria-labelledby` pointing at the dialog title, plus an `aria-label` on the close button. A small reusable hook (`useModalClose`) closes the open dialog with the **Escape** key, so dialogs are fully operable from the keyboard and announced correctly by screen readers.
+
 ### Hybrid architecture (MERN + GitHub Pages):
 
 A hybrid architecture was chosen instead of a traditional server to serve the public website. The main reason is that fair visitors need a website that loads quickly and works offline, something that can only be achieved with a static page. GitHub Pages allows hosting that website for free with very good availability.

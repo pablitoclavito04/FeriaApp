@@ -6,6 +6,7 @@ import casetaService from '../services/casetaService';
 import menuService from '../services/menuService';
 import concertService from '../services/concertService';
 import RoleBanner from '../components/RoleBanner';
+import useModalClose from '../hooks/useModalClose';
 import { canPublish } from '../utils/permissions';
 
 const Dashboard = () => {
@@ -15,6 +16,9 @@ const Dashboard = () => {
   const [error, setError] = useState('');
   const [showPublishModal, setShowPublishModal] = useState(false);
   const [stats, setStats] = useState({ fairs: 0, casetas: 0, menus: 0, concerts: 0 });
+
+  // Close the publish dialog with the Escape key (keyboard a11y).
+  useModalClose(() => setShowPublishModal(false));
 
   useEffect(() => {
     const loadStats = async () => {
@@ -147,10 +151,10 @@ const Dashboard = () => {
 
       {showPublishModal && (
         <div className="modal-overlay" onClick={() => setShowPublishModal(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+          <div className="modal" role="dialog" aria-modal="true" aria-labelledby="publish-title" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Publish Website</h3>
-              <button className="modal-close" onClick={() => setShowPublishModal(false)}>
+              <h3 id="publish-title">Publish Website</h3>
+              <button className="modal-close" onClick={() => setShowPublishModal(false)} aria-label="Close dialog">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18" />
                   <line x1="6" y1="6" x2="18" y2="18" />

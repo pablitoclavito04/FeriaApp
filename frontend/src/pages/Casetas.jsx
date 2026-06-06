@@ -5,6 +5,7 @@ import MapPicker from '../components/MapPicker';
 import ImportCasetasModal from '../components/ImportCasetasModal';
 import useToast from '../context/useToast';
 import useAuth from '../context/useAuth';
+import useModalClose from '../hooks/useModalClose';
 import { canCreate, canEdit, canDelete } from '../utils/permissions';
 
 const Casetas = () => {
@@ -31,6 +32,13 @@ const Casetas = () => {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
+
+  // Close the delete dialogs with the Escape key (keyboard a11y). Don't close
+  // the "delete all" dialog mid-operation.
+  useModalClose(() => {
+    setDeletingId(null);
+    if (!deletingAll) setShowDeleteAll(false);
+  });
 
   useEffect(() => {
     loadData();
@@ -378,10 +386,10 @@ const Casetas = () => {
 
       {showDeleteAll && (
         <div className="modal-overlay" onClick={() => !deletingAll && setShowDeleteAll(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+          <div className="modal" role="dialog" aria-modal="true" aria-labelledby="delete-all-title" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Delete all casetas</h3>
-              <button className="modal-close" onClick={() => setShowDeleteAll(false)} disabled={deletingAll}>
+              <h3 id="delete-all-title">Delete all casetas</h3>
+              <button className="modal-close" onClick={() => setShowDeleteAll(false)} disabled={deletingAll} aria-label="Close dialog">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18" />
                   <line x1="6" y1="6" x2="18" y2="18" />
@@ -405,10 +413,10 @@ const Casetas = () => {
 
       {deletingId && (
         <div className="modal-overlay" onClick={() => setDeletingId(null)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+          <div className="modal" role="dialog" aria-modal="true" aria-labelledby="delete-caseta-title" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Delete Caseta</h3>
-              <button className="modal-close" onClick={() => setDeletingId(null)}>
+              <h3 id="delete-caseta-title">Delete Caseta</h3>
+              <button className="modal-close" onClick={() => setDeletingId(null)} aria-label="Close dialog">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18" />
                   <line x1="6" y1="6" x2="18" y2="18" />

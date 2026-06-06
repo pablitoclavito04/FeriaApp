@@ -181,13 +181,96 @@ curl -k -I https://localhost/api/fairs
 
 The first request confirms the HTTP→HTTPS redirect (`301 Moved Permanently` + `Location: https://localhost/`). The second confirms that nginx serves TLS correctly and proxies the API to the backend (`200 OK`, `Content-Type: application/json`). The response also includes the Helmet security headers — most notably `Strict-Transport-Security: max-age=31536000`, which instructs the browser to always use HTTPS for this host.
 
-**For production deployment** the workflow would use Let's Encrypt instead:
-1. Register a public domain pointing to the VPS IP.
+**For a domain-based production deployment** the workflow would use Let's Encrypt instead of a self-signed certificate:
+1. Register a public domain pointing to the server IP.
 2. Install **certbot** in the host: `sudo apt install certbot python3-certbot-nginx`.
 3. Run `sudo certbot --nginx -d feriaapp.example.com` — certbot validates domain ownership, issues the certificate and reconfigures nginx automatically.
 4. A `cron` job renews the certificate every 60 days.
 
-The current setup is local-only because the project is not deployed on a public server.
+The application is also deployed on a public cloud server (see the next section); that deployment currently uses the self-signed certificate and is reached by IP.
+
+---
+
+## Cloud deployment (DigitalOcean).
+
+The application is deployed on a public cloud server so it can be reached from anywhere — for example by the evaluators, without access to the developer's machine. The same Docker Compose stack used locally runs unchanged on the server, which is the main benefit of containerising the application: *build once, run anywhere*.
+
+### Server (Droplet).
+
+| Item | Value |
+|---|---|
+| Provider | DigitalOcean (Droplet) |
+| Region | Frankfurt (FRA1) — low latency from Spain |
+| Image | Docker on Ubuntu 22.04 (Marketplace, Docker pre-installed) |
+| Size | Basic, 2 vCPU / 2 GB RAM / 60 GB SSD |
+| Access URL | `https://<server-ip>` |
+| Authentication | SSH key (password login disabled) |
+
+### Deployment process.
+
+The server is provisioned once and then runs the same stack as local development:
+
+```bash
+# 1. Connect via SSH (key-based authentication)
+ssh -i ~/.ssh/feriaapp_do root@<server-ip>
+
+# 2. Update the base system (security patches)
+apt-get update && apt-get upgrade -y
+
+# 3. Clone the repository (production branch)
+git clone --branch main https://github.com/pablitoclavito04/FeriaApp.git
+cd FeriaApp
+
+# 4. Create the .env with the production secrets (never committed)
+#    JWT_SECRET, GITHUB_TOKEN/OWNER/REPO, ANTHROPIC_API_KEY
+
+# 5. Generate the self-signed TLS certificate
+mkdir -p nginx/ssl
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout nginx/ssl/feriaapp.key -out nginx/ssl/feriaapp.crt \
+  -subj "/C=ES/ST=Cadiz/L=Jerez/O=FeriaApp/OU=TFG/CN=<server-ip>"
+
+# 6. Build and start the whole stack
+docker compose up --build -d
+
+# 7. Seed the initial users
+docker exec feriaapp-backend node seedAdmin.js
+```
+
+After this the panel is available at `https://<server-ip>` (the browser shows a warning for the self-signed certificate, accepted with one click). The connection is still encrypted with TLS; only the certificate is not issued by a public Certificate Authority.
+
+### Firewall (UFW).
+
+The host firewall is configured to expose only the strictly necessary ports, so the database and other internal services are never reachable from the internet:
+
+```bash
+ufw default deny incoming
+ufw default allow outgoing
+ufw allow 22/tcp     # SSH (administration)
+ufw allow 80/tcp     # HTTP (redirects to HTTPS)
+ufw allow 443/tcp    # HTTPS (the application)
+ufw enable
+```
+
+MongoDB (27017) and the backend (5000) are **not** exposed publicly — they are only reachable inside the Docker network, behind nginx.
+
+### Data migration.
+
+The development data (1 fair, 175 stalls and their images) was migrated from the local MongoDB to the server using `mongodump`/`mongorestore` over an SSH-encrypted channel, and the referenced images under `uploads/` were copied into the backend container. Only the content collections were migrated; users are created on the server with `seedAdmin.js`.
+
+### Updating the deployed application.
+
+When new changes are merged into `main`, the server is updated by pulling and rebuilding only the affected services:
+
+```bash
+cd /root/FeriaApp
+git pull origin main
+docker compose up --build -d        # or: ... --build frontend / backend
+```
+
+### Cost and lifecycle.
+
+The Droplet bills per hour (~18 USD/month while it exists). Stopping the Droplet still bills for the reserved resources; to stop billing entirely the Droplet must be **destroyed** from the DigitalOcean control panel once it is no longer needed.
 
 ---
 

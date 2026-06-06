@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import userService from '../services/userService';
 import useToast from '../context/useToast';
+import useModalClose from '../hooks/useModalClose';
 
 const ROLES = ['admin', 'editor', 'viewer'];
 
@@ -10,6 +11,9 @@ const Users = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [deletingId, setDeletingId] = useState(null);
+
+  // Close the delete-confirmation dialog with the Escape key (keyboard a11y).
+  useModalClose(() => setDeletingId(null));
 
   useEffect(() => {
     loadUsers();
@@ -94,10 +98,10 @@ const Users = () => {
 
       {deletingId && (
         <div className="modal-overlay" onClick={() => setDeletingId(null)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+          <div className="modal" role="dialog" aria-modal="true" aria-labelledby="delete-user-title" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Delete User</h3>
-              <button className="modal-close" onClick={() => setDeletingId(null)}>
+              <h3 id="delete-user-title">Delete User</h3>
+              <button className="modal-close" onClick={() => setDeletingId(null)} aria-label="Close dialog">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18" />
                   <line x1="6" y1="6" x2="18" y2="18" />

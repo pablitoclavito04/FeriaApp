@@ -3,6 +3,7 @@ import menuService from '../services/menuService';
 import casetaService from '../services/casetaService';
 import useToast from '../context/useToast';
 import useAuth from '../context/useAuth';
+import useModalClose from '../hooks/useModalClose';
 import { canCreate, canEdit, canDelete } from '../utils/permissions';
 
 const INITIAL_ROWS = 3;
@@ -18,6 +19,9 @@ const Menus = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingMenu, setEditingMenu] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
+
+  // Close the delete-confirmation dialog with the Escape key (keyboard a11y).
+  useModalClose(() => setDeletingId(null));
 
   // Edit form state (single item)
   const [editFormData, setEditFormData] = useState({
@@ -421,10 +425,10 @@ const Menus = () => {
 
       {deletingId && (
         <div className="modal-overlay" onClick={() => setDeletingId(null)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+          <div className="modal" role="dialog" aria-modal="true" aria-labelledby="delete-menu-title" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Delete Menu Item</h3>
-              <button className="modal-close" onClick={() => setDeletingId(null)}>
+              <h3 id="delete-menu-title">Delete Menu Item</h3>
+              <button className="modal-close" onClick={() => setDeletingId(null)} aria-label="Close dialog">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18" />
                   <line x1="6" y1="6" x2="18" y2="18" />
