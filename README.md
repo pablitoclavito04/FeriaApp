@@ -5,9 +5,7 @@ A full stack web platform for consulting information about the **Feria de Jerez 
 ## Live links
 
 - **Public website (PWA):** [pablitoclavito04.github.io/FeriaApp](https://pablitoclavito04.github.io/FeriaApp/) — no login required.
-- **Administration panel:** [https://165.227.170.216](https://165.227.170.216) — deployed on a cloud server (DigitalOcean), reachable from anywhere.
-
-> The panel uses a self-signed TLS certificate, so the browser shows a "Not secure" / certificate warning on first visit. The connection is still encrypted; accept it with **Advanced → Continue** to proceed.
+- **Administration panel:** [https://feriaapp.com](https://feriaapp.com) — deployed on a cloud server (DigitalOcean), reachable from anywhere, with a trusted HTTPS certificate (Let's Encrypt).
 
 **Demo credentials (administration panel):**
 

@@ -187,7 +187,7 @@ The first request confirms the HTTP→HTTPS redirect (`301 Moved Permanently` + 
 3. Run `sudo certbot --nginx -d feriaapp.example.com` — certbot validates domain ownership, issues the certificate and reconfigures nginx automatically.
 4. A `cron` job renews the certificate every 60 days.
 
-The application is also deployed on a public cloud server (see the next section); that deployment currently uses the self-signed certificate and is reached by IP.
+The application is also deployed on a public cloud server (see the next section) under the domain **feriaapp.com**, where it does use a trusted Let's Encrypt certificate (no browser warning).
 
 ---
 
@@ -203,7 +203,9 @@ The application is deployed on a public cloud server so it can be reached from a
 | Region | Frankfurt (FRA1) — low latency from Spain |
 | Image | Docker on Ubuntu 22.04 (Marketplace, Docker pre-installed) |
 | Size | Basic, 2 vCPU / 2 GB RAM / 60 GB SSD |
-| Access URL | `https://<server-ip>` |
+| Domain | feriaapp.com (registered at name.com, DNS managed by DigitalOcean) |
+| Access URL | `https://feriaapp.com` |
+| TLS certificate | Let's Encrypt (trusted, auto-renewing) |
 | Authentication | SSH key (password login disabled) |
 
 ### Deployment process.
@@ -224,20 +226,30 @@ cd FeriaApp
 # 4. Create the .env with the production secrets (never committed)
 #    JWT_SECRET, GITHUB_TOKEN/OWNER/REPO, ANTHROPIC_API_KEY
 
-# 5. Generate the self-signed TLS certificate
-mkdir -p nginx/ssl
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-  -keyout nginx/ssl/feriaapp.key -out nginx/ssl/feriaapp.crt \
-  -subj "/C=ES/ST=Cadiz/L=Jerez/O=FeriaApp/OU=TFG/CN=<server-ip>"
-
-# 6. Build and start the whole stack
+# 5. Build and start the whole stack
 docker compose up --build -d
 
-# 7. Seed the initial users
+# 6. Seed the initial users
 docker exec feriaapp-backend node seedAdmin.js
 ```
 
-After this the panel is available at `https://<server-ip>` (the browser shows a warning for the self-signed certificate, accepted with one click). The connection is still encrypted with TLS; only the certificate is not issued by a public Certificate Authority.
+### Domain and trusted HTTPS (Let's Encrypt).
+
+The domain **feriaapp.com** was registered (at name.com) and its DNS delegated to DigitalOcean: the registrar's nameservers were changed to `ns1/ns2/ns3.digitalocean.com`, and an **A record** (`@ → server IP`) was created in DigitalOcean's DNS so the domain resolves to the Droplet.
+
+A trusted certificate is then issued with **certbot** (Let's Encrypt). Because nginx holds port 80, it is briefly stopped while certbot validates in standalone mode:
+
+```bash
+apt-get install -y certbot
+docker compose stop nginx
+certbot certonly --standalone --non-interactive --agree-tos \
+  --email <you@example.com> -d feriaapp.com
+docker compose start nginx
+```
+
+The host's `/etc/letsencrypt` is mounted read-only into the nginx container (see `docker-compose.yaml`), and `nginx.conf` points `ssl_certificate`/`ssl_certificate_key` at `/etc/letsencrypt/live/feriaapp.com/`. Certbot installs a scheduled task that renews the certificate automatically before it expires.
+
+After this the panel is available at **`https://feriaapp.com`** with a trusted certificate — no browser warning.
 
 ### Firewall (UFW).
 
