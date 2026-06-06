@@ -2,7 +2,20 @@
 
 A full stack web platform for consulting information about the **Feria de Jerez de la Frontera**. The project is divided into two distinct parts: a MERN administration panel and a static public PWA automatically published on GitHub Pages.
 
-**Public website:** [pablitoclavito04.github.io/FeriaApp](https://pablitoclavito04.github.io/FeriaApp/)
+## Live links
+
+- **Public website (PWA):** [pablitoclavito04.github.io/FeriaApp](https://pablitoclavito04.github.io/FeriaApp/) — no login required.
+- **Administration panel:** [https://165.227.170.216](https://165.227.170.216) — deployed on a cloud server (DigitalOcean), reachable from anywhere.
+
+> The panel uses a self-signed TLS certificate, so the browser shows a "Not secure" / certificate warning on first visit. The connection is still encrypted; accept it with **Advanced → Continue** to proceed.
+
+**Demo credentials (administration panel):**
+
+| Role | Email | Password |
+|---|---|---|
+| Admin | admin@feriaapp.com | admin1234 |
+| Editor | editor@feriaapp.com | editor1234 |
+| Viewer | viewer@feriaapp.com | viewer1234 |
 
 **Figma prototype:**
 - [Mockup](https://www.figma.com/design/Yl0MYP8yugGAy1L8tQh9kA/Mockup-de-FeriaApp)
