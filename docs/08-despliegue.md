@@ -4,16 +4,22 @@
 
 ## Deployment environments.
 
-FeriaApp has two distinct deployment environments:
+FeriaApp is deployed across these environments:
 
 | Environment | Platform | URL |
 |---|---|---|
-| Public website | GitHub Pages | https://pablitoclavito04.github.io/FeriaApp/ |
-| Administration panel + Backend | Docker (local) | http://localhost |
+| Public website (cloud) | DigitalOcean (Docker + nginx) | https://feriaapp.com |
+| Administration panel + Backend (cloud) | DigitalOcean (Docker + nginx) | https://admin.feriaapp.com |
+| Public website (mirror) | GitHub Pages | https://pablitoclavito04.github.io/FeriaApp/ |
+| Full stack (local development) | Docker (local) | http://localhost |
+
+The public website and the admin panel both run on the **same DigitalOcean server**, split by nginx `server_name` into two subdomains. The GitHub Pages copy is kept as a free public mirror/backup. See [Cloud deployment (DigitalOcean)](#cloud-deployment-digitalocean) below for the full setup.
 
 ---
 
 ## Public website on GitHub Pages.
+
+> The public website's **primary** deployment is now the cloud server at `feriaapp.com` (see [Cloud deployment](#cloud-deployment-digitalocean)). The GitHub Pages deployment described here remains active as a free public mirror, updated by the same *Publish* action. The site detects its base path at runtime, so the same build works at `/` on the domain and under `/FeriaApp/` on GitHub Pages.
 
 ### Configuration.
 
@@ -30,6 +36,7 @@ The public website deployment is automatic every time the administrator presses 
 3. It uses Octokit to upload the JSON files to the `gh-pages` branch in the `data/` folder.
 4. It uploads Caseta images to the `uploads/` folder.
 5. GitHub Pages deploys automatically within 2 minutes.
+6. The same JSON files are also written to a local `uploads/public-data` folder on the server, which nginx serves at `feriaapp.com/data`. This lets the cloud public site (`feriaapp.com`) show the published data directly from our own server, in addition to the GitHub Pages mirror.
 
 ### Run evidence
 
@@ -81,6 +88,8 @@ The administration stack is composed of five containerised services. Only the re
        Docker network: feriaapp_feriaapp-network (bridge, 172.23.0.0/16)
        Host-exposed ports: 80, 443 (nginx only)
 ```
+
+The diagram above shows the **path-based** routing used for local/direct-IP access (the nginx `default_server`). In the **cloud** deployment the same containers are reached through two subdomains instead: nginx routes by `server_name` so `feriaapp.com` lands on `public-web` (with `/data` and `/uploads` proxied to the backend) and `admin.feriaapp.com` lands on `frontend` (with `/api` and `/uploads`). See [Cloud deployment](#cloud-deployment-digitalocean).
 
 ### Docker services.
 
@@ -137,11 +146,22 @@ This single capture exercises the full chain — HTTPS client → nginx reverse 
 
 ### Nginx routing.
 
+Local / direct-IP access (nginx `default_server`, path-based):
+
 | Route | Destination | Description |
 |---|---|---|
 | / | frontend:80 | Administration panel |
 | /api/ | backend:5000 | REST API |
 | /public/ | public-web:80 | Public website |
+
+Cloud access (routed by `server_name` into two subdomains):
+
+| Host | Route | Destination | Description |
+|---|---|---|---|
+| admin.feriaapp.com | / | frontend:80 | Administration panel |
+| admin.feriaapp.com | /api/ · /uploads/ | backend:5000 | REST API · uploaded images |
+| feriaapp.com | / | public-web:80 | Public website |
+| feriaapp.com | /data/ · /uploads/ | backend:5000 | Published JSON data · images |
 
 ### HTTPS configuration.
 
