@@ -415,8 +415,9 @@ The rubric's "Excellent" level requires a clear and reproducible network verific
 | `https://localhost/api/...` | 443 | `feriaapp-nginx` | `backend:5000` | REST API (Express). |
 | `https://localhost/api/docs` | 443 | `feriaapp-nginx` → `backend:5000` | Swagger UI | Interactive API documentation. |
 | `https://localhost/public/...` | 443 | `feriaapp-nginx` | `public-web:80` | Public website (static). |
-| `https://feriaapp.com/...` | 443 | `feriaapp-nginx` | (same routing as above) | Cloud deployment — public domain with trusted Let's Encrypt certificate, resolved by public DNS. |
-| `https://pablitoclavito04.github.io/FeriaApp/` | 443 (CDN) | GitHub Pages | n/a | Public site for end users — separate deployment. |
+| `https://feriaapp.com/...` | 443 | `feriaapp-nginx` | `public-web:80` (+ `backend:5000` for `/data`, `/uploads`) | Cloud deployment — **public website**, split by `server_name`. Trusted Let's Encrypt certificate, resolved by public DNS. |
+| `https://admin.feriaapp.com/...` | 443 | `feriaapp-nginx` | `frontend:80` (+ `backend:5000` for `/api`, `/uploads`) | Cloud deployment — **administration panel**, split by `server_name`. Same trusted certificate (both names as SANs). |
+| `https://pablitoclavito04.github.io/FeriaApp/` | 443 (CDN) | GitHub Pages | n/a | Public site mirror for end users — separate deployment kept as a free backup. |
 
 The routing rules live in [nginx.conf](../nginx.conf). Only ports `80` and `443` are published to the host (see `ports:` in [docker-compose.yaml](../docker-compose.yaml)); every other port (`5000`, `27017`, the two internal `80`s of `frontend` and `public-web`) is `expose:`d only to the Docker network.
 
@@ -509,10 +510,10 @@ No host-side `/etc/hosts` modification is required for the local setup — `loca
 
 ### Public DNS name resolution (cloud deployment).
 
-The application is also deployed on a public server under the real domain **feriaapp.com** (see the cloud-deployment section of [08-despliegue.md](08-despliegue.md#cloud-deployment-digitalocean)). Here name resolution is performed by **public DNS**, which is exactly the "name resolution" evidence the criterion asks for. The chain is:
+The application is also deployed on a public server under the real domain **feriaapp.com**, with the public website at `feriaapp.com` and the administration panel at `admin.feriaapp.com` (see the cloud-deployment section of [08-despliegue.md](08-despliegue.md#cloud-deployment-digitalocean)). Here name resolution is performed by **public DNS**, which is exactly the "name resolution" evidence the criterion asks for. The chain is:
 
 1. The domain was registered and its **nameservers delegated to DigitalOcean** (`ns1/ns2/ns3.digitalocean.com`).
-2. An **A record** (`feriaapp.com → 165.227.170.216`, the Droplet's public IP) was created in DigitalOcean's DNS.
+2. **Two A records** were created in DigitalOcean's DNS, both pointing at the Droplet's public IP `165.227.170.216`: `feriaapp.com` (public website) and `admin.feriaapp.com` (administration panel). nginx then splits the two sites internally by `server_name`.
 
 This is verified with `nslookup` from any machine:
 
@@ -523,28 +524,35 @@ nslookup -type=NS feriaapp.com
 #   feriaapp.com   nameserver = ns2.digitalocean.com
 #   feriaapp.com   nameserver = ns3.digitalocean.com
 
-# Which IP the domain resolves to
+# Which IP each name resolves to — both point at the same Droplet
 nslookup feriaapp.com
 #   Name:    feriaapp.com
-#   Address: 165.227.170.216      <- the Droplet
+#   Address: 165.227.170.216      <- the Droplet (public website)
+
+nslookup admin.feriaapp.com
+#   Name:    admin.feriaapp.com
+#   Address: 165.227.170.216      <- the same Droplet (admin panel)
 ```
 
-The first command proves the DNS delegation took effect (the authoritative nameservers are DigitalOcean's). The second proves the public name resolves to the server's IP — so a request to `https://feriaapp.com` reaches this Droplet, where nginx terminates TLS and proxies to the internal services exactly as described above.
+The first command proves the DNS delegation took effect (the authoritative nameservers are DigitalOcean's). The next two prove both public names resolve to the server's IP — so a request to either reaches this Droplet, where nginx terminates TLS, picks the matching `server_name`, and proxies to the internal services exactly as described above.
 
-Finally, the published name and its trusted certificate are confirmed end-to-end (no `-k` needed, because the Let's Encrypt certificate is trusted):
+Finally, the published names and their trusted certificate are confirmed end-to-end (no `-k` needed, because the Let's Encrypt certificate is trusted). A single certificate covers both names as Subject Alternative Names:
 
 ```bash
 curl -I https://feriaapp.com
-#   HTTP/1.1 200 OK    <- name resolves, TLS trusted, proxy reaches the panel
+#   HTTP/1.1 200 OK    <- public site: name resolves, TLS trusted
+curl -I https://admin.feriaapp.com
+#   HTTP/1.1 200 OK    <- admin panel: same trusted certificate
 
-# Inspect the certificate issuer/subject
-echo | openssl s_client -connect feriaapp.com:443 -servername feriaapp.com 2>/dev/null \
-  | openssl x509 -noout -issuer -subject
-#   issuer = C=US, O=Let's Encrypt, CN=YR2
+# Inspect the certificate issuer and the names it covers
+echo | openssl s_client -connect admin.feriaapp.com:443 -servername admin.feriaapp.com 2>/dev/null \
+  | openssl x509 -noout -issuer -subject -ext subjectAltName
+#   issuer  = C=US, O=Let's Encrypt, CN=YR2
 #   subject = CN=feriaapp.com
+#   X509v3 Subject Alternative Name: DNS:feriaapp.com, DNS:admin.feriaapp.com
 ```
 
-In summary: on the **local** deployment, name resolution is internal (Docker DNS) and the host name is `localhost`; on the **cloud** deployment, name resolution is public (DNS A record on the `feriaapp.com` domain) and the certificate is a trusted Let's Encrypt one.
+In summary: on the **local** deployment, name resolution is internal (Docker DNS) and the host name is `localhost`; on the **cloud** deployment, name resolution is public (two DNS A records under the `feriaapp.com` domain — root and `admin` subdomain), the sites are split by nginx `server_name`, and the certificate is a trusted Let's Encrypt one covering both names.
 
 ### Evidence index.
 
@@ -555,7 +563,7 @@ In summary: on the **local** deployment, name resolution is internal (Docker DNS
 | HTTP→HTTPS redirect + HTTPS reaches backend (Helmet headers visible) | [https-curl-verification.png](https-curl-verification.png) |
 | End-to-end request chain (curl + backend logs) | [backend-curl-and-logs.png](backend-curl-and-logs.png) |
 | Public website reachable on its real domain | [public-site-github-pages.png](public-site-github-pages.png) |
-| Public DNS name resolution (`nslookup feriaapp.com` → Droplet IP) + trusted HTTPS on the domain | `nslookup`/`curl` commands above (cloud deployment) |
+| Public DNS name resolution (`nslookup feriaapp.com` and `admin.feriaapp.com` → Droplet IP) + trusted HTTPS covering both names | `nslookup`/`curl`/`openssl` commands above (cloud deployment) |
 | Docker-internal DNS (`ping mongo` from `feriaapp-backend`) | [docker-internal-dns.png](docker-internal-dns.png) |
 | Real HTTP call between proxy and backend by service name (`wget` from nginx to `backend:5000`) | [docker-internal-wget.png](docker-internal-wget.png) |
 | Backend startup logs (`Server running on port 5000`, `MongoDB connected: mongo`) | [docker-logs-startup.png](docker-logs-startup.png) |
