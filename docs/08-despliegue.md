@@ -204,8 +204,8 @@ The application is deployed on a public cloud server so it can be reached from a
 | Image | Docker on Ubuntu 22.04 (Marketplace, Docker pre-installed) |
 | Size | Basic, 2 vCPU / 2 GB RAM / 60 GB SSD |
 | Domain | feriaapp.com (registered at name.com, DNS managed by DigitalOcean) |
-| Access URL | `https://feriaapp.com` |
-| TLS certificate | Let's Encrypt (trusted, auto-renewing) |
+| Access URLs | `https://feriaapp.com` (public site) · `https://admin.feriaapp.com` (admin panel) |
+| TLS certificate | Let's Encrypt (trusted, auto-renewing, covers both names) |
 | Authentication | SSH key (password login disabled) |
 
 ### Deployment process.
@@ -233,23 +233,32 @@ docker compose up --build -d
 docker exec feriaapp-backend node seedAdmin.js
 ```
 
-### Domain and trusted HTTPS (Let's Encrypt).
+### Domain, subdomains and trusted HTTPS (Let's Encrypt).
 
-The domain **feriaapp.com** was registered (at name.com) and its DNS delegated to DigitalOcean: the registrar's nameservers were changed to `ns1/ns2/ns3.digitalocean.com`, and an **A record** (`@ → server IP`) was created in DigitalOcean's DNS so the domain resolves to the Droplet.
+The domain **feriaapp.com** was registered (at name.com) and its DNS delegated to DigitalOcean: the registrar's nameservers were changed to `ns1/ns2/ns3.digitalocean.com`. Two **A records** were created in DigitalOcean's DNS, both pointing at the Droplet's IP:
 
-A trusted certificate is then issued with **certbot** (Let's Encrypt). Because nginx holds port 80, it is briefly stopped while certbot validates in standalone mode:
+| Record | Hostname | Points to | Serves |
+|---|---|---|---|
+| A | `@` (feriaapp.com) | server IP | Public website |
+| A | `admin` (admin.feriaapp.com) | server IP | Administration panel |
+
+The two sites are split inside **nginx** by `server_name`: the `feriaapp.com` server block serves the public PWA (with its JSON data at `/data` and images at `/uploads`, both proxied to the backend), and the `admin.feriaapp.com` block serves the React panel plus `/api` and `/uploads`. A `default_server` block keeps direct IP/localhost access working.
+
+A trusted certificate covering **both** names is issued with **certbot** (Let's Encrypt). Because nginx holds port 80, it is briefly stopped while certbot validates in standalone mode:
 
 ```bash
 apt-get install -y certbot
 docker compose stop nginx
-certbot certonly --standalone --non-interactive --agree-tos \
-  --email <you@example.com> -d feriaapp.com
-docker compose start nginx
+certbot certonly --standalone --non-interactive --agree-tos --expand \
+  --email <you@example.com> -d feriaapp.com -d admin.feriaapp.com
+docker compose up -d
 ```
 
-The host's `/etc/letsencrypt` is mounted read-only into the nginx container (see `docker-compose.yaml`), and `nginx.conf` points `ssl_certificate`/`ssl_certificate_key` at `/etc/letsencrypt/live/feriaapp.com/`. Certbot installs a scheduled task that renews the certificate automatically before it expires.
+The host's `/etc/letsencrypt` is mounted read-only into the nginx container (see `docker-compose.yaml`), and `nginx.conf` points `ssl_certificate`/`ssl_certificate_key` at `/etc/letsencrypt/live/feriaapp.com/` (a single certificate with both names as Subject Alternative Names). Certbot installs a scheduled task that renews the certificate automatically before it expires.
 
-After this the panel is available at **`https://feriaapp.com`** with a trusted certificate — no browser warning.
+After this the public site is available at **`https://feriaapp.com`** and the panel at **`https://admin.feriaapp.com`**, both with a trusted certificate — no browser warning.
+
+> **Serving the public site from our own server.** The "Publish" action in the panel writes the four JSON files (fairs, casetas, menus, concerts) both to GitHub Pages *and* to a local `uploads/public-data` folder inside the backend volume. nginx serves that folder at `feriaapp.com/data`, so the public site runs fully on our own server without depending on GitHub Pages. The public web derives its base path at runtime, so the same build works at `/` on the domain and under `/FeriaApp/` on GitHub Pages.
 
 ### Firewall (UFW).
 

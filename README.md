@@ -1,11 +1,13 @@
 # FeriaApp.
 
-A full stack web platform for consulting information about the **Feria de Jerez de la Frontera**. The project is divided into two distinct parts: a MERN administration panel and a static public PWA automatically published on GitHub Pages.
+A full stack web platform for consulting information about the **Feria de Jerez de la Frontera**. The project is divided into two distinct parts: a MERN administration panel and a static public PWA. Both are deployed on a cloud server (DigitalOcean) under their own subdomain, and the public PWA is also mirrored to GitHub Pages.
 
 ## Live links
 
-- **Public website (PWA):** [pablitoclavito04.github.io/FeriaApp](https://pablitoclavito04.github.io/FeriaApp/) — no login required.
-- **Administration panel:** [https://feriaapp.com](https://feriaapp.com) — deployed on a cloud server (DigitalOcean), reachable from anywhere, with a trusted HTTPS certificate (Let's Encrypt).
+- **Public website (PWA):** [https://feriaapp.com](https://feriaapp.com) — no login required. Also mirrored at [pablitoclavito04.github.io/FeriaApp](https://pablitoclavito04.github.io/FeriaApp/).
+- **Administration panel:** [https://admin.feriaapp.com](https://admin.feriaapp.com) — reachable from anywhere, with a trusted HTTPS certificate (Let's Encrypt).
+
+Both subdomains are served from the same DigitalOcean server: `feriaapp.com` serves the public site and `admin.feriaapp.com` serves the panel, split by nginx.
 
 **Demo credentials (administration panel):**
 
@@ -245,10 +247,15 @@ docker-compose up --build
 | Service | URL |
 |---|---|
 | Administration panel | https://localhost |
-| Public website | https://localhost/public/ |
 | API | https://localhost/api/ |
 
 > The browser will warn about the self-signed certificate the first time. Click **Advanced → Continue to localhost** to accept it.
+
+To test the production subdomain split (`feriaapp.com` + `admin.feriaapp.com`) locally, add `127.0.0.1 feriaapp.com admin.feriaapp.com` to your hosts file and run with the local override:
+>
+> ```bash
+> docker compose -f docker-compose.yaml -f docker-compose.local.yaml up --build
+> ```
 
 **5. Create the administrator user**
 ```bash
