@@ -46,3 +46,8 @@ docs/insomnia/*.yaml
 
 frontend/node_modules/
 backend/node_modules/
+
+# Runtime uploads: test maps and the public-data mirror live in the Docker
+# volume, not in git. (Existing historical images stay tracked.)
+backend/uploads/*-map.png
+backend/uploads/public-data/

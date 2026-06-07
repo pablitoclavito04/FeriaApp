@@ -1,26 +1,32 @@
-const CACHE_NAME = 'feriaapp-v44';
+const CACHE_NAME = 'feriaapp-v45';
+
+// Base path of this deployment, derived from where the SW itself is served.
+// On GitHub Pages that is "/FeriaApp/"; on our own domain it is "/". The same
+// build then works on both without hardcoding the prefix.
+const BASE_PATH = self.location.pathname.replace(/[^/]*$/, '');
+
 // Precache the default map as a fallback. Per-fair maps live under
-// /FeriaApp/uploads/ with unique (timestamped) filenames and are cached on
-// first fetch by the cache-first handler below; a new map gets a new URL, so
-// there is never a stale-image problem.
+// <base>uploads/ with unique (timestamped) filenames and are cached on first
+// fetch by the cache-first handler below; a new map gets a new URL, so there
+// is never a stale-image problem.
 const urlsToCache = [
-  '/FeriaApp/',
-  '/FeriaApp/index.html',
-  '/FeriaApp/app.js',
-  '/FeriaApp/styles.css',
-  '/FeriaApp/manifest.json',
-  '/FeriaApp/plano_feria.png',
-  '/FeriaApp/data/fairs.json',
-  '/FeriaApp/data/casetas.json',
-  '/FeriaApp/data/menus.json',
-  '/FeriaApp/data/concerts.json',
+  `${BASE_PATH}`,
+  `${BASE_PATH}index.html`,
+  `${BASE_PATH}app.js`,
+  `${BASE_PATH}styles.css`,
+  `${BASE_PATH}manifest.json`,
+  `${BASE_PATH}plano_feria.png`,
+  `${BASE_PATH}data/fairs.json`,
+  `${BASE_PATH}data/casetas.json`,
+  `${BASE_PATH}data/menus.json`,
+  `${BASE_PATH}data/concerts.json`,
 ];
 
 const DATA_FILES = [
-  '/FeriaApp/data/fairs.json',
-  '/FeriaApp/data/casetas.json',
-  '/FeriaApp/data/menus.json',
-  '/FeriaApp/data/concerts.json',
+  `${BASE_PATH}data/fairs.json`,
+  `${BASE_PATH}data/casetas.json`,
+  `${BASE_PATH}data/menus.json`,
+  `${BASE_PATH}data/concerts.json`,
 ];
 
 // Install service worker and cache files

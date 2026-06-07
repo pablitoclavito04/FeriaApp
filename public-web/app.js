@@ -20,8 +20,18 @@ let casetasSort = 'number';
 let selectedScheduleDay = 'all';
 let scheduleCasetaFilter = null;
 
-// Base URL for data files
-const BASE_URL = '/FeriaApp/data';
+// Base path of the deployment. On GitHub Pages the site lives under
+// "/FeriaApp/"; on our own domain (feriaapp.com) it lives at the root "/".
+// Derive it from the current document path so the same build works on both:
+// take everything up to and including the last "/" of the pathname.
+const BASE_PATH = window.location.pathname.replace(/[^/]*$/, '');
+
+// Base URL for data files (e.g. "/FeriaApp/data" on Pages, "/data" on domain).
+const BASE_URL = `${BASE_PATH}data`;
+
+// Rewrite a backend "/uploads/..." path to where images are actually served
+// for this deployment (under the base path).
+const toUploadsUrl = (p) => p.replace('/uploads/', `${BASE_PATH}uploads/`);
 
 // Load all data from JSON files
 let loadDataPromise = null;
@@ -297,7 +307,7 @@ const isFairOngoing = () => {
 const isCasetaOpen = (_caseta) => isFairOngoing();
 
 // Default map (used when a fair has no map of its own — backward compatible).
-const DEFAULT_MAP_URL = '/FeriaApp/plano_feria.png';
+const DEFAULT_MAP_URL = `${BASE_PATH}plano_feria.png`;
 const DEFAULT_MAP_BOUNDS = [[0, 0], [1052, 1514]];
 
 // The fair whose map and casetas are shown.
@@ -306,7 +316,7 @@ const getActiveFair = () => fairs.find((f) => f.active) || fairs[0];
 // Map image URL for the active fair: its own mapImage, else the default.
 const getMapUrl = () => {
   const fair = getActiveFair();
-  if (fair?.mapImage) return fair.mapImage.replace('/uploads/', '/FeriaApp/uploads/');
+  if (fair?.mapImage) return toUploadsUrl(fair.mapImage);
   return DEFAULT_MAP_URL;
 };
 
@@ -325,7 +335,7 @@ const buildCasetaCard = (caseta) => {
   const statusClass = open ? 'is-open' : 'is-closed';
   const statusLabel = open ? 'Abierta' : 'Cerrado';
   const image = caseta.image
-    ? `<img src="${caseta.image.replace('/uploads/', '/FeriaApp/uploads/')}" alt="${caseta.name}" class="caseta-card-image" />`
+    ? `<img src="${toUploadsUrl(caseta.image)}" alt="${caseta.name}" class="caseta-card-image" />`
     : '<div class="caseta-no-image"></div>';
   return `
     <article class="caseta-card" data-caseta-id="${caseta._id}" onclick="openCasetaDetail('${caseta._id}')" onmouseenter="highlightMapMarker('${caseta._id}', true)" onmouseleave="highlightMapMarker('${caseta._id}', false)">
@@ -376,7 +386,7 @@ const renderMenus = (casetasData) => {
 
   container.innerHTML = entries.map(({ caseta, items }) => {
     const image = caseta.image
-      ? `<img src="${caseta.image.replace('/uploads/', '/FeriaApp/uploads/')}" alt="${caseta.name}" class="menu-caseta-image" />`
+      ? `<img src="${toUploadsUrl(caseta.image)}" alt="${caseta.name}" class="menu-caseta-image" />`
       : '<div class="menu-caseta-no-image"></div>';
 
     const suggestions = items.slice(0, 3);
@@ -657,7 +667,7 @@ const openCasetaDetail = (id) => {
 
   const mediaEl = document.getElementById('detail-media');
   mediaEl.innerHTML = caseta.image
-    ? `<img src="${caseta.image.replace('/uploads/', '/FeriaApp/uploads/')}" alt="${caseta.name}" />`
+    ? `<img src="${toUploadsUrl(caseta.image)}" alt="${caseta.name}" />`
     : '<span>Imagen no disponible</span>';
 
   document.getElementById('detail-name').textContent = caseta.name;

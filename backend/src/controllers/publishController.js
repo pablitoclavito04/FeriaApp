@@ -11,6 +11,20 @@ const owner = process.env.GITHUB_OWNER;
 const repo = process.env.GITHUB_REPO;
 const branch = 'gh-pages';
 
+// Local mirror of the published data, served by nginx at /data on feriaapp.com
+// so the public web can be served from our own server, not only from GitHub
+// Pages. Lives inside the uploads volume so it persists across restarts.
+const uploadsDir = path.join(__dirname, '../../uploads');
+const publicDataDir = path.join(uploadsDir, 'public-data');
+
+// Write one JSON file to the local public-data mirror.
+const writeLocalData = (fileName, content) => {
+  if (!fs.existsSync(publicDataDir)) {
+    fs.mkdirSync(publicDataDir, { recursive: true });
+  }
+  fs.writeFileSync(path.join(publicDataDir, fileName), content);
+};
+
 // Helper to upload a file to GitHub
 const uploadFile = async (filePath, content, isBase64 = false) => {
   const contentBase64 = isBase64 ? content : Buffer.from(content).toString('base64');
@@ -38,14 +52,14 @@ const uploadFile = async (filePath, content, isBase64 = false) => {
 
 // Helper to upload images from uploads folder
 const uploadImages = async () => {
-  const uploadsDir = path.join(__dirname, '../../uploads');
-  
   if (!fs.existsSync(uploadsDir)) return;
-  
+
   const files = fs.readdirSync(uploadsDir);
-  
+
   for (const file of files) {
     const filePath = path.join(uploadsDir, file);
+    // Skip the public-data mirror folder; only image files belong on Pages.
+    if (fs.statSync(filePath).isDirectory()) continue;
     const fileContent = fs.readFileSync(filePath);
     const base64Content = fileContent.toString('base64');
     await uploadFile(`uploads/${file}`, base64Content, true);
@@ -63,13 +77,26 @@ const publish = async (req, res) => {
     const menus = await Menu.find().populate('caseta', 'name number');
     const concerts = await Concert.find().populate('caseta', 'name number');
 
-    // Generate JSON data files
-    await uploadFile('data/fairs.json', JSON.stringify(fairs, null, 2));
-    await uploadFile('data/casetas.json', JSON.stringify(casetas, null, 2));
-    await uploadFile('data/menus.json', JSON.stringify(menus, null, 2));
-    await uploadFile('data/concerts.json', JSON.stringify(concerts, null, 2));
+    // Serialize once, then publish to both targets.
+    const fairsJson = JSON.stringify(fairs, null, 2);
+    const casetasJson = JSON.stringify(casetas, null, 2);
+    const menusJson = JSON.stringify(menus, null, 2);
+    const concertsJson = JSON.stringify(concerts, null, 2);
 
-    // Upload images
+    // Generate JSON data files on GitHub Pages
+    await uploadFile('data/fairs.json', fairsJson);
+    await uploadFile('data/casetas.json', casetasJson);
+    await uploadFile('data/menus.json', menusJson);
+    await uploadFile('data/concerts.json', concertsJson);
+
+    // Mirror the same JSON locally so feriaapp.com (served by our nginx) shows
+    // the published data too. The images already live in the uploads volume.
+    writeLocalData('fairs.json', fairsJson);
+    writeLocalData('casetas.json', casetasJson);
+    writeLocalData('menus.json', menusJson);
+    writeLocalData('concerts.json', concertsJson);
+
+    // Upload images to GitHub Pages
     await uploadImages();
 
     res.json({ message: 'Published successfully' });

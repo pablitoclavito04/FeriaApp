@@ -1,0 +1,10 @@
+# Local testing override. Use together with the main compose file:
+#   docker compose -f docker-compose.yaml -f docker-compose.local.yaml up --build
+# It swaps the production nginx config (Let's Encrypt) for the self-signed local
+# one and drops the /etc/letsencrypt mount, so the subdomain split can be tested
+# on Windows. Production uses docker-compose.yaml alone.
+services:
+  nginx:
+    volumes:
+      - ./nginx.local.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro

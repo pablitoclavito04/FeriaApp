@@ -2,7 +2,7 @@
   "name": "FeriaApp",
   "short_name": "FeriaApp",
   "description": "Tu guía completa de la Feria de Jerez",
-  "start_url": "/FeriaApp/",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#1a1a2e",
   "theme_color": "#C0392B",
