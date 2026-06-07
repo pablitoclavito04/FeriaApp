@@ -334,6 +334,11 @@ The pipeline is located at `.github/workflows/ci.yml` and runs automatically on 
 - Only runs if both previous jobs have passed.
 - Builds all Docker images to verify the Dockerfiles are valid.
 
+**4. publish-images (CD):**
+- Runs only on a push to `main` (not on `develop` or pull requests), and only after `docker-build` succeeds.
+- Logs in to the **GitHub Container Registry** (`ghcr.io`) using the built-in `GITHUB_TOKEN` (no extra secret needed) with `packages: write` permission.
+- Builds and pushes the three service images — `feriaapp-backend`, `feriaapp-frontend`, `feriaapp-public-web` — each tagged with the commit SHA and `latest`. This is the **continuous-deployment artifact**: versioned container images published on every release to `main`.
+
 ### Secrets management.
 
 The pipeline does **not** keep any sensitive value inside the YAML. Instead, the `test-backend` job pulls four values from **GitHub Secrets** (Repository → Settings → Secrets and variables → Actions) and injects them into the test environment:
@@ -362,16 +367,17 @@ The relevant block in [.github/workflows/ci.yml](../.github/workflows/ci.yml) is
 
 `MONGODB_URI` is **not** a secret — it points to the throwaway `mongo:7` service container that the workflow itself starts on `localhost:27017`, so it is intentionally hard-coded.
 
-### Continuous delivery — `gh-pages` artifact.
+### Continuous deployment — published container images.
 
-The CI side (build + test + docker-build) is the conventional half of the pipeline. The CD side, however, is **not** triggered by a push to `main`: it is triggered by the administrator pressing the **"Publish"** button in the panel. When that happens, the backend acts as the deployment runner:
+On every push to `main`, the `publish-images` job publishes the three service images to the GitHub Container Registry. These tagged images are the **CD artifact**: a deployment can be reproduced anywhere by pulling them instead of rebuilding from source. They appear under the repository's **Packages** section:
 
-1. Queries MongoDB and produces the four JSON files (`fairs.json`, `casetas.json`, `menus.json`, `concerts.json`).
-2. Reads the caseta images from `/app/uploads` (the `backend-uploads` Docker volume — see [§Docker services](#docker-services)).
-3. Uses **Octokit** (authenticated with the `GITHUB_TOKEN` PAT) to upload all of them to the `gh-pages` branch under `data/` and `uploads/`.
-4. GitHub Pages picks up the new commit on `gh-pages` and re-publishes the public site within ~2 minutes.
+- `ghcr.io/pablitoclavito04/feriaapp-backend:latest`
+- `ghcr.io/pablitoclavito04/feriaapp-frontend:latest`
+- `ghcr.io/pablitoclavito04/feriaapp-public-web:latest`
 
-The deployed artifact is therefore the **`gh-pages` branch itself** — every "Publish" action produces a new commit on that branch, which is the durable, versioned deployment record. The live URL of the artifact is <https://pablitoclavito04.github.io/FeriaApp/> and the corresponding screenshot is [public-site-github-pages.png](public-site-github-pages.png) (already shown in [§Public website on GitHub Pages → Run evidence](#run-evidence) above).
+(each also tagged with the exact commit SHA for traceability).
+
+> **Not to be confused with the app's "Publish" button.** The panel's *Publish* action is an **application feature**, not part of CI/CD: a user clicks it, and the backend regenerates the public **data** (the four JSON files + images) and pushes it to the `gh-pages` branch via Octokit (re-published by GitHub Pages within ~2 minutes) and to the local `public-data` mirror. That moves *data*; the CD pipeline above moves *code/images*. They are independent.
 
 ### Pipeline flow.
 
@@ -388,16 +394,23 @@ Push to develop or main
                      │
                      ▼
            ┌──────────────────┐
-           │   docker-build   │
+           │   docker-build   │   ── CI ──
            │  (build images)  │
-           └──────────────────┘
+           └────────┬─────────┘
+                    │  (only if push to main)
+                    ▼
+           ┌──────────────────────┐
+           │   publish-images     │   ── CD ──
+           │  push to ghcr.io     │
+           │  (SHA + latest tags) │
+           └──────────────────────┘
 ```
 
 ### Run evidence
 
 ![CI/CD pipeline run on GitHub Actions with all three jobs (Test Backend, Build Frontend, Build Docker Images) succeeding in 59 seconds.](ci-pipeline-green.png)
 
-The screenshot shows a successful run on the `develop` branch: `Test Backend` (36s), `Build Frontend` (11s) and `Build Docker Images` (17s) all completed in green. The total duration is 59 seconds.
+The screenshot shows a successful run on the `develop` branch: `Test Backend` (36s), `Build Frontend` (11s) and `Build Docker Images` (17s) all completed in green. On a push to `main`, a fourth job — `Publish Docker Images (CD)` — runs after these and pushes the tagged images to `ghcr.io`; the published packages are visible under the repository's **Packages** section.
 
 ---
 

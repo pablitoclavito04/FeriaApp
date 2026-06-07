@@ -81,3 +81,43 @@ jobs:
       - name: Build Docker images
         run: |
           docker compose build
+
+  # CD: on every push to main, publish the three service images to the GitHub
+  # Container Registry (ghcr.io) tagged with the commit SHA and "latest". The
+  # built-in GITHUB_TOKEN is enough to push to the repository's own registry,
+  # so no extra secret is needed. Runs only after CI (tests + builds) passes.
+  publish-images:
+    name: Publish Docker Images (CD)
+    runs-on: ubuntu-latest
+    needs: [docker-build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    permissions:
+      contents: read
+      packages: write
+
+    env:
+      REGISTRY: ghcr.io
+      OWNER: ${{ github.repository_owner }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push images
+        run: |
+          OWNER_LC=$(echo "$OWNER" | tr '[:upper:]' '[:lower:]')
+          for service in backend frontend public-web; do
+            IMAGE="$REGISTRY/$OWNER_LC/feriaapp-$service"
+            echo "Building and pushing $IMAGE"
+            docker build -t "$IMAGE:${{ github.sha }}" -t "$IMAGE:latest" "./$service"
+            docker push "$IMAGE:${{ github.sha }}"
+            docker push "$IMAGE:latest"
+          done
