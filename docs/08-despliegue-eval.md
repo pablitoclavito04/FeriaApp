@@ -276,7 +276,8 @@ Every file below must exist for the stack to come up. All of them are committed 
 | `backend/Dockerfile` | Builds the Node.js API image. | [backend/Dockerfile](../backend/Dockerfile) |
 | `frontend/Dockerfile` | Multi-stage build for the React admin panel. | [frontend/Dockerfile](../frontend/Dockerfile) |
 | `public-web/Dockerfile` | Builds the public-website static image. | [public-web/Dockerfile](../public-web/Dockerfile) |
-| `nginx.conf` | Reverse-proxy routing rules and HTTPS configuration. | [nginx.conf](../nginx.conf) |
+| `nginx.conf` | Reverse-proxy routing and HTTPS. Splits the public site (`feriaapp.com`) and the admin panel (`admin.feriaapp.com`) by `server_name`, plus a `default_server` for direct IP/localhost access. | [nginx.conf](../nginx.conf) |
+| `nginx.local.conf` + `docker-compose.local.yaml` | Optional override to test the subdomain split locally with the self-signed certificate. Not used in production. | [nginx.local.conf](../nginx.local.conf), [docker-compose.local.yaml](../docker-compose.local.yaml) |
 | `.env.example` | Template documenting every variable the deployment needs. The real `.env` is created from this file. | [.env.example](../.env.example) |
 | `backend/package.json`, `frontend/package.json`, `public-web/package.json` | Dependency manifests consumed by `npm install` inside each Dockerfile. | [backend](../backend/package.json), [frontend](../frontend/package.json), [public-web](../public-web/package.json) |
 | `.github/workflows/ci.yml` | CI pipeline — runs on every push to `develop` and `main`. | [.github/workflows/ci.yml](../.github/workflows/ci.yml) |
@@ -291,7 +292,7 @@ These are produced automatically and are **not** committed:
 | `frontend/dist/` | `npm run build` (inside the frontend Dockerfile, stage 1) | Inside the build container — discarded after `COPY --from=build` | Build output, regenerable. |
 | `nginx/ssl/feriaapp.crt` and `feriaapp.key` | Manual OpenSSL command (see [08-despliegue.md §HTTPS configuration](08-despliegue.md#https-configuration)) | `nginx/ssl/` on the host | Self-signed certificate for *this* developer's machine — must not leak. |
 | `.env` | Manually copied from `.env.example` and edited with real values | Project root | Contains secrets. |
-| JSON publication files (`fairs.json`, `casetas.json`, `menus.json`, `concerts.json`) | When the admin presses "Publish" | Pushed via Octokit to the `gh-pages` branch under `data/` | They are published artifacts, not source. |
+| JSON publication files (`fairs.json`, `casetas.json`, `menus.json`, `concerts.json`) | When the admin presses "Publish" | Pushed via Octokit to the `gh-pages` branch under `data/`, **and** mirrored to `uploads/public-data/` inside the `backend-uploads` volume (served by nginx at `feriaapp.com/data`) | They are published artifacts, not source. |
 | Caseta images uploaded by the admin | At runtime when uploading | `backend-uploads` Docker volume (mounted at `/app/uploads`) and replicated to `gh-pages/uploads/` on publish | User-generated content, not source. |
 | `node_modules/` (each project) | `npm install` | Inside each container (and locally for development) | Reproducible from `package-lock.json`. |
 | MongoDB data files | At runtime | `mongo-data` Docker volume (mounted at `/data/db`) | Database state. |
@@ -350,9 +351,10 @@ Two named Docker volumes guarantee that all stateful data survives a container r
 | Data | Container path | Backed by | Survives `docker-compose down`? | Survives `down -v`? |
 |---|---|---|---|---|
 | MongoDB data files | `/data/db` (in `feriaapp-mongo`) | Named volume `mongo-data` | ✅ Yes | ❌ No (intentional) |
-| Caseta image uploads | `/app/uploads` (in `feriaapp-backend`) | Named volume `backend-uploads` | ✅ Yes | ❌ No (intentional) |
+| Caseta image uploads + published public data (`uploads/public-data/`) | `/app/uploads` (in `feriaapp-backend`) | Named volume `backend-uploads` | ✅ Yes | ❌ No (intentional) |
 | nginx config | `/etc/nginx/nginx.conf` | Bind-mount `./nginx.conf` (`:ro`) | ✅ Yes | ✅ Yes (it's a host file) |
-| TLS material | `/etc/nginx/ssl/` | Bind-mount `./nginx/ssl/` (`:ro`) | ✅ Yes | ✅ Yes |
+| TLS material (local, self-signed) | `/etc/nginx/ssl/` | Bind-mount `./nginx/ssl/` (`:ro`) | ✅ Yes | ✅ Yes |
+| TLS material (cloud, Let's Encrypt) | `/etc/letsencrypt/` | Bind-mount `/etc/letsencrypt` (`:ro`) — issued and auto-renewed by certbot on the host | ✅ Yes | ✅ Yes (host-managed) |
 
 Both named volumes are declared at the bottom of [docker-compose.yaml](../docker-compose.yaml):
 
