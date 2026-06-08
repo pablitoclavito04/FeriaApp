@@ -1,20 +1,23 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import PrivateRoute from './components/PrivateRoute';
 import Sidebar from './components/Sidebar';
 import AccessChoice from './pages/AccessChoice';
 import useAuth from './context/useAuth';
+import lazyWithRetry from './utils/lazyWithRetry';
 
 // Lazy-loaded route pages: each becomes its own JS chunk that the browser only
 // downloads when the user navigates to it, keeping the initial bundle small.
-const Login = lazy(() => import('./pages/Login'));
-const Register = lazy(() => import('./pages/Register'));
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const Fairs = lazy(() => import('./pages/Fairs'));
-const Casetas = lazy(() => import('./pages/Casetas'));
-const Menus = lazy(() => import('./pages/Menus'));
-const Concerts = lazy(() => import('./pages/Concerts'));
-const Users = lazy(() => import('./pages/Users'));
+// lazyWithRetry reloads once if a chunk 404s after a deploy (stale index.html),
+// so the page never hangs on the "Loading…" fallback.
+const Login = lazyWithRetry(() => import('./pages/Login'));
+const Register = lazyWithRetry(() => import('./pages/Register'));
+const Dashboard = lazyWithRetry(() => import('./pages/Dashboard'));
+const Fairs = lazyWithRetry(() => import('./pages/Fairs'));
+const Casetas = lazyWithRetry(() => import('./pages/Casetas'));
+const Menus = lazyWithRetry(() => import('./pages/Menus'));
+const Concerts = lazyWithRetry(() => import('./pages/Concerts'));
+const Users = lazyWithRetry(() => import('./pages/Users'));
 
 const Layout = ({ children }) => (
   <div className="app-layout">

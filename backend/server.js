@@ -32,10 +32,33 @@ mongoose.connection.once('open', async () => {
 
 const app = express();
 
+// CORS allow-list: only our own front-ends may call the API from the browser.
+// A bare cors() would allow ANY website to call it, which is an unnecessary
+// exposure. Extra origins can be added via CORS_ORIGINS (comma-separated).
+const allowedOrigins = [
+  'https://feriaapp.com',
+  'https://www.feriaapp.com',
+  'https://admin.feriaapp.com',
+  'http://localhost:5173', // Vite dev server
+  'https://localhost', // local Docker (nginx)
+  ...(process.env.CORS_ORIGINS ? process.env.CORS_ORIGINS.split(',').map((o) => o.trim()) : []),
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow non-browser clients (curl, server-to-server) that send no Origin,
+    // and any origin on the allow-list. For a disallowed origin, resolve with
+    // `false` (no CORS headers added) rather than throwing — the browser then
+    // blocks the request, and we avoid noisy 500s in the server logs.
+    callback(null, !origin || allowedOrigins.includes(origin));
+  },
+  credentials: true,
+};
+
 app.use(express.json());
 app.use(helmet());
 app.use(morgan('dev'));
-app.use(cors());
+app.use(cors(corsOptions));
 
 // Serve uploaded files. Allow them to be loaded cross-origin (the admin panel
 // runs on a different port in dev, and the public web on a different host), so
