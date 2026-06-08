@@ -10,7 +10,11 @@ export const AuthProvider = ({ children }) => {
   const savedUser = sessionStorage.getItem('user');
 
   const [user, setUser] = useState(savedUser ? JSON.parse(savedUser) : null);
-  const [loading, setLoading] = useState(!token);
+  // The session is read synchronously from sessionStorage above, so there is
+  // nothing async to wait for: loading is always false. (It was previously
+  // initialised to !token, which left it stuck true for logged-out visitors,
+  // hanging PrivateRoute on "Loading…" forever.)
+  const [loading, setLoading] = useState(false);
 
   const login = async (email, password) => {
     const data = await authService.login(email, password);
