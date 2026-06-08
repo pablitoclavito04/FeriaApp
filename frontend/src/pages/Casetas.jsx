@@ -339,6 +339,9 @@ const Casetas = () => {
           <div className="form-group">
             <label>Location on map</label>
             <MapPicker
+              // Remount the map per edited caseta so the Leaflet view, image and
+              // marker all reset cleanly instead of keeping the previous one's.
+              key={editingCaseta?._id || 'new'}
               onLocationSelect={handleLocationSelect}
               initialPosition={
                 formData.location?.x

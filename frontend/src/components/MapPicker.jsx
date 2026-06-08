@@ -1,5 +1,5 @@
 import { MapContainer, ImageOverlay, Marker, useMapEvents } from 'react-leaflet';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import L from 'leaflet';
 import planoFeria from '../assets/plano_feria.png';
 
@@ -35,6 +35,14 @@ const LocationPicker = ({ onLocationSelect }) => {
 // including a cropped map. Falls back to the bundled default plan if absent.
 const MapPicker = ({ onLocationSelect, initialPosition, mapImage, mapBounds }) => {
   const [marker, setMarker] = useState(initialPosition || null);
+
+  // Sync the marker when the parent opens a DIFFERENT caseta. useState only
+  // reads initialPosition on first mount, so without this the marker would stay
+  // on the first-edited caseta's position for every subsequent edit (which is
+  // why every caseta appeared to share the same location).
+  useEffect(() => {
+    setMarker(initialPosition || null);
+  }, [initialPosition?.lat, initialPosition?.lng]);
 
   const handleLocationSelect = (latlng) => {
     setMarker(latlng);
