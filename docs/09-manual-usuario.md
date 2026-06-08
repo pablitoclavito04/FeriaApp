@@ -6,9 +6,7 @@
 
 1. Open the browser and go to `http://localhost` (with Docker) or `http://localhost:5173` (local development).
 2. On the entry screen ("how do you want to access?"), choose **Sign in** or **Sign up**.
-   - **Sign in** with existing credentials. The default administrator is:
-     - **Email:** admin@feriaapp.com
-     - **Password:** admin1234
+   - **Sign in** with existing credentials. The default administrator email is `admin@feriaapp.com`; its password is set in `seedAdmin.js` (and provided privately for evaluation).
    - **Sign up** to create a new account. New accounts are always created as **viewer** (read-only); an administrator can promote them later (see *User management* below).
 3. After logging in, a banner shows your role and what it allows.
 

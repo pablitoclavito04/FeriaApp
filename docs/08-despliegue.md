@@ -435,7 +435,7 @@ Once the backend is running, you can verify the endpoints with the following cur
 # Login and get JWT token
 curl -X POST http://localhost:5000/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@feriaapp.com","password":"admin1234"}'
+  -d '{"email":"admin@feriaapp.com","password":"<your-password>"}'
 ```
 
 ### Fairs

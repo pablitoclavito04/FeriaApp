@@ -52,9 +52,7 @@ ANTHROPIC_API_KEY=your_anthropic_api_key_here
 node seedAdmin.js
 ```
 
-This creates the administrator user with the following credentials:
-- **Email:** admin@feriaapp.com
-- **Password:** admin1234
+This creates the administrator user (email `admin@feriaapp.com`). Its password is defined in `seedAdmin.js` — change it for any real deployment.
 
 ### 4. Start the backend.
 
@@ -125,9 +123,7 @@ In another terminal, while the containers are running:
 docker exec feriaapp-backend node seedAdmin.js
 ```
 
-Credentials:
-- **Email:** admin@feriaapp.com
-- **Password:** admin1234
+Admin user: email `admin@feriaapp.com`; its password is defined in `seedAdmin.js` (change it for any real deployment).
 
 ---
 

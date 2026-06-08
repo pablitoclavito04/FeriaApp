@@ -9,13 +9,7 @@ A full stack web platform for consulting information about the **Feria de Jerez 
 
 Both subdomains are served from the same DigitalOcean server: `feriaapp.com` serves the public site and `admin.feriaapp.com` serves the panel, split by nginx.
 
-**Demo credentials (administration panel):**
-
-| Role | Email | Password |
-|---|---|---|
-| Admin | admin@feriaapp.com | admin1234 |
-| Editor | editor@feriaapp.com | editor1234 |
-| Viewer | viewer@feriaapp.com | viewer1234 |
+**Demo credentials:** three accounts (admin, editor and viewer roles) are available for evaluation. They are provided privately with the project submission rather than published here.
 
 **Figma prototype:**
 - [Mockup](https://www.figma.com/design/Yl0MYP8yugGAy1L8tQh9kA/Mockup-de-FeriaApp)
@@ -186,7 +180,7 @@ ANTHROPIC_API_KEY=your_anthropic_api_key_here
 ```bash
 node seedAdmin.js
 ```
-Credentials: `admin@feriaapp.com` / `admin1234`
+This seeds the default admin account (`admin@feriaapp.com`). Its password is defined in `seedAdmin.js` — change it for any real deployment.
 
 **4. Start the backend**
 ```bash

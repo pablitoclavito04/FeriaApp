@@ -275,7 +275,7 @@ The API uses JWT for authentication and role-based access control for authorizat
 ```bash
 curl -X POST https://localhost/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@feriaapp.com","password":"admin1234"}'
+  -d '{"email":"admin@feriaapp.com","password":"<your-password>"}'
 ```
 
 Response (`200 OK`):
@@ -313,13 +313,7 @@ curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
 
 ### Demo credentials
 
-The `seedAdmin.js` script creates three demo users — one per role — to make it easy to test the authorization layer:
-
-| Role | Email | Password |
-|---|---|---|
-| `admin` | `admin@feriaapp.com` | `admin1234` |
-| `editor` | `editor@feriaapp.com` | `editor1234` |
-| `viewer` | `viewer@feriaapp.com` | `viewer1234` |
+The `seedAdmin.js` script creates three demo users — one per role (`admin`, `editor`, `viewer`) — to make it easy to test the authorization layer. The passwords are defined in `seedAdmin.js`; they are provided privately with the project submission rather than published here, and should be changed for any real deployment.
 
 To recreate them:
 
