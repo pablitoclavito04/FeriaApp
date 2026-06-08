@@ -1,8 +1,8 @@
 [
   {
     "mapBounds": {
-      "width": 1514,
-      "height": 1052
+      "width": 1317,
+      "height": 907
     },
     "_id": "6a20920b0030b81344d4edc6",
     "name": "Feria del Jerez 2026",
@@ -12,8 +12,8 @@
     "location": "Real de la Feria, Parque González Hontoria, Jerez de la Frontera",
     "active": true,
     "createdAt": "2026-06-03T20:43:55.345Z",
-    "updatedAt": "2026-06-04T21:06:04.725Z",
+    "updatedAt": "2026-06-08T21:08:18.466Z",
     "__v": 0,
-    "mapImage": "/uploads/1780606579217-plano_feria_jerez.png"
+    "mapImage": "/uploads/1780952061075-Captura de pantalla 2026-06-08 184459-cropped.png"
   }
 ]
