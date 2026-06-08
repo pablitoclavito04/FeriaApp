@@ -37,9 +37,13 @@ const deleteAllCasetas = async (params = {}) => {
 
 // Upload a fair map and run AI detection on it. Returns
 // { mapUrl, bounds, imageSize, expectedCount, casetas }.
+// AI detection on a full map takes well over a minute, so override axios's
+// default timeout (220s) to match the backend/nginx limits and avoid the
+// client aborting a request that is still being processed.
 const detectFromMap = async (formData) => {
   const response = await api.post('/casetas/detect', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 220000,
   });
   return response.data;
 };
