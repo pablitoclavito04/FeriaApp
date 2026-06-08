@@ -2,11 +2,16 @@ import { useState, useRef } from 'react';
 import casetaService from '../services/casetaService';
 import useToast from '../context/useToast';
 import MapReview from './MapReview';
+import MapCropper from './MapCropper';
 
 // Published map size casetas were originally calibrated against. Used only to
 // warn when an uploaded map has different dimensions (positions may not align
 // with previously saved casetas on the same fair).
 const PUBLISHED_MAP = { width: 1514, height: 1052 };
+
+// Backend origin where /uploads images are served (empty in the Docker build,
+// so the cropper requests the map through the same nginx proxy as the panel).
+const BACKEND_ORIGIN = (import.meta.env.VITE_API_URL || '').replace(/\/api\/?$/, '');
 
 // Upload a fair map, run AI detection, review the detected casetas, and save
 // the selected ones to a fair. Steps: upload -> detecting -> review.
@@ -20,6 +25,8 @@ const ImportCasetasModal = ({ fairs, onClose, onImported }) => {
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [saving, setSaving] = useState(false);
   const [existingCount, setExistingCount] = useState(0); // casetas already in the target fair
+  const [showCropper, setShowCropper] = useState(false);
+  const [crop, setCrop] = useState(null); // { x, y, width, height } in original pixels, or null
   const nextId = useRef(0); // monotonic id source for manually added casetas
 
   const handleDetect = async (e) => {
@@ -145,6 +152,9 @@ const ImportCasetasModal = ({ fairs, onClose, onImported }) => {
         fair: fairId || undefined,
         mapImage: detection.mapUrl,
         mapBounds: detection.imageSize,
+        // Optional crop region (original pixels). The backend crops the
+        // published image and re-maps the caseta positions to it.
+        ...(crop ? { crop } : {}),
         casetas: selected.map((r) => ({
           number: r.number,
           location: r.location,
@@ -255,6 +265,8 @@ const ImportCasetasModal = ({ fairs, onClose, onImported }) => {
                 published map size. Saved positions may not align with existing casetas.
               </p>
             )}
+            {!showCropper && (
+            <>
             <p className="modal-body" style={{ textAlign: 'left', marginBottom: '0.25rem' }}>
               Detected {rows.length}. To review: {reviewCount}. Selected: {selectedIds.size}.
             </p>
@@ -343,7 +355,54 @@ const ImportCasetasModal = ({ fairs, onClose, onImported }) => {
                 </table>
               </div>
             </div>
+            </>
+            )}
+
+            {/* Optional crop: select the region of the map to publish. When
+                open, the review list above is hidden so only the map shows.
+                Kept inside the scrollable area so the action buttons stay put. */}
+            <div style={{ marginTop: showCropper ? 0 : '1rem', paddingTop: showCropper ? 0 : '0.75rem', borderTop: showCropper ? 'none' : '1px solid var(--border, #e5e7eb)' }}>
+              <button
+                type="button"
+                onClick={() => setShowCropper((v) => !v)}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  background: showCropper ? '#2563eb' : '#eff6ff',
+                  color: showCropper ? '#fff' : '#2563eb',
+                  border: '1px solid #2563eb',
+                  borderRadius: '8px',
+                  padding: '0.5rem 0.9rem',
+                  cursor: 'pointer',
+                  fontSize: '0.88rem',
+                  fontWeight: 600,
+                }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M6 2v14a2 2 0 0 0 2 2h14" />
+                  <path d="M18 22V8a2 2 0 0 0-2-2H2" />
+                </svg>
+                {showCropper ? 'Hide map crop' : 'Crop map for public site (optional)'}
+              </button>
+              {crop && !showCropper && (
+                <span style={{ marginLeft: '0.6rem', fontSize: '0.82rem', color: '#16a34a', fontWeight: 600 }}>
+                  ✓ Crop selected ({crop.width}×{crop.height}px)
+                </span>
+              )}
+              {showCropper && (
+                <div style={{ marginTop: '0.6rem' }}>
+                  <MapCropper
+                    imageUrl={`${BACKEND_ORIGIN}${detection.mapUrl}`}
+                    originalWidth={detection.imageSize.width}
+                    originalHeight={detection.imageSize.height}
+                    onChange={setCrop}
+                  />
+                </div>
+              )}
             </div>
+            </div>
+
             <div className="modal-actions" style={{ marginTop: '1rem', flexShrink: 0 }}>
               <button className="modal-btn-confirm" onClick={handleSave} disabled={saving}>
                 {saving ? 'Importing…' : `Import ${selectedIds.size} casetas`}

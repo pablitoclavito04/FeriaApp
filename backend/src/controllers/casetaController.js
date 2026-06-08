@@ -2,6 +2,9 @@ const Caseta = require('../models/Caseta');
 const Fair = require('../models/Fair');
 const path = require('path');
 const { runAIDetection } = require('../services/detectCasetasAI');
+const { remapLocation, sanitizeCrop, cropImageFile } = require('../services/cropMap');
+
+const UPLOADS_DIR = path.join(__dirname, '../../uploads');
 
 // @desc    Get all casetas
 // @route   GET /api/casetas
@@ -548,13 +551,15 @@ const detectCasetasFromMap = async (req, res) => {
   }
   try {
     const imagePath = path.resolve(req.file.path);
-    const { width, height, casetas } = await runAIDetection(imagePath);
+    const { width, height, casetas, mapArea } = await runAIDetection(imagePath);
     res.json({
       mapUrl: `/uploads/${req.file.filename}`,
       imageSize: { width, height },
       // Leaflet bounds in the existing convention: [[0,0],[height,width]].
       bounds: [[0, 0], [height, width]],
       expectedCount: casetas.length,
+      // Suggested crop region (pixels) = the detected map area without legend.
+      mapArea,
       casetas,
     });
   } catch (error) {
@@ -576,7 +581,11 @@ const detectCasetasFromMap = async (req, res) => {
 // @access  Private (admin)
 const bulkCreateCasetas = async (req, res) => {
   try {
-    const { casetas, mapImage, mapBounds } = req.body;
+    let { casetas, mapImage, mapBounds } = req.body;
+    // Optional crop: { crop: {x,y,width,height} in original pixels, originalHeight }.
+    // When present, crop the published map to that region and re-express each
+    // caseta location against the cropped image; casetas outside it are dropped.
+    const { crop } = req.body;
 
     // Resolve the target fair: explicit id, else the active one.
     const fair = req.body.fair
@@ -584,6 +593,36 @@ const bulkCreateCasetas = async (req, res) => {
       : await Fair.findOne({ active: true });
     if (!fair) {
       return res.status(404).json({ error: 'Fair not found', code: 'FAIR_NOT_FOUND' });
+    }
+
+    // Apply the crop before validating numbers, so dropped casetas don't trigger
+    // spurious duplicate/validation checks.
+    if (crop && mapImage && mapBounds && mapBounds.width && mapBounds.height) {
+      const safe = sanitizeCrop(crop, mapBounds.width, mapBounds.height);
+      if (safe) {
+        const originalHeight = mapBounds.height;
+        const filename = path.basename(mapImage);
+        try {
+          const out = await cropImageFile(UPLOADS_DIR, filename, safe);
+          mapImage = `/uploads/${out.filename}`;
+          mapBounds = { width: out.width, height: out.height };
+          casetas = casetas
+            .map((c) => {
+              const loc = remapLocation(c.location, originalHeight, safe);
+              return loc ? { ...c, location: loc } : null;
+            })
+            .filter(Boolean);
+        } catch (err) {
+          return res.status(500).json({ error: 'Could not crop the map image', code: 'CROP_FAILED' });
+        }
+      }
+    }
+
+    if (casetas.length === 0) {
+      return res.status(422).json({
+        error: 'No casetas remain after cropping (all fell outside the selected region)',
+        code: 'VALIDATION_ERROR',
+      });
     }
 
     // Reject duplicate numbers within the payload before writing anything.

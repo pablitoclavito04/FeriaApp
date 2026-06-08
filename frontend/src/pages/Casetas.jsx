@@ -8,6 +8,17 @@ import useAuth from '../context/useAuth';
 import useModalClose from '../hooks/useModalClose';
 import { canCreate, canEdit, canDelete } from '../utils/permissions';
 
+// Backend origin where /uploads images are served. Derived from the API URL
+// (strip the trailing /api). When VITE_API_URL is unset (Docker/production
+// build) this is empty, so images are requested as a relative /uploads/...
+// and served through the same nginx proxy as the panel — which is what makes
+// them load on admin.feriaapp.com instead of pointing at localhost.
+const BACKEND_ORIGIN = (import.meta.env.VITE_API_URL || '').replace(/\/api\/?$/, '');
+
+// Build the URL for a caseta image, encoding the path so filenames containing
+// spaces (e.g. "Captura de pantalla ....png") are not broken by the browser.
+const imageUrl = (image) => (image ? `${BACKEND_ORIGIN}${encodeURI(image)}` : null);
+
 // Casetas page: CRUD for stalls plus the map location editor, AI map import
 // (ImportCasetasModal), client-side pagination and role-gated actions.
 const Casetas = () => {
@@ -147,7 +158,7 @@ const Casetas = () => {
       fair: caseta.fair?._id || caseta.fair,
       location: caseta.location || { x: null, y: null },
     });
-    setImagePreview(caseta.image ? `http://localhost:5000${caseta.image}` : null);
+    setImagePreview(imageUrl(caseta.image));
     setShowForm(true);
     document.querySelector('.main-content')?.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -367,7 +378,7 @@ const Casetas = () => {
               <td>{caseta.fair?.name}</td>
               <td>
                 {caseta.image
-                  ? <img src={`http://localhost:5000${caseta.image}`} alt={caseta.name} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }} />
+                  ? <img src={imageUrl(caseta.image)} alt={caseta.name} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }} />
                   : 'No image'}
               </td>
               <td>
