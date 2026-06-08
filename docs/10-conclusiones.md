@@ -24,9 +24,9 @@ FeriaApp meets that objective with an architecture that clearly differentiates t
 | Smart search | ✅ Completed | Fuse.js with typo tolerance |
 | Menu PDF download | ✅ Completed | jsPDF generated on the client |
 | Docker containerisation | ✅ Completed | 5 services in docker-compose |
-| Nginx as reverse proxy | ✅ Completed | Routing between frontend, API and public website |
-| CI/CD pipeline | ✅ Completed | GitHub Actions with tests, build and Docker |
-| Unit tests | ✅ Completed | 318 tests with Jest + Supertest, 85.03% code coverage |
+| Nginx as reverse proxy | ✅ Completed | Routing between frontend, API and public website; subdomain split (feriaapp.com / admin.feriaapp.com) |
+| CI/CD pipeline | ✅ Completed | GitHub Actions: backend + frontend tests, build, Docker, and image publish (CD) to ghcr.io |
+| Tests | ✅ Completed | 351 backend tests (Jest + Supertest) and 43 frontend tests (Vitest + RTL) |
 | Documentation | ✅ Completed | 10 sections in /docs |
 
 ---

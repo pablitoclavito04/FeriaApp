@@ -68,9 +68,9 @@ The website visited by users is a static page designed as a Progressive Web App 
 
 ### 8. AI-powered map import.
 
-The administrator uploads the image of any fair map and an AI vision model (Claude, by Anthropic) analyses it automatically: it detects each stall, reads its number, and proposes an approximate position on the map. Because the model interprets the map visually rather than relying on rules tuned to one specific plan, the feature adapts to **any** fair map, not just a single venue.
+The administrator uploads the image of any fair map and an AI vision model (Claude, by Anthropic) analyses it automatically: it detects each stall, reads its number, reads the **name** from the map's side legend (matching each number to its name), and proposes an approximate position on the map. Because the model interprets the map visually rather than relying on rules tuned to one specific plan, the feature adapts to **any** fair map, not just a single venue.
 
-The detected stalls are shown for review on the map: the administrator drags each marker to fine-tune its exact position, edits numbers or names, and can add or remove stalls before confirming the import. This combines automatic detection (which does the bulk of the work) with a final human adjustment that guarantees precise placement. Each fair stores its own map, so the public website always shows the active fair's plan with its stalls in the right place.
+The detected stalls are shown for review on the map: the administrator drags each marker to fine-tune its exact position, edits numbers or names, and can add or remove stalls before confirming the import. Optionally, the administrator can **crop** the map — dragging a rectangle to select the region published on the public site (e.g. excluding the legend) — and the backend crops the image and re-maps the stall positions accordingly. This combines automatic detection (which does the bulk of the work) with a final human adjustment that guarantees precise placement. Each fair stores its own map, so the public website always shows the active fair's plan with its stalls in the right place.
 
 ### 9. Interactive map.
 

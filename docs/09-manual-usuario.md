@@ -92,17 +92,18 @@ While the AI is working, the modal shows a progress message. Detection of a full
 
 4. Review the result:
    - **Drag** any marker to fine-tune its exact position.
-   - **Edit** the number or name of any stall in the list on the right.
+   - **Edit** the number or name of any stall in the list on the right (names read from the map legend appear pre-filled).
    - **Click** an empty spot on the map to add a stall the AI missed.
    - Use the **trash icon** to remove a false detection.
    - Untick any stall you do not want to import.
+   - *(Optional)* Press **Crop map for public site** and drag a rectangle to choose the region of the map shown on the public website (e.g. excluding the legend). If you skip this, the whole map is published.
 5. Press **Import** to save the selected stalls into the fair.
 
 The review screen shows the detected stalls as numbered markers on the uploaded map (left), alongside an editable list (right) with each stall's number, name and detection confidence. A summary at the top reports how many stalls were detected, how many need review and how many are selected for import:
 
 ![Review screen: the uploaded fair map with numbered stall markers on the left, and an editable table on the right listing each stall's number (#), name, confidence (CONF.) and a trash icon to remove it. The header reads "Detected 178. To review: 0. Selected: 178." and the import button reads "Import 178 casetas".](ai-import-review.png)
 
-> Notes: stall names are optional during import (a default "Caseta N" is used and can be edited later with the Edit button). Re-importing the same fair updates the matching stalls by number instead of duplicating them. Images are added afterwards from each stall's Edit form.
+> Notes: the AI fills in stall **names** automatically when the map has a legend; they remain editable, and stalls without a name get a default "Caseta N". Re-importing the same fair updates the matching stalls by number instead of duplicating them. Images are added afterwards from each stall's Edit form. (The exact stall count in the screenshots — e.g. 175 or 178 — depends on how many the AI detected on that run; the real Feria de Jerez has roughly 175 stalls.)
 
 If the chosen fair already contains stalls, the review screen shows a warning before importing. This makes it clear that importing will update the matching stalls and replace the fair's map, so a different fair should be created first if the new map belongs to a different venue:
 
@@ -161,8 +162,9 @@ If the chosen fair already contains stalls, the review screen shows a warning be
 ### Access.
 
 The public website is available at:
-- **GitHub Pages:** https://pablitoclavito04.github.io/FeriaApp/
-- **Docker:** http://localhost/public/
+- **Production (cloud):** https://feriaapp.com
+- **GitHub Pages mirror:** https://pablitoclavito04.github.io/FeriaApp/
+- **Local Docker:** http://localhost/
 
 ### Exploring the fair.
 

@@ -42,11 +42,11 @@ Lighthouse audit of the deployed public site at `https://pablitoclavito04.github
 
 | Metric | Value |
 |---|---|
-| Unit tests | 342 |
-| Test files | 10 |
-| Test framework | Jest + Supertest |
-| CI/CD | GitHub Actions |
-| Test execution | Serial (--runInBand) |
+| Backend tests | 351 (11 suites) |
+| Frontend tests | 43 (Vitest + React Testing Library) |
+| Test frameworks | Jest + Supertest (backend), Vitest + RTL (frontend) |
+| CI/CD | GitHub Actions (tests run on every push) |
+| Backend test execution | Serial (--runInBand) |
 
 ---
 
@@ -268,9 +268,10 @@ docker exec feriaapp-backend node seedAdmin.js
 
 The GitHub Actions pipeline runs automatically on every push to `develop` or `main`:
 
-1. **Test backend** — runs unit tests with Jest and Supertest against a real MongoDB instance.
-2. **Build frontend** — verifies the React app compiles without errors.
+1. **Test backend** — runs the Jest + Supertest suite against a real MongoDB instance.
+2. **Build frontend** — runs the Vitest suite and verifies the React app compiles.
 3. **Build Docker** — verifies all Dockerfiles are valid by building the images.
+4. **Publish images (CD)** — on push to `main`, builds and pushes the three service images to the GitHub Container Registry (`ghcr.io`), tagged with the commit SHA and `latest`.
 
 ---
 

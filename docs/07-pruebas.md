@@ -23,9 +23,9 @@ Screenshots of the tests are available in `docs/insomnia/`.
 
 ### 2. Unit tests with Jest and Supertest.
 
-In Sprint 5, automated unit tests were implemented for the backend; they were extended as new features were added. The tests cover all main API endpoints across 10 test files.
+In Sprint 5, automated unit tests were implemented for the backend; they were extended as new features were added. The tests cover all main API endpoints across 11 test files.
 
-**Test files:**
+**Backend test files:**
 
 | File | Module | Tests |
 |---|---|---|
@@ -39,7 +39,8 @@ In Sprint 5, automated unit tests were implemented for the backend; they were ex
 | `backend/tests/roles.test.js` | Authorization & roles | 24 |
 | `backend/tests/advanced-routes.test.js` | Advanced & nested routes | 55 |
 | `backend/tests/error-branches.test.js` | Error & edge-case branches | 31 |
-| **Total** | | **342** |
+| `backend/tests/cropMap.test.js` | Map crop coordinate math | 9 |
+| **Total** | | **351** |
 
 **Test scenarios covered per module:**
 - Successful creation with valid data
@@ -74,14 +75,30 @@ PASS  tests/roles.test.js
 PASS  tests/advanced-routes.test.js
 PASS  tests/error-branches.test.js
 
-Test Suites: 10 passed, 10 total
-Tests:       342 passed, 342 total
+Test Suites: 11 passed, 11 total
+Tests:       351 passed, 351 total
 Time:        16.4 s
 ```
 
-![Jest test suite output (earlier run: 318 tests across 8 suites, all green)](test-suite-passing.png)
+![Jest test suite output (earlier run, all green)](test-suite-passing.png)
 
-The suite grew as new features landed: the user/role-management and AI-import suites were added on top of the role-based authorization, express-validator and error-branch suites, which themselves built on the original CRUD tests. It now totals **342 tests across 10 suites**, all green. (The screenshot above is from an earlier run showing 318 tests across 8 suites, before the user-management and AI-import suites were added.)
+The suite grew as new features landed: the user/role-management, AI-import and map-crop suites were added on top of the role-based authorization, express-validator and error-branch suites, which themselves built on the original CRUD tests. It now totals **351 tests across 11 suites**, all green. (The screenshot above is from an earlier run with fewer suites, taken before later features were added.)
+
+### 3. Unit tests with Vitest (frontend).
+
+The React admin panel is tested with **Vitest + React Testing Library** (43 tests). They cover the client-side logic the rubric values: permission helpers, the Intl-based format helpers, the `useModalClose` accessibility hook, the `lazyWithRetry` chunk-recovery helper, the auth and caseta services (with a mocked axios instance), the `Login` page (validation and submit flows) and the `MapCropper` component.
+
+```bash
+cd frontend
+npm test
+```
+
+```
+ Test Files  8 passed (8)
+      Tests  43 passed (43)
+```
+
+Both test suites (backend and frontend) run in the CI pipeline on every push.
 
 ---
 
@@ -89,9 +106,10 @@ The suite grew as new features landed: the user/role-management and AI-import su
 
 Tests run automatically on every push to `develop` or `main` via GitHub Actions. The pipeline includes:
 
-1. **Backend test:** Runs `npm test` with a MongoDB instance in the CI environment.
-2. **Frontend build:** Runs `npm run build` to verify the frontend compiles without errors.
+1. **Backend test:** Runs the Jest suite with a MongoDB instance in the CI environment.
+2. **Frontend build & test:** Runs the Vitest suite and `npm run build` to verify the frontend tests pass and the app compiles.
 3. **Docker build:** Builds all Docker images to verify the Dockerfiles are valid.
+4. **Publish images (CD):** On push to `main`, pushes the three service images to `ghcr.io` (tagged with the commit SHA and `latest`).
 
 The pipeline ensures that no code with failing tests reaches the `main` branch.
 
@@ -274,8 +292,8 @@ PASS  tests/roles.test.js
     ✓ GET /api/fairs is accessible to editor
     ✓ GET /api/fairs is accessible to viewer
 
-Test Suites: 8 passed, 8 total
-Tests:       318 passed, 318 total
+Test Suites: 11 passed, 11 total
+Tests:       351 passed, 351 total
 ```
 
 ---
@@ -317,7 +335,7 @@ When validation fails, the API responds with `422 Unprocessable Entity` and a st
 
 ### Why two variants per entity
 
-POST validators enforce `notEmpty()` on required fields (full document creation). PUT validators mark every field as `optional()` so partial updates (e.g. toggling only `active`) don't trigger spurious validation errors. The 318-test suite passes with this split.
+POST validators enforce `notEmpty()` on required fields (full document creation). PUT validators mark every field as `optional()` so partial updates (e.g. toggling only `active`) don't trigger spurious validation errors. The full backend suite passes with this split.
 
 ---
 
@@ -356,6 +374,6 @@ The HTML report is generated at `backend/coverage/lcov-report/index.html`.
 
 ### Coverage report output
 
-![Jest coverage table broken down by folder and file: All files 84.4% statements / 70.25% branches / 96.7% functions / 85.03% lines, with models and routes at 100% across the board, and the bottom summary showing 8 test suites and 318 tests passing](coverage-report.png)
+![Jest coverage table broken down by folder and file: All files 84.4% statements / 70.25% branches / 96.7% functions / 85.03% lines, with models and routes at 100% across the board (coverage figures from an earlier run; the suite has since grown to 351 tests across 11 suites)](coverage-report.png)
 
 The screenshot shows the textual coverage table printed by `npm run test:coverage`, broken down by folder and file. Models and routes reach **100%** on all four metrics; the lower numbers in `controllers/` correspond to error branches and edge cases left uncovered by design (full breakdown in the table above). The global line coverage of **85.03%** clears the 75% threshold configured in `jest.config.js`.
