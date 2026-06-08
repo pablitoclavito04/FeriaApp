@@ -61,12 +61,13 @@ describe('casetaService', () => {
     expect(result.deleted).toBe(5);
   });
 
-  it('detectFromMap posts the form data to the detect endpoint', async () => {
+  it('detectFromMap posts the form data with a long timeout', async () => {
     api.post.mockResolvedValue({ data: { casetas: [] } });
     const fd = new FormData();
     await casetaService.detectFromMap(fd);
     expect(api.post).toHaveBeenCalledWith('/casetas/detect', fd, {
       headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 220000,
     });
   });
 

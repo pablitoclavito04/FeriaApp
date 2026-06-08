@@ -11,8 +11,12 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
-// Bounds del plano (ajusta estos valores según tu imagen)
-const bounds = [[0, 0], [1052, 1514]];
+// Backend origin for served map images (empty in the Docker/production build,
+// so /uploads goes through the same nginx proxy as the panel).
+const BACKEND_ORIGIN = (import.meta.env.VITE_API_URL || '').replace(/\/api\/?$/, '');
+
+// Default plan size, used when the fair has no map of its own (backward compat).
+const DEFAULT_BOUNDS = [[0, 0], [1052, 1514]];
 
 // Captures clicks on the map and reports the clicked coordinates upward.
 const LocationPicker = ({ onLocationSelect }) => {
@@ -26,7 +30,10 @@ const LocationPicker = ({ onLocationSelect }) => {
 
 // Single-stall location editor: shows the fair plan and lets the admin click
 // to place (or move) one marker, reporting its coordinates to the parent form.
-const MapPicker = ({ onLocationSelect, initialPosition }) => {
+// mapImage / mapBounds come from the caseta's fair so the marker is drawn on
+// the SAME image (and same dimensions) the positions were calibrated against —
+// including a cropped map. Falls back to the bundled default plan if absent.
+const MapPicker = ({ onLocationSelect, initialPosition, mapImage, mapBounds }) => {
   const [marker, setMarker] = useState(initialPosition || null);
 
   const handleLocationSelect = (latlng) => {
@@ -34,11 +41,19 @@ const MapPicker = ({ onLocationSelect, initialPosition }) => {
     onLocationSelect(latlng);
   };
 
+  // Leaflet CRS.Simple bounds are [[0,0],[height,width]].
+  const bounds =
+    mapBounds?.width && mapBounds?.height
+      ? [[0, 0], [mapBounds.height, mapBounds.width]]
+      : DEFAULT_BOUNDS;
+  const imageUrl = mapImage ? `${BACKEND_ORIGIN}${encodeURI(mapImage)}` : planoFeria;
+  const center = [bounds[1][0] / 2, bounds[1][1] / 2];
+
   return (
     <div className="map-picker">
       <p className="map-instructions">Click on the map to select the caseta location</p>
       <MapContainer
-        center={[526, 757]}
+        center={center}
         zoom={-1}
         crs={L.CRS.Simple}
         style={{ height: '500px', width: '100%', borderRadius: '8px' }}
@@ -50,7 +65,7 @@ const MapPicker = ({ onLocationSelect, initialPosition }) => {
           map.target.fitBounds(bounds);
         }}
       >
-        <ImageOverlay url={planoFeria} bounds={bounds} />
+        <ImageOverlay url={imageUrl} bounds={bounds} />
         <LocationPicker onLocationSelect={handleLocationSelect} />
         {marker && <Marker position={marker} />}
       </MapContainer>

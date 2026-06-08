@@ -207,6 +207,11 @@ const Casetas = () => {
 
   if (loading) return <p>Loading...</p>;
 
+  // The map (image + dimensions) of the fair currently selected in the form, so
+  // the location editor shows the right plan — including a cropped one — instead
+  // of the bundled default plan.
+  const selectedFairMap = fairs.find((f) => f._id === formData.fair);
+
   // Client-side pagination: sort by number and show PAGE_SIZE per page.
   const PAGE_SIZE = 80;
   const sortedCasetas = [...casetas].sort((a, b) => (a.number ?? 0) - (b.number ?? 0));
@@ -340,6 +345,8 @@ const Casetas = () => {
                   ? { lat: formData.location.x, lng: formData.location.y }
                   : null
               }
+              mapImage={selectedFairMap?.mapImage}
+              mapBounds={selectedFairMap?.mapBounds}
             />
             {formData.location?.x && (
               <p className="location-info">
